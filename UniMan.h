@@ -1,0 +1,6 @@
+class UniMan{
+    public:
+        UniMan();
+};
+
+
