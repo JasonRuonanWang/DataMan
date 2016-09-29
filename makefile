@@ -1,14 +1,12 @@
 all:
-	cc *.c -c
-	c++ *.cc -c
-	c++ *.o --shared -o libDataMan.so
+	c++ *.cc --shared -o libDataMan.so -std=c++11 -lzmq
 
 install: all
-	cp *.so $(libpath)/UniMan/lib/
+	cp *.so $(libpath)/DataMan/lib/
 
 
 clean:
-	rm -rf *.o *.so
+	rm -rf *.o *.so*
 
 
 

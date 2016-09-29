@@ -1,11 +1,9 @@
-#include<stdio.h>
 #include"DataMan.h"
 
 
-UniMan::UniMan(){
-
-
-
+DataMan::DataMan(){
 }
 
+DataMan::~DataMan(){
+}
 
