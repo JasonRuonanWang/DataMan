@@ -9,6 +9,11 @@ class MdtmMan : public StreamMan{
 
     private:
         void *zmq_ipc_req = NULL;
+        void *zmq_ipc_rep = NULL;
+        void zmq_ipc_rep_thread_func();
+        bool zmq_ipc_rep_thread_active;
+        thread *zmq_ipc_rep_thread;
+        int zmq_msg_size = 1024;
 
 };
 

@@ -16,7 +16,9 @@ MdtmMan::MdtmMan(string local_ip, string remote_ip, string mode, string prefix, 
     msg["priority"] = {0,3,10};
 
     zmq_ipc_req = zmq_socket (zmq_context, ZMQ_REQ);
-    zmq_connect (zmq_ipc_req, "ipc:///tmp/ADIOS_MDTM_zmq");
+    zmq_ipc_rep = zmq_socket (zmq_context, ZMQ_REP);
+    zmq_connect (zmq_ipc_req, "ipc:///tmp/ADIOS_MDTM_pipe");
+    zmq_bind (zmq_ipc_rep, "ipc:///tmp/MDTM_ADIOS_pipe");
 
     char buffer_return[10];
     zmq_send (zmq_ipc_req, msg.dump().c_str(), msg.dump().length(), 0);
@@ -25,7 +27,12 @@ MdtmMan::MdtmMan(string local_ip, string remote_ip, string mode, string prefix, 
 }
 
 MdtmMan::~MdtmMan(){
+
+    zmq_close (zmq_ipc_rep);
     zmq_close (zmq_ipc_req);
+
+//    zmq_ipc_rep_thread_active = false;
+//    delete zmq_ipc_rep_thread;
 }
 
 int MdtmMan::put(void *data, string doid, string var, int *varshape = 0, int *offset = 0, int *putshape = 0){
@@ -39,6 +46,14 @@ int MdtmMan::put(void *data, string doid, string var, int *varshape = 0, int *of
     cout << ((float*)data)[2] << endl;
     cout << ((float*)data)[3] << endl;
     return 0;
+}
+
+void MdtmMan::zmq_ipc_rep_thread_func(){
+    while (zmq_ipc_rep_thread_active){
+        char msg[zmq_msg_size];
+        zmq_recv (zmq_ipc_rep, msg, zmq_msg_size, 0);
+        zmq_send (zmq_ipc_rep, "OK", 10, 0);
+    }
 }
 
 
