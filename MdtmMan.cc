@@ -1,7 +1,5 @@
 #include"MdtmMan.h"
-#include"json/json.hpp"
 #include"zmq.h"
-using json = nlohmann::json;
 
 
 MdtmMan::MdtmMan(string local_ip, string remote_ip, string mode, string prefix, int num_pipes, int *tolerance, int *priority)
@@ -24,34 +22,42 @@ MdtmMan::MdtmMan(string local_ip, string remote_ip, string mode, string prefix, 
     zmq_send (zmq_ipc_req, msg.dump().c_str(), msg.dump().length(), 0);
     zmq_recv (zmq_ipc_req, buffer_return, 10, 0);
 
+    zmq_ipc_rep_thread_active = true;
+    zmq_ipc_rep_thread = new thread(&MdtmMan::zmq_ipc_rep_thread_func, this);
 }
 
 MdtmMan::~MdtmMan(){
-
     zmq_close (zmq_ipc_rep);
     zmq_close (zmq_ipc_req);
-
-//    zmq_ipc_rep_thread_active = false;
-//    delete zmq_ipc_rep_thread;
+    zmq_ipc_rep_thread_active = false;
+    zmq_ipc_rep_thread->join();
+    delete zmq_ipc_rep_thread;
 }
 
-int MdtmMan::put(void *data, string doid, string var, int *varshape = 0, int *offset = 0, int *putshape = 0){
+int MdtmMan::put(void *data,
+        string doid,
+        string var,
+        string dtype,
+        unsigned int *putshape = 0,
+        unsigned int *varshape = 0,
+        unsigned int *offset = 0)
+{
 
     json msg;
+    msg["doid"] = doid;
+    msg["var"] = var;
+    msg["putsize"] = product(putshape) * dsize(dtype);
+    msg["putshape"] = array_to_json(putshape);
 
-    cout << doid << endl;
-    cout << var << endl;
-    cout << ((float*)data)[0] << endl;
-    cout << ((float*)data)[1] << endl;
-    cout << ((float*)data)[2] << endl;
-    cout << ((float*)data)[3] << endl;
+    cout << msg << endl;
+
     return 0;
 }
 
 void MdtmMan::zmq_ipc_rep_thread_func(){
     while (zmq_ipc_rep_thread_active){
-        char msg[zmq_msg_size];
-        zmq_recv (zmq_ipc_rep, msg, zmq_msg_size, 0);
+        char msg[1024];
+        zmq_recv (zmq_ipc_rep, msg, 1024, ZMQ_NOBLOCK);
         zmq_send (zmq_ipc_rep, "OK", 10, 0);
     }
 }

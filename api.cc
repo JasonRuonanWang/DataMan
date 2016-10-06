@@ -4,22 +4,33 @@
 #include"api.h"
 
 
+DataMan *dman = NULL;
 
-extern "C" void dataman_write_c(void *data){
-
-    DataMan *man = new MdtmMan("tcp://127.0.0.1:12306", "tcp://127.0.0.1:12307", "sender");
-    man->put(data, "aaa", "bbb", 0,0,0);
-    delete man;
+void dataman_init(){
+    dman = new MdtmMan("tcp://127.0.0.1:12306", "tcp://127.0.0.1:12307", "sender");
 }
 
-extern "C" void dataman_init_c(){
-
+void dataman_write(void *data,
+        string doid,
+        string var,
+        string dtype,
+        unsigned int *putshape = 0,
+        unsigned int *varshape = 0,
+        unsigned int *offset = 0)
+{
+    if(!dman)
+        dataman_init();
+    dman->put(data, doid, var, dtype, putshape, varshape, offset);
 }
 
-extern "C" void dataman_open_c(){
+
+void dataman_open(){
 }
 
 
+void dataman_term(){
+    delete dman;
+}
 
 
 

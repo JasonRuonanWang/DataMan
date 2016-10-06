@@ -7,7 +7,13 @@ class StreamMan : public DataMan{
     public:
         StreamMan(string local_ip, string remote_ip);
         ~StreamMan();
-        virtual int put(void *data, string doid, string var, int *varshape, int *offset, int *putshape) = 0;
+        virtual int put(void *data,
+                string doid,
+                string var,
+                string dtype,
+                unsigned int *putshape,
+                unsigned int *varshape,
+                unsigned int *offset) = 0;
     protected:
         void *zmq_context = NULL;
     private:

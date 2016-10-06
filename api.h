@@ -1,5 +1,13 @@
+#include<string>
+using namespace std;
 
-extern "C" void dataman_write_c(void *data);
+void dataman_write(void *data,
+        string doid,
+        string var,
+        string dtype,
+        unsigned int *putshape,
+        unsigned int *varshape,
+        unsigned int *offset);
 
 
 

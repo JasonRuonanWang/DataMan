@@ -6,8 +6,10 @@ install: all
 	cp api.h $(libpath)/DataMan/include/DataManager.h
 
 
+
 clean:
 	rm -rf *.o *.so*
+	cd examples; make clean
 
 
 

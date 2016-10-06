@@ -36,7 +36,7 @@ StreamMan::~StreamMan(){
 void StreamMan::zmq_tcp_rep_thread_func(){
     while (zmq_tcp_rep_thread_active){
         char msg[1024];
-        zmq_recv (zmq_tcp_rep, msg, 1024, 0);
+        zmq_recv (zmq_tcp_rep, msg, 1024, ZMQ_NOBLOCK);
         zmq_send (zmq_tcp_rep, "OK", 10, 0);
     }
 }
