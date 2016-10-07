@@ -10,5 +10,12 @@ void dataman_write(void *data,
         unsigned int *offset);
 
 
+void dataman_init(string local_ip,
+        string remote_ip,
+        string mode,
+        string prefix,
+        int num_pipes,
+        int *tolerance,
+        int *priority);
 
 

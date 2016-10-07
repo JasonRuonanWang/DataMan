@@ -30,7 +30,7 @@ class DataMan{
             return 0;
         }
 
-        inline json array_to_json(unsigned int *array){
+        inline json atoj(unsigned int *array){
             json j;
             if(array){
                 if(array[0] > 0){
@@ -43,6 +43,9 @@ class DataMan{
             return j;
         }
 
+        inline string rmquote(string in){
+            return in.substr(1,in.length()-2);
+        }
 
 };
 

@@ -3,7 +3,7 @@ all:
 
 install: all
 	cp *.so $(libpath)/DataMan/lib/
-	cp api.h $(libpath)/DataMan/include/DataManager.h
+	cp DataManager.h $(libpath)/DataMan/include
 
 
 

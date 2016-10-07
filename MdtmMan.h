@@ -4,7 +4,14 @@ class MdtmMan : public StreamMan{
     public:
         MdtmMan();
         ~MdtmMan();
-        MdtmMan(string local_ip, string remote_ip, string mode, string prefix = "/tmp/", int num_pipes = 4, int *tolerance = NULL, int *priority = NULL);
+        MdtmMan(string local_ip,
+                string remote_ip,
+                string mode,
+                string prefix,
+                int num_pipes,
+                int *tolerance,
+                int *priority);
+
         virtual int put(void *data,
                 string doid,
                 string var,
@@ -12,7 +19,6 @@ class MdtmMan : public StreamMan{
                 unsigned int *putshape,
                 unsigned int *varshape,
                 unsigned int *offset);
-
 
     private:
         void *zmq_ipc_req = NULL;

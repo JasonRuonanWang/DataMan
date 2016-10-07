@@ -1,9 +1,16 @@
 #include"MdtmMan.h"
 #include"zmq.h"
+//#include <sys/types.h>
+#include <sys/stat.h>
 
-
-MdtmMan::MdtmMan(string local_ip, string remote_ip, string mode, string prefix, int num_pipes, int *tolerance, int *priority)
-    :StreamMan(local_ip, remote_ip)
+MdtmMan::MdtmMan(string local_address,
+        string remote_address,
+        string mode,
+        string prefix,
+        int num_pipes,
+        int *tolerance,
+        int *priority)
+    :StreamMan(local_address, remote_address)
 {
     json msg;
     msg["operation"] = "init";
@@ -13,6 +20,14 @@ MdtmMan::MdtmMan(string local_ip, string remote_ip, string mode, string prefix, 
     msg["loss_tolerance"] = {0,0,1};
     msg["priority"] = {0,3,10};
 
+    // Pipes
+    for (int i=0; i<msg["pipe_names"].size(); i++){
+        string filename = prefix + rmquote(msg["pipe_names"][i].dump());
+        mkfifo(filename.c_str(),'w');
+    }
+
+
+    // ZMQ
     zmq_ipc_req = zmq_socket (zmq_context, ZMQ_REQ);
     zmq_ipc_rep = zmq_socket (zmq_context, ZMQ_REP);
     zmq_connect (zmq_ipc_req, "ipc:///tmp/ADIOS_MDTM_pipe");
@@ -47,7 +62,8 @@ int MdtmMan::put(void *data,
     msg["doid"] = doid;
     msg["var"] = var;
     msg["putsize"] = product(putshape) * dsize(dtype);
-    msg["putshape"] = array_to_json(putshape);
+    msg["putshape"] = atoj(putshape);
+    msg["dtype"] = dtype;
 
     cout << msg << endl;
 

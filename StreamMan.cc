@@ -5,7 +5,7 @@
 
 using namespace std;
 
-StreamMan::StreamMan(string local_ip, string remote_ip)
+StreamMan::StreamMan(string local_address, string remote_address)
 {
     zmq_context = zmq_ctx_new ();
     zmq_tcp_req = zmq_socket (zmq_context, ZMQ_REQ);
@@ -17,8 +17,8 @@ StreamMan::StreamMan(string local_ip, string remote_ip)
     remote << "tcp://" << remote_ip << ":12307";
     */
 
-    zmq_connect (zmq_tcp_req, remote_ip.c_str());
-    zmq_bind (zmq_tcp_rep, local_ip.c_str());
+    zmq_connect (zmq_tcp_req, remote_address.c_str());
+    zmq_bind (zmq_tcp_rep, local_address.c_str());
 
     zmq_tcp_rep_thread_active = true;
     zmq_tcp_rep_thread = new thread(&StreamMan::zmq_tcp_rep_thread_func, this);
