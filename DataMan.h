@@ -9,7 +9,15 @@ class DataMan{
     public:
         DataMan();
         virtual ~DataMan();
-        virtual int put(void *data, string doid, string var, string dtype, unsigned int *putshape, unsigned int *varshape, unsigned int *offset) = 0;
+        virtual int put(void *data,
+                string doid,
+                string var,
+                string dtype,
+                unsigned int *putshape,
+                unsigned int *varshape,
+                unsigned int *offset) = 0;
+
+        virtual int get(void *data, json j) = 0;
 
         inline unsigned int product(unsigned int *shape){
             unsigned int s = 0;

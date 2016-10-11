@@ -1,7 +1,7 @@
+#include <sys/stat.h>
+#include <unistd.h>
 #include"MdtmMan.h"
 #include"zmq.h"
-//#include <sys/types.h>
-#include <sys/stat.h>
 
 MdtmMan::MdtmMan(string local_address,
         string remote_address,
@@ -26,8 +26,8 @@ MdtmMan::MdtmMan(string local_address,
         mkfifo(filename.c_str(),'w');
     }
 
+    // ZMQ_DataMan_MDTM
 
-    // ZMQ
     zmq_ipc_req = zmq_socket (zmq_context, ZMQ_REQ);
     zmq_ipc_rep = zmq_socket (zmq_context, ZMQ_REP);
     zmq_connect (zmq_ipc_req, "ipc:///tmp/ADIOS_MDTM_pipe");
@@ -39,6 +39,7 @@ MdtmMan::MdtmMan(string local_address,
 
     zmq_ipc_rep_thread_active = true;
     zmq_ipc_rep_thread = new thread(&MdtmMan::zmq_ipc_rep_thread_func, this);
+
 }
 
 MdtmMan::~MdtmMan(){
@@ -57,15 +58,32 @@ int MdtmMan::put(void *data,
         unsigned int *varshape = 0,
         unsigned int *offset = 0)
 {
-
     json msg;
     msg["doid"] = doid;
     msg["var"] = var;
     msg["putsize"] = product(putshape) * dsize(dtype);
     msg["putshape"] = atoj(putshape);
     msg["dtype"] = dtype;
+    msg["pipe"] = "red";
 
     cout << msg << endl;
+
+    int size = msg["putsize"].get<int>();
+    cout << size << endl;
+    char ret[10];
+    zmq_send(zmq_tcp_req, msg.dump().c_str(), msg.dump().length(), 0);
+    cout << "sent" << endl;
+    zmq_recv(zmq_tcp_req, ret, 10, 0);
+    cout << "received" << endl;
+
+    FILE *f = fopen("/tmp/red", "wb");
+    fwrite(data, 1, size, f);
+    fclose(f);
+
+    return 0;
+}
+
+int MdtmMan::get(void *data, json j){
 
     return 0;
 }
@@ -75,6 +93,7 @@ void MdtmMan::zmq_ipc_rep_thread_func(){
         char msg[1024];
         zmq_recv (zmq_ipc_rep, msg, 1024, ZMQ_NOBLOCK);
         zmq_send (zmq_ipc_rep, "OK", 10, 0);
+        usleep(10000);
     }
 }
 

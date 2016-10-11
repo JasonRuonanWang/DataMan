@@ -20,6 +20,8 @@ class MdtmMan : public StreamMan{
                 unsigned int *varshape,
                 unsigned int *offset);
 
+        virtual int get(void *data, json j);
+
     private:
         void *zmq_ipc_req = NULL;
         void *zmq_ipc_rep = NULL;

@@ -6,13 +6,13 @@
 
 DataMan *dman = NULL;
 
-void dataman_init(string local_address ="tcp://127.0.0.1:12306",
-        string remote_address="tcp://127.0.0.1:12307",
-        string mode="sender",
-        string prefix="/tmp/",
-        int num_pipes=4,
-        int *tolerance=NULL,
-        int *priority=NULL){
+void dataman_init(string local_address,
+        string remote_address,
+        string mode,
+        string prefix,
+        int num_pipes,
+        int *tolerance,
+        int *priority){
     dman = new MdtmMan(local_address, remote_address, mode, prefix, num_pipes, tolerance, priority);
 }
 
