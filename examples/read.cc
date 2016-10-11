@@ -6,8 +6,10 @@ using namespace std;
 
 int main(){
 
+    string sender_address = "tcp://127.0.0.1:12306";
+    string receiver_address = "tcp://127.0.0.1:12307";
 
-    dataman_init("ipc:///tmp/sender_remote","ipc:///tmp/sender_local","receiver");
+    dataman_init(receiver_address, sender_address, "receiver");
 
 
     while (1){

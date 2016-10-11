@@ -4,8 +4,10 @@
 
 int main(){
 
+    string sender_address = "tcp://127.0.0.1:12306";
+    string receiver_address = "tcp://127.0.0.1:12307";
 
-    dataman_init("ipc:///tmp/sender_local","ipc:///tmp/sender_remote","sender");
+    dataman_init(sender_address, receiver_address);
 
     float data[1024];
     unsigned int shape[3] = {2,256,4};

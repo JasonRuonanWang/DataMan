@@ -8,8 +8,6 @@ using namespace std;
 
 StreamMan::StreamMan(string local_address, string remote_address)
 {
-    cout << local_address << endl;
-    cout << remote_address << endl;
     zmq_context = zmq_ctx_new ();
     zmq_tcp_req = zmq_socket (zmq_context, ZMQ_REQ);
     zmq_tcp_rep = zmq_socket (zmq_context, ZMQ_REP);
@@ -34,22 +32,20 @@ void StreamMan::zmq_tcp_rep_thread_func(){
         char msg[1024];
         int err = zmq_recv (zmq_tcp_rep, msg, 1024, ZMQ_NOBLOCK);
 
-        cout << err << endl;
         if (err>=0){
 
+            zmq_send (zmq_tcp_rep, "OK", 10, 0);
             json j = json::parse(msg);
             int size = j["putsize"].get<int>();
-            cout << size << endl;
-            cout << "************" << endl;
             float data[size];
-            cout << "************############" << endl;
-            FILE *f = fopen("/tmp/red", "rb");
-            cout << "************############************" << endl;
-            fread(data, 1, size, f);
-            cout << "************############************############" << endl;
-            fclose(f);
 
-            zmq_send (zmq_tcp_rep, "OK", 10, 0);
+            cout << "before read" << endl;
+            FILE *f = fopen("/tmp/yellow", "rb");
+            fread(data, 1, 1, f);
+            fclose(f);
+            cout << "after read" << endl;
+
+
 
         }
         usleep(1000000);

@@ -23,7 +23,7 @@ MdtmMan::MdtmMan(string local_address,
     // Pipes
     for (int i=0; i<msg["pipe_names"].size(); i++){
         string filename = prefix + rmquote(msg["pipe_names"][i].dump());
-        mkfifo(filename.c_str(),'w');
+        mkfifo(filename.c_str(), 0666);
     }
 
     // ZMQ_DataMan_MDTM
@@ -69,16 +69,15 @@ int MdtmMan::put(void *data,
     cout << msg << endl;
 
     int size = msg["putsize"].get<int>();
-    cout << size << endl;
     char ret[10];
     zmq_send(zmq_tcp_req, msg.dump().c_str(), msg.dump().length(), 0);
-    cout << "sent" << endl;
     zmq_recv(zmq_tcp_req, ret, 10, 0);
-    cout << "received" << endl;
 
-    FILE *f = fopen("/tmp/red", "wb");
-    fwrite(data, 1, size, f);
-    fclose(f);
+    cout << "before write" << endl;
+    FILE *fp = fopen("/tmp/yellow", "wb");
+    fwrite(data, 1, 1, fp);
+    fclose(fp);
+    cout << "after write" << endl;
 
     return 0;
 }
