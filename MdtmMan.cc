@@ -73,11 +73,9 @@ int MdtmMan::put(void *data,
     zmq_send(zmq_tcp_req, msg.dump().c_str(), msg.dump().length(), 0);
     zmq_recv(zmq_tcp_req, ret, 10, 0);
 
-    cout << "before write" << endl;
     FILE *fp = fopen("/tmp/yellow", "wb");
-    fwrite(data, 1, 1, fp);
+    fwrite(data, 1, size, fp);
     fclose(fp);
-    cout << "after write" << endl;
 
     return 0;
 }

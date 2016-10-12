@@ -31,25 +31,16 @@ void StreamMan::zmq_tcp_rep_thread_func(){
     while (zmq_tcp_rep_thread_active){
         char msg[1024];
         int err = zmq_recv (zmq_tcp_rep, msg, 1024, ZMQ_NOBLOCK);
-
+        zmq_send (zmq_tcp_rep, "OK", 10, 0);
         if (err>=0){
-
-            zmq_send (zmq_tcp_rep, "OK", 10, 0);
             json j = json::parse(msg);
             int size = j["putsize"].get<int>();
             float data[size];
-
-            cout << "before read" << endl;
             FILE *f = fopen("/tmp/yellow", "rb");
-            fread(data, 1, 1, f);
+            fread(data, 1, size, f);
             fclose(f);
-            cout << "after read" << endl;
-
-
-
         }
-        usleep(1000000);
-
+        usleep(10000);
     }
 }
 
