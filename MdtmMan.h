@@ -18,7 +18,8 @@ class MdtmMan : public StreamMan{
                 string dtype,
                 unsigned int *putshape,
                 unsigned int *varshape,
-                unsigned int *offset);
+                unsigned int *offset,
+                int priority);
 
         virtual int get(void *data, json j);
 

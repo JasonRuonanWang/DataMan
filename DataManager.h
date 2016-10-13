@@ -7,7 +7,8 @@ void dataman_write(void *data,
         string dtype,
         unsigned int *putshape,
         unsigned int *varshape,
-        unsigned int *offset);
+        unsigned int *offset,
+        int priority);
 
 void dataman_init(string local_address ="tcp://127.0.0.1:12306",
         string remote_address="tcp://127.0.0.1:12307",

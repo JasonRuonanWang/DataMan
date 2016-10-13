@@ -17,7 +17,7 @@ int main(){
     }
 
     for (int i=0; i<10; i++){
-        dataman_write(data, "aaa", "bbb", "float", shape, 0, 0);
+        dataman_write(data, "aaa", "bbb", "float", shape, 0, 0, 100);
         usleep(1000);
     }
 

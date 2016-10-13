@@ -16,9 +16,22 @@ MdtmMan::MdtmMan(string local_address,
     msg["operation"] = "init";
     msg["mode"] = mode;
     msg["pipe_prefix"] = prefix;
-    msg["pipe_names"] = {"red", "yellow", "green"};
-    msg["loss_tolerance"] = {0,0,1};
-    msg["priority"] = {0,3,10};
+
+    string pipename_prefix = "MdtmManPipe";
+    for(int i=0; i<num_pipes; i++){
+        stringstream pipename;
+        pipename << pipename_prefix << i;
+        if(i==0){
+            msg["pipe_names"] = {pipename.str()};
+            msg["loss_tolerance"] = {tolerance[i]};
+            msg["priority"] = {priority[i]};
+        }
+        else{
+            msg["pipe_names"].insert(msg["pipe_names"].end(), pipename.str());
+            msg["loss_tolerance"].insert(msg["loss_tolerance"].end(), tolerance[i]);
+            msg["priority"].insert(msg["priority"].end(), priority[i]);
+        }
+    }
 
     // Pipes
     for (int i=0; i<msg["pipe_names"].size(); i++){
@@ -54,27 +67,28 @@ int MdtmMan::put(void *data,
         string doid,
         string var,
         string dtype,
-        unsigned int *putshape = 0,
-        unsigned int *varshape = 0,
-        unsigned int *offset = 0)
+        unsigned int *putshape,
+        unsigned int *varshape,
+        unsigned int *offset,
+        int priority)
 {
     json msg;
     msg["doid"] = doid;
     msg["var"] = var;
-    msg["putsize"] = product(putshape) * dsize(dtype);
     msg["putshape"] = atoj(putshape);
     msg["dtype"] = dtype;
     msg["pipe"] = "red";
+    unsigned int putsize = product(putshape) * dsize(dtype);
+    msg["putsize"] = product(putshape) * dsize(dtype);
 
     cout << msg << endl;
 
-    int size = msg["putsize"].get<int>();
     char ret[10];
     zmq_send(zmq_tcp_req, msg.dump().c_str(), msg.dump().length(), 0);
     zmq_recv(zmq_tcp_req, ret, 10, 0);
 
     FILE *fp = fopen("/tmp/yellow", "wb");
-    fwrite(data, 1, size, fp);
+    fwrite(data, 1, putsize, fp);
     fclose(fp);
 
     return 0;

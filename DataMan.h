@@ -15,7 +15,8 @@ class DataMan{
                 string dtype,
                 unsigned int *putshape,
                 unsigned int *varshape,
-                unsigned int *offset) = 0;
+                unsigned int *offset,
+                int priority) = 0;
 
         virtual int get(void *data, json j) = 0;
 
