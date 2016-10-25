@@ -19,9 +19,12 @@ class MdtmMan : public StreamMan{
                 unsigned int *putshape,
                 unsigned int *varshape,
                 unsigned int *offset,
+                int tolerance,
                 int priority);
 
         virtual int get(void *data, json j);
+        virtual void* get(json j);
+
 
     private:
         void *zmq_ipc_req = NULL;
@@ -30,6 +33,8 @@ class MdtmMan : public StreamMan{
         bool zmq_ipc_rep_thread_active;
         thread *zmq_ipc_rep_thread;
         int zmq_msg_size = 1024;
+        string getmode = "callback";
+        json pipe_desc;
 
 };
 

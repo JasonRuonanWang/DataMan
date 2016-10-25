@@ -11,7 +11,6 @@ StreamMan::StreamMan(string local_address, string remote_address)
     zmq_context = zmq_ctx_new ();
     zmq_tcp_req = zmq_socket (zmq_context, ZMQ_REQ);
     zmq_tcp_rep = zmq_socket (zmq_context, ZMQ_REP);
-
     zmq_connect (zmq_tcp_req, remote_address.c_str());
     zmq_bind (zmq_tcp_rep, local_address.c_str());
     zmq_tcp_rep_thread_active = true;
@@ -34,11 +33,14 @@ void StreamMan::zmq_tcp_rep_thread_func(){
         zmq_send (zmq_tcp_rep, "OK", 10, 0);
         if (err>=0){
             json j = json::parse(msg);
-            int size = j["putsize"].get<int>();
-            float data[size];
-            FILE *f = fopen("/tmp/yellow", "rb");
-            fread(data, 1, size, f);
-            fclose(f);
+            if(getmode == "callback"){
+                int size = j["putsize"].get<int>();
+                void *data = malloc(size);
+                get(data, j);
+                cout << ((float*)data)[0] << endl;
+                cout << ((float*)data)[1] << endl;
+                cout << ((float*)data)[2] << endl;
+            }
         }
         usleep(10000);
     }

@@ -9,15 +9,15 @@ int main(){
 
     dataman_init(sender_address, receiver_address);
 
-    float data[1024];
-    unsigned int shape[3] = {2,256,4};
+    float *data = new float[1024*1024*1024];
+    unsigned int shape[3] = {2,1024*1024,1024};
 
-    for (int i=0; i<1024; i++){
+    for (int i=0; i<1024*1024*1024; i++){
         data[i] = i;
     }
 
     for (int i=0; i<10; i++){
-        dataman_write(data, "aaa", "bbb", "float", shape, 0, 0, 100);
+        dataman_write(data, "aaa", "bbb", "float", shape, 0, 0, 0, 100);
         usleep(1000);
     }
 

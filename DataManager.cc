@@ -27,8 +27,9 @@ void dataman_init(string local_address,
     if (!priority){
         priority = new int[num_pipes];
         for (int i=0; i<num_pipes; i++){
-            priority[i]=100;
+            priority[i]=50;
         }
+        priority[0]=100;
         delete_priority=true;
     }
 
@@ -45,11 +46,12 @@ void dataman_write(void *data,
         unsigned int *putshape = NULL,
         unsigned int *varshape = NULL,
         unsigned int *offset = NULL,
+        int tolerance=0,
         int priority=100)
 {
     if(!dman)
         dataman_init();
-    dman->put(data, doid, var, dtype, putshape, varshape, offset, priority);
+    dman->put(data, doid, var, dtype, putshape, varshape, offset, tolerance, priority);
 }
 
 

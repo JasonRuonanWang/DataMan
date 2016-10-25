@@ -12,30 +12,29 @@ MdtmMan::MdtmMan(string local_address,
         int *priority)
     :StreamMan(local_address, remote_address)
 {
-    json msg;
-    msg["operation"] = "init";
-    msg["mode"] = mode;
-    msg["pipe_prefix"] = prefix;
+    pipe_desc["operation"] = "init";
+    pipe_desc["mode"] = mode;
+    pipe_desc["pipe_prefix"] = prefix;
 
     string pipename_prefix = "MdtmManPipe";
     for(int i=0; i<num_pipes; i++){
         stringstream pipename;
         pipename << pipename_prefix << i;
         if(i==0){
-            msg["pipe_names"] = {pipename.str()};
-            msg["loss_tolerance"] = {tolerance[i]};
-            msg["priority"] = {priority[i]};
+            pipe_desc["pipe_names"] = {pipename.str()};
+            pipe_desc["loss_tolerance"] = {tolerance[i]};
+            pipe_desc["priority"] = {priority[i]};
         }
         else{
-            msg["pipe_names"].insert(msg["pipe_names"].end(), pipename.str());
-            msg["loss_tolerance"].insert(msg["loss_tolerance"].end(), tolerance[i]);
-            msg["priority"].insert(msg["priority"].end(), priority[i]);
+            pipe_desc["pipe_names"].insert(pipe_desc["pipe_names"].end(), pipename.str());
+            pipe_desc["loss_tolerance"].insert(pipe_desc["loss_tolerance"].end(), tolerance[i]);
+            pipe_desc["priority"].insert(pipe_desc["priority"].end(), priority[i]);
         }
     }
 
     // Pipes
-    for (int i=0; i<msg["pipe_names"].size(); i++){
-        string filename = prefix + rmquote(msg["pipe_names"][i].dump());
+    for (int i=0; i<pipe_desc["pipe_names"].size(); i++){
+        string filename = prefix + rmquote(pipe_desc["pipe_names"][i].dump());
         mkfifo(filename.c_str(), 0666);
     }
 
@@ -47,7 +46,7 @@ MdtmMan::MdtmMan(string local_address,
     zmq_bind (zmq_ipc_rep, "ipc:///tmp/MDTM_ADIOS_pipe");
 
     char buffer_return[10];
-    zmq_send (zmq_ipc_req, msg.dump().c_str(), msg.dump().length(), 0);
+    zmq_send (zmq_ipc_req, pipe_desc.dump().c_str(), pipe_desc.dump().length(), 0);
     zmq_recv (zmq_ipc_req, buffer_return, 10, 0);
 
     zmq_ipc_rep_thread_active = true;
@@ -70,6 +69,7 @@ int MdtmMan::put(void *data,
         unsigned int *putshape,
         unsigned int *varshape,
         unsigned int *offset,
+        int tolerance,
         int priority)
 {
     json msg;
@@ -77,7 +77,10 @@ int MdtmMan::put(void *data,
     msg["var"] = var;
     msg["putshape"] = atoj(putshape);
     msg["dtype"] = dtype;
-    msg["pipe"] = "red";
+
+    int index = closest(priority, pipe_desc["priority"], true);
+    msg["pipe"] = pipe_desc["pipe_names"][index];
+
     unsigned int putsize = product(putshape) * dsize(dtype);
     msg["putsize"] = product(putshape) * dsize(dtype);
 
@@ -87,15 +90,21 @@ int MdtmMan::put(void *data,
     zmq_send(zmq_tcp_req, msg.dump().c_str(), msg.dump().length(), 0);
     zmq_recv(zmq_tcp_req, ret, 10, 0);
 
-    FILE *fp = fopen("/tmp/yellow", "wb");
+    FILE *fp = fopen(msg["pipe"].dump().c_str(), "wb");
     fwrite(data, 1, putsize, fp);
     fclose(fp);
 
     return 0;
 }
 
-int MdtmMan::get(void *data, json j){
+void* MdtmMan::get(json j){
+}
 
+int MdtmMan::get(void *data, json j){
+    int size = j["putsize"].get<int>();
+    FILE *f = fopen(j["pipe"].dump().c_str(), "rb");
+    fread(data, 1, size, f);
+    fclose(f);
     return 0;
 }
 

@@ -16,9 +16,11 @@ class DataMan{
                 unsigned int *putshape,
                 unsigned int *varshape,
                 unsigned int *offset,
+                int tolerance,
                 int priority) = 0;
 
         virtual int get(void *data, json j) = 0;
+        virtual void* get(json j) = 0;
 
         inline unsigned int product(unsigned int *shape){
             unsigned int s = 0;
@@ -54,6 +56,29 @@ class DataMan{
 
         inline string rmquote(string in){
             return in.substr(1,in.length()-2);
+        }
+
+        inline bool isin(string a, json j){
+            for (int i=0; i<j.size(); i++){
+                if (j[i] == a)
+                    return true;
+            }
+            return false;
+        }
+
+        inline int closest(int v, json j, bool up){
+            int s=100, k=-1, t;
+            for (int i=0; i<j.size(); i++){
+                if(up)
+                    t = j[i].get<int>() - v;
+                else
+                    t = v - j[i].get<int>();
+                if(t >= 0 && t < s){
+                    s = t;
+                    k = i;
+                }
+            }
+            return k;
         }
 
 };

@@ -15,8 +15,10 @@ class StreamMan : public DataMan{
                 unsigned int *putshape,
                 unsigned int *varshape,
                 unsigned int *offset,
+                int tolerance,
                 int priority) = 0;
         virtual int get(void *data, json j) = 0;
+        virtual void* get(json j) = 0;
     protected:
         void *zmq_context = NULL;
         void *zmq_tcp_req = NULL;
@@ -25,6 +27,8 @@ class StreamMan : public DataMan{
         void zmq_tcp_rep_thread_func();
         bool zmq_tcp_rep_thread_active;
         thread *zmq_tcp_rep_thread;
+        string getmode = "callback";
+        void (*get_callback)(void *data, int size);
 
 };
 
