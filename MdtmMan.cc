@@ -97,8 +97,6 @@ int MdtmMan::put(void *data,
     return 0;
 }
 
-void* MdtmMan::get(json j){
-}
 
 int MdtmMan::get(void *data, json j){
     int size = j["putsize"].get<int>();

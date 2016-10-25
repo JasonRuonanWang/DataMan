@@ -18,7 +18,6 @@ class StreamMan : public DataMan{
                 int tolerance,
                 int priority) = 0;
         virtual int get(void *data, json j) = 0;
-        virtual void* get(json j) = 0;
     protected:
         void *zmq_context = NULL;
         void *zmq_tcp_req = NULL;

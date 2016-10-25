@@ -1,10 +1,10 @@
 #include"StreamMan.h"
 
-class MdtmMan : public StreamMan{
+class ZmqMan : public StreamMan{
     public:
-        MdtmMan();
-        ~MdtmMan();
-        MdtmMan(string local_ip,
+        ZmqMan();
+        ~ZmqMan();
+        ZmqMan(string local_ip,
                 string remote_ip,
                 string mode,
                 string prefix,
