@@ -1,6 +1,6 @@
 all:
-	g++ -g write.cc -o write -ldataman
-	g++ -g read.cc -o read -ldataman
+	g++ -g write.cc -o write -lDataMan
+	g++ -g read.cc -o read -lDataMan
 
 clean:
 	rm -rf write read *.dSYM
