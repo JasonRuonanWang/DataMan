@@ -66,7 +66,7 @@ class DataMan{
         }
 
         inline int closest(int v, json j, bool up){
-            int s=100, k=-1, t;
+            int s=100, k=0, t;
             for (int i=0; i<j.size(); i++){
                 if(up)
                     t = j[i].get<int>() - v;

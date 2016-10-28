@@ -9,8 +9,8 @@ class MdtmMan : public StreamMan{
                 string mode,
                 string prefix,
                 int num_pipes,
-                int *tolerance,
-                int *priority);
+                vector<int> tolerance,
+                vector<int> priority);
 
         virtual int put(void *data,
                 string doid,

@@ -11,32 +11,20 @@ void dataman_init(string local_address,
         string mode,
         string prefix,
         int num_pipes,
-        int *tolerance,
-        int *priority){
-
-    bool delete_tolerance=false;
-    bool delete_priority=false;
-
-    if (!tolerance){
-        tolerance = new int[num_pipes];
+        vector<int> tolerance,
+        vector<int> priority)
+{
+    if (tolerance.size() < num_pipes){
         for (int i=0; i<num_pipes; i++){
-            tolerance[i]=0;
+            tolerance.push_back(0);
         }
-        delete_tolerance=true;
     }
-    if (!priority){
-        priority = new int[num_pipes];
+    if (priority.size() < num_pipes){
         for (int i=0; i<num_pipes; i++){
-            priority[i]=50;
+            priority.push_back(100/(i+1));
         }
-        priority[0]=100;
-        delete_priority=true;
     }
-
     dman = new MdtmMan(local_address, remote_address, mode, prefix, num_pipes, tolerance, priority);
-
-    if(delete_tolerance) delete tolerance;
-    if(delete_priority) delete priority;
 }
 
 void dataman_write(void *data,

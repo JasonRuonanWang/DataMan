@@ -8,8 +8,8 @@ MdtmMan::MdtmMan(string local_address,
         string mode,
         string prefix,
         int num_pipes,
-        int *tolerance,
-        int *priority)
+        vector<int> tolerance,
+        vector<int> priority)
     :StreamMan(local_address, remote_address)
 {
     pipe_desc["operation"] = "init";
@@ -90,7 +90,8 @@ int MdtmMan::put(void *data,
     zmq_send(zmq_tcp_req, msg.dump().c_str(), msg.dump().length(), 0);
     zmq_recv(zmq_tcp_req, ret, 10, 0);
 
-    FILE *fp = fopen(msg["pipe"].dump().c_str(), "wb");
+    string pipename = rmquote(pipe_desc["pipe_prefix"].dump()) + rmquote(msg["pipe"].dump());
+    FILE *fp = fopen(pipename.c_str(), "wb");
     fwrite(data, 1, putsize, fp);
     fclose(fp);
 
@@ -100,7 +101,8 @@ int MdtmMan::put(void *data,
 
 int MdtmMan::get(void *data, json j){
     int size = j["putsize"].get<int>();
-    FILE *f = fopen(j["pipe"].dump().c_str(), "rb");
+    string pipename = rmquote(pipe_desc["pipe_prefix"].dump()) + rmquote(j["pipe"].dump());
+    FILE *f = fopen(pipename.c_str(), "rb");
     fread(data, 1, size, f);
     fclose(f);
     return 0;

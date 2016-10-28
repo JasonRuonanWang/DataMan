@@ -1,4 +1,5 @@
 #include<string>
+#include<vector>
 using namespace std;
 
 void dataman_write(void *data,
@@ -16,8 +17,8 @@ void dataman_init(string local_address ="tcp://127.0.0.1:12306",
         string mode="sender",
         string prefix="/tmp/",
         int num_pipes=10,
-        int *tolerance=NULL,
-        int *priority=NULL);
+        vector<int> tolerance=vector<int>(),
+        vector<int> priority=vector<int>());
 
 
 

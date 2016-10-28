@@ -37,9 +37,6 @@ void StreamMan::zmq_tcp_rep_thread_func(){
                 int size = j["putsize"].get<int>();
                 void *data = malloc(size);
                 get(data, j);
-                cout << ((float*)data)[0] << endl;
-                cout << ((float*)data)[1] << endl;
-                cout << ((float*)data)[2] << endl;
             }
         }
         usleep(10000);
