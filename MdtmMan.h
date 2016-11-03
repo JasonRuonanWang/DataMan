@@ -12,7 +12,7 @@ class MdtmMan : public StreamMan{
                 vector<int> tolerance,
                 vector<int> priority);
 
-        virtual int put(void *data,
+        virtual int put(const void *data,
                 string doid,
                 string var,
                 string dtype,

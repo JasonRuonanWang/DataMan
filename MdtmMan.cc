@@ -62,7 +62,7 @@ MdtmMan::~MdtmMan(){
     delete zmq_ipc_rep_thread;
 }
 
-int MdtmMan::put(void *data,
+int MdtmMan::put(const void *data,
         string doid,
         string var,
         string dtype,
@@ -97,7 +97,6 @@ int MdtmMan::put(void *data,
 
     return 0;
 }
-
 
 int MdtmMan::get(void *data, json j){
     int size = j["putsize"].get<int>();

@@ -8,7 +8,7 @@ class StreamMan : public DataMan{
         StreamMan(string local_address,
                 string remote_address);
         ~StreamMan();
-        virtual int put(void *data,
+        virtual int put(const void *data,
                 string doid,
                 string var,
                 string dtype,

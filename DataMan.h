@@ -9,7 +9,7 @@ class DataMan{
     public:
         DataMan();
         virtual ~DataMan();
-        virtual int put(void *data,
+        virtual int put(const void *data,
                 string doid,
                 string var,
                 string dtype,

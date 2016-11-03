@@ -27,7 +27,7 @@ void dataman_init(string local_address,
     dman = new MdtmMan(local_address, remote_address, mode, prefix, num_pipes, tolerance, priority);
 }
 
-void dataman_write(void *data,
+void dataman_write(const void *data,
         string doid,
         string var,
         string dtype,
@@ -42,7 +42,6 @@ void dataman_write(void *data,
     dman->put(data, doid, var, dtype, putshape, varshape, offset, tolerance, priority);
 }
 
-
 void dataman_open(){
 }
 
@@ -51,5 +50,20 @@ void dataman_term(){
     delete dman;
 }
 
+extern "C"
+{
 
+    void dataman_init_c(){
+        dataman_init();
+    }
+
+    void dataman_open_c(){
+        dataman_open();
+    }
+
+    void dataman_write_c(const void *data, const char *name, const char *var, const char *type){
+        dataman_write(data, name, var, type);
+    }
+
+}
 
