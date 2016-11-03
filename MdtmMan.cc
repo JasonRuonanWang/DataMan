@@ -66,9 +66,9 @@ int MdtmMan::put(const void *data,
         string doid,
         string var,
         string dtype,
-        vector<unsigned long> putshape,
-        vector<unsigned long> varshape,
-        vector<unsigned long> offset,
+        vector<uint64_t> putshape,
+        vector<uint64_t> varshape,
+        vector<uint64_t> offset,
         int tolerance,
         int priority)
 {

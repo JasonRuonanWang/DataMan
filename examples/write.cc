@@ -15,7 +15,11 @@ int main(){
     cout << "init" << endl;
     dataman_init(sender_address, receiver_address, mode, prefix, num_pipes);
 
-    unsigned int shape[2] = {1,1024};
+
+    vector<uint64_t> putshape;
+    putshape.push_back(1024);
+    vector<uint64_t> varshape = putshape;
+    vector<uint64_t> offset;
 
     float **data = new float*[10];
     int datasize = 1024*1024;
@@ -31,9 +35,11 @@ int main(){
 
     for (int j=0; j<10000; j++){
         for (int i=0; i<10; i++){
-            dataman_write(data[i], "aaa", "bbb", "float", shape, 0, 0, 0, 100/(i+1));
+            dataman_write(data[i], "aaa", "bbb", "float", putshape, varshape, offset, 0, 100/(i+1));
         }
     }
+
+
 
     return 0;
 }

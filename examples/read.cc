@@ -5,6 +5,8 @@ using namespace std;
 
 int main(){
 
+    cout << sizeof(unsigned long) << "   " << sizeof(unsigned long long) << "   " << sizeof(uint64_t) << endl;
+
     string sender_address = "tcp://127.0.0.1:12306";
     string receiver_address = "tcp://127.0.0.1:12307";
     string mode = "receiver";

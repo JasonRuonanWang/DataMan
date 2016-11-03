@@ -6,13 +6,13 @@
 
 DataMan *dman = NULL;
 
-void dataman_init(string local_address ="tcp://127.0.0.1:12306",
-        string remote_address="tcp://127.0.0.1:12307",
-        string mode="sender",
-        string prefix="/tmp/",
-        int num_pipes=10,
-        vector<int> tolerance=vector<int>(),
-        vector<int> priority=vector<int>())
+void dataman_init(string local_address,
+        string remote_address,
+        string mode,
+        string prefix,
+        int num_pipes,
+        vector<int> tolerance,
+        vector<int> priority)
 {
     if (tolerance.size() < num_pipes){
         for (int i=0; i<num_pipes; i++){
@@ -31,11 +31,11 @@ void dataman_write(const void *data,
         string doid,
         string var,
         string dtype,
-        vector<unsigned long> putshape = vector<unsigned long>(),
-        vector<unsigned long> varshape = vector<unsigned long>(),
-        vector<unsigned long> offset = vector<unsigned long>(),
-        int tolerance=0,
-        int priority=100)
+        vector<uint64_t> putshape,
+        vector<uint64_t> varshape,
+        vector<uint64_t> offset,
+        int tolerance,
+        int priority)
 {
     printf("DataManager::dataman_write()\n");
     if(!dman)
@@ -47,16 +47,16 @@ void dataman_write_c_to_cpp(const void *data,
         string doid,
         string var,
         string dtype,
-        unsigned long *putshape = NULL,
-        unsigned long *varshape = NULL,
-        unsigned long *offset = NULL,
+        uint64_t *putshape = NULL,
+        uint64_t *varshape = NULL,
+        uint64_t *offset = NULL,
         int tolerance=0,
         int priority=100)
 {
     printf("DataManager::dataman_write_c_to_cpp()\n");
-    vector<unsigned long> putshapev;
-    vector<unsigned long> varshapev;
-    vector<unsigned long> offsetv;
+    vector<uint64_t> putshapev;
+    vector<uint64_t> varshapev;
+    vector<uint64_t> offsetv;
     for(int i=1; i<=varshape[0]; i++){
         putshapev.push_back(putshape[i]);
         varshapev.push_back(varshape[i]);
@@ -70,8 +70,9 @@ void dataman_open(){
 }
 
 
-void dataman_term(){
-    delete dman;
+void dataman_terminate(){
+    printf("DataManager::dataman_terminate()\n");
+    if(dman) delete dman;
 }
 
 extern "C"
@@ -89,12 +90,16 @@ extern "C"
             const char *doid,
             const char *var,
             const char *datatype,
-            unsigned long *putshape,
-            unsigned long *varshape,
-            unsigned long *offset)
+            uint64_t *putshape,
+            uint64_t *varshape,
+            uint64_t *offset)
     {
         printf("DataManager::dataman_write_c()\n");
         dataman_write_c_to_cpp(data, doid, var, datatype, putshape, varshape, offset);
+    }
+
+    void dataman_terminate_c(){
+        dataman_terminate();
     }
 
 }
