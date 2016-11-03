@@ -13,18 +13,17 @@ class DataMan{
                 string doid,
                 string var,
                 string dtype,
-                unsigned int *putshape,
-                unsigned int *varshape,
-                unsigned int *offset,
+                vector<unsigned long> putshape,
+                vector<unsigned long> varshape,
+                vector<unsigned long> offset,
                 int tolerance,
                 int priority) = 0;
 
         virtual int get(void *data, json j) = 0;
 
         inline unsigned int product(unsigned int *shape){
-            unsigned int s = 0;
+            unsigned int s = 1;
             if(shape){
-                s = 1;
                 for (unsigned int i=1; i<=shape[0]; i++){
                     s *= shape[i];
                 }

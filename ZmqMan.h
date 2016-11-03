@@ -16,9 +16,9 @@ class ZmqMan : public StreamMan{
                 string doid,
                 string var,
                 string dtype,
-                unsigned int *putshape,
-                unsigned int *varshape,
-                unsigned int *offset,
+                vector<unsigned long> putshape,
+                vector<unsigned long> varshape,
+                vector<unsigned long> offset,
                 int tolerance,
                 int priority);
 

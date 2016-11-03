@@ -12,13 +12,13 @@ void dataman_write(void *data,
         int tolerance,
         int priority);
 
-void dataman_init(string local_address ="tcp://127.0.0.1:12306",
-        string remote_address="tcp://127.0.0.1:12307",
-        string mode="sender",
-        string prefix="/tmp/",
-        int num_pipes=10,
-        vector<int> tolerance=vector<int>(),
-        vector<int> priority=vector<int>());
+void dataman_init(string local_address,
+        string remote_address,
+        string mode,
+        string prefix,
+        int num_pipes,
+        vector<int> tolerance,
+        vector<int> priority);
 
 
 
