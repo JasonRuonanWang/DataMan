@@ -75,15 +75,15 @@ int MdtmMan::put(const void *data,
     json msg;
     msg["doid"] = doid;
     msg["var"] = var;
+    msg["dtype"] = dtype;
     msg["putshape"] = putshape;
     msg["varshape"] = varshape;
     msg["offset"] = offset;
-    msg["dtype"] = dtype;
 
     int index = closest(priority, pipe_desc["priority"], true);
     msg["pipe"] = pipe_desc["pipe_names"][index];
 
-    unsigned long putsize = std::accumulate(putshape.begin(), putshape.end(), dsize(dtype), std::multiplies<unsigned long>());
+    uint64_t putsize = std::accumulate(putshape.begin(), putshape.end(), dsize(dtype), std::multiplies<uint64_t>());
     msg["putsize"] = putsize;
 
     cout << msg << endl;

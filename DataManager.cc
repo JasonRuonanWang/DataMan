@@ -66,26 +66,35 @@ void dataman_write_c_to_cpp(const void *data,
     dataman_write(data, doid, var, dtype, putshapev, varshapev, offsetv, tolerance, priority);
 }
 
-void dataman_open(){
-}
+void dataman_flush(){
 
+}
 
 void dataman_terminate(){
     printf("DataManager::dataman_terminate()\n");
     if(dman) delete dman;
 }
 
+void dataman_reg_cb(void (*cb)
+        (void *data,
+         string doid,
+         string var,
+         string dtype,
+         vector<uint64_t> putshape,
+         vector<uint64_t> varshape,
+         vector<uint64_t> offset)
+        )
+{
+    dman->get_callback = cb;
+}
+
 extern "C"
 {
-
     void dataman_init_c(){
         dataman_init();
     }
-
-    void dataman_open_c(){
-        dataman_open();
+    void dataman_prepare_c(){
     }
-
     void dataman_write_c(const void *data,
             const char *doid,
             const char *var,
@@ -97,10 +106,13 @@ extern "C"
         printf("DataManager::dataman_write_c()\n");
         dataman_write_c_to_cpp(data, doid, var, datatype, putshape, varshape, offset);
     }
-
+    void dataman_flush_c(){
+        dataman_flush();
+    }
     void dataman_terminate_c(){
         dataman_terminate();
     }
-
 }
+
+
 

@@ -21,6 +21,15 @@ class DataMan{
 
         virtual int get(void *data, json j) = 0;
 
+        void (*get_callback)(void *data,
+                string doid,
+                string var,
+                string dtype,
+                vector<uint64_t> putshape,
+                vector<uint64_t> varshape,
+                vector<uint64_t> offset) = NULL;
+
+    protected:
         inline unsigned int product(unsigned int *shape){
             unsigned int s = 1;
             if(shape){
@@ -79,6 +88,8 @@ class DataMan{
             return k;
         }
 
+        string getmode = "callback"; // graph, callback
+        DataMan *next = NULL;
 };
 
 

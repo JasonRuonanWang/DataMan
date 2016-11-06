@@ -26,8 +26,7 @@ class StreamMan : public DataMan{
         void zmq_tcp_rep_thread_func();
         bool zmq_tcp_rep_thread_active;
         thread *zmq_tcp_rep_thread;
-        string getmode = "callback";
-        void (*get_callback)(void *data, int size);
+
 
 };
 

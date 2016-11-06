@@ -1,8 +1,8 @@
-#include<iostream>
+#include <iostream>
 #include <unistd.h>
-#include<sstream>
-#include"StreamMan.h"
-#include"zmq.h"
+#include <sstream>
+#include "StreamMan.h"
+#include "zmq.h"
 
 using namespace std;
 
@@ -32,16 +32,26 @@ void StreamMan::zmq_tcp_rep_thread_func(){
         int err = zmq_recv (zmq_tcp_rep, msg, 1024, ZMQ_NOBLOCK);
         zmq_send (zmq_tcp_rep, "OK", 10, 0);
         if (err>=0){
-            cout << msg << endl;
+            cout << "StreamMan::zmq_tcp_rep_thread_func: " msg << endl;
             json j = json::parse(msg);
             if(getmode == "callback"){
                 int size = j["putsize"].get<int>();
                 void *data = malloc(size);
                 get(data, j);
+                get_callback(data,
+                        j["doid"],
+                        j["var"],
+                        j["dtype"],
+                        j["putshape"].get<vector<uint64_t>>(),
+                        j["varshape"].get<vector<uint64_t>>(),
+                        j["offset"].get<vector<uint64_t>>());
             }
         }
         usleep(10000);
     }
 }
+
+
+
 
 
