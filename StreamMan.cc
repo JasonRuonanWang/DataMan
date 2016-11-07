@@ -35,7 +35,7 @@ void StreamMan::flush(){
     zmq_recv(zmq_tcp_req, ret, 10, 0);
 }
 
-void StreamMan::cache_it(void *cache,
+void StreamMan::cache_it(
         void *data,
         vector<uint64_t> varshape,
         vector<uint64_t> putshape,
@@ -48,6 +48,34 @@ void StreamMan::cache_it(void *cache,
     uint64_t SI = J*K;
     uint64_t SJ = K;
     uint64_t SK = 1;
+    uint64_t s = 0;
+
+    cout << "offset: ";
+    for(int i=0; i<3; i++){
+        cout << offset[i];
+        cout <<  "  ";
+    }
+    cout << endl;
+
+    cout << "varshape: ";
+    for(int i=0; i<3; i++){
+        cout << varshape[i];
+        cout <<  "  ";
+    }
+    cout << endl;
+
+    cout << "putshape: ";
+    for(int i=0; i<3; i++){
+        cout << putshape[i];
+        cout <<  "  ";
+    }
+    cout << endl;
+
+    uint64_t putsize = std::accumulate(putshape.begin(), putshape.end(), 1, std::multiplies<uint64_t>());
+    uint64_t varsize = std::accumulate(varshape.begin(), varshape.end(), 1, std::multiplies<uint64_t>());
+
+    float *cachef = (float*) cache;
+    float *dataf = (float*) data;
 
     for(uint64_t i=0; i<putshape[0]; i++){
         for(uint64_t j=0; j<putshape[1]; j++){
@@ -57,19 +85,20 @@ void StreamMan::cache_it(void *cache,
                 uint64_t ok=k+offset[2];
                 uint64_t oindex = oi*SI + oj*SJ + ok*SK;
                 uint64_t index = i*SI + j*SJ + k*SK;
-                ((float*)cache)[oindex] = ((float*)data)[index];
+                cachef[oindex] =dataf[s];
+                s++;
             }
         }
     }
 
-    cache_shape = varshape;
 
-    /*
+/*
     for (int i=0; i<I*J*K; i++)
         cout << ((float*)cache)[i] << " ";
     cout << endl;
     */
 
+    cache_shape = varshape;
 }
 
 void StreamMan::zmq_tcp_rep_thread_func(){
@@ -82,13 +111,14 @@ void StreamMan::zmq_tcp_rep_thread_func(){
             json j = json::parse(msg);
             if(getmode == "callback"){
                 if(j["operation"] == "put"){
-                    int varsize = j["varsize"].get<int>();
-                    if(!cache) cache = malloc(varsize);
-                    int putsize = j["putsize"].get<int>();
+                    uint64_t putsize = j["putsize"].get<uint64_t>();
                     void *data = malloc(putsize);
                     get(data, j);
-                    if(j["var"] == "data")
-                        cache_it(cache, data, j["varshape"].get<vector<uint64_t>>(), j["putshape"].get<vector<uint64_t>>(), j["offset"].get<vector<uint64_t>>());
+                    if(j["var"] == "data"){
+                        uint64_t varsize = j["varsize"].get<uint64_t>();
+                        if(!cache) cache = malloc(varsize);
+                        cache_it(data, j["varshape"].get<vector<uint64_t>>(), j["putshape"].get<vector<uint64_t>>(), j["offset"].get<vector<uint64_t>>());
+                    }
                     /*
                     for (int i=0; i<putsize/4; i++)
                         cout << ((float*)data)[i] << " ";

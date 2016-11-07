@@ -22,9 +22,11 @@ void get(void *data,
 
     uint64_t varsize = std::accumulate(varshape.begin(), varshape.end(), 1, std::multiplies<uint64_t>());
 
+    /*
     for (int i=0; i<varsize; i++)
         cout << ((float*)data)[i] << " ";
     cout << endl;
+    */
 
 }
 

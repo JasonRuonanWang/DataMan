@@ -31,24 +31,33 @@ int main(){
     offset.push_back(0);
     offset.push_back(0);
 
-    varshape[0] = 10;
-    varshape[1] = 20;
-    varshape[2] = 30;
+    varshape[0] = 4;
+    varshape[1] = 6;
+    varshape[2] = 10;
 
     putshape[0] = 1;
-    putshape[1] = 20;
-    putshape[2] = 30;
+    putshape[1] = 2;
+    putshape[2] = 5;
 
-    int datasize = 20*30;
+    int datasize = 10;
 
     float data[datasize];
 
-    for (int i=0; i<10; i++){
-        for (int j=0; j<datasize; j++){
-            data[j] = i*1000 + j;
+    for (int i=0; i<4; i++){
+        for (int j=0; j<3; j++){
+            for (int k=0; k<2; k++){
+                for (int m=0; m<datasize; m++){
+                    data[m] = i*60 + j*10 + m;
+                }
+                offset[0] = i;
+                offset[1] = j*2;
+                offset[2] = k*5;
+                dataman_write(data, "aaa", "data", "float", putshape, varshape, offset, 0, 100);
+            }
         }
-        offset[0] = i;
-        dataman_write(data, "aaa", "data", "float", putshape, varshape, offset, 0, 100);
+
+
+
     }
 
     dataman_flush();

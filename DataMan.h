@@ -91,7 +91,7 @@ class DataMan{
             return k;
         }
 
-        void *cache;
+        void *cache = NULL;
         vector<uint64_t> cache_shape;
         string getmode = "callback"; // graph, callback
         DataMan *next = NULL;

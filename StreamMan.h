@@ -28,7 +28,7 @@ class StreamMan : public DataMan{
         bool zmq_tcp_rep_thread_active;
         thread *zmq_tcp_rep_thread;
 
-        void cache_it(void *cache,
+        void cache_it(
                 void *data,
                 vector<uint64_t> varshape,
                 vector<uint64_t> putshape,
