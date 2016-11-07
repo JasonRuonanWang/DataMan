@@ -50,6 +50,7 @@ void StreamMan::cache_it(
     uint64_t SK = 1;
     uint64_t s = 0;
 
+    /*
     cout << "offset: ";
     for(int i=0; i<3; i++){
         cout << offset[i];
@@ -70,6 +71,7 @@ void StreamMan::cache_it(
         cout <<  "  ";
     }
     cout << endl;
+    */
 
     uint64_t putsize = std::accumulate(putshape.begin(), putshape.end(), 1, std::multiplies<uint64_t>());
     uint64_t varsize = std::accumulate(varshape.begin(), varshape.end(), 1, std::multiplies<uint64_t>());
@@ -91,13 +93,6 @@ void StreamMan::cache_it(
         }
     }
 
-
-/*
-    for (int i=0; i<I*J*K; i++)
-        cout << ((float*)cache)[i] << " ";
-    cout << endl;
-    */
-
     cache_shape = varshape;
 }
 
@@ -116,7 +111,12 @@ void StreamMan::zmq_tcp_rep_thread_func(){
                     get(data, j);
                     if(j["var"] == "data"){
                         uint64_t varsize = j["varsize"].get<uint64_t>();
-                        if(!cache) cache = malloc(varsize);
+                        if(!cache){
+                            cache = malloc(varsize);
+                            for(int i=0; i<varsize/4; i++){
+                                ((float*)cache)[i]=numeric_limits<float>::quiet_NaN();
+                            }
+                        }
                         cache_it(data, j["varshape"].get<vector<uint64_t>>(), j["putshape"].get<vector<uint64_t>>(), j["offset"].get<vector<uint64_t>>());
                     }
                     /*
