@@ -25,6 +25,7 @@ class MdtmMan : public StreamMan{
         virtual int get(void *data, json j);
 
 
+
     private:
         void *zmq_ipc_req = NULL;
         void *zmq_ipc_rep = NULL;

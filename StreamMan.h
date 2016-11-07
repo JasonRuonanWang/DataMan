@@ -18,6 +18,7 @@ class StreamMan : public DataMan{
                 int tolerance,
                 int priority) = 0;
         virtual int get(void *data, json j) = 0;
+        void flush();
     protected:
         void *zmq_context = NULL;
         void *zmq_tcp_req = NULL;
@@ -26,6 +27,12 @@ class StreamMan : public DataMan{
         void zmq_tcp_rep_thread_func();
         bool zmq_tcp_rep_thread_active;
         thread *zmq_tcp_rep_thread;
+
+        void cache_it(void *cache,
+                void *data,
+                vector<uint64_t> varshape,
+                vector<uint64_t> putshape,
+                vector<uint64_t> offset);
 
 
 };

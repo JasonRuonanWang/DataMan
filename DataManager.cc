@@ -43,6 +43,11 @@ void dataman_write(const void *data,
     dman->put(data, doid, var, dtype, putshape, varshape, offset, tolerance, priority);
 }
 
+
+void dataman_flush(){
+    dman->flush();
+}
+
 void dataman_write_c_to_cpp(const void *data,
         string doid,
         string var,
@@ -64,10 +69,6 @@ void dataman_write_c_to_cpp(const void *data,
     }
 
     dataman_write(data, doid, var, dtype, putshapev, varshapev, offsetv, tolerance, priority);
-}
-
-void dataman_flush(){
-
 }
 
 void dataman_terminate(){

@@ -17,28 +17,41 @@ int main(){
 
 
     vector<uint64_t> putshape;
-    putshape.push_back(1024);
-    vector<uint64_t> varshape = putshape;
-    vector<uint64_t> offset;
+    putshape.push_back(0);
+    putshape.push_back(0);
+    putshape.push_back(0);
 
-    float **data = new float*[10];
-    int datasize = 1024*1024;
-    for(int i=0; i<10; i++){
-        data[i] = new float[datasize];
-    }
+    vector<uint64_t> varshape;
+    varshape.push_back(0);
+    varshape.push_back(0);
+    varshape.push_back(0);
+
+    vector<uint64_t> offset;
+    offset.push_back(0);
+    offset.push_back(0);
+    offset.push_back(0);
+
+    varshape[0] = 10;
+    varshape[1] = 20;
+    varshape[2] = 30;
+
+    putshape[0] = 1;
+    putshape[1] = 20;
+    putshape[2] = 30;
+
+    int datasize = 20*30;
+
+    float data[datasize];
 
     for (int i=0; i<10; i++){
         for (int j=0; j<datasize; j++){
-            data[i][j] = i;
+            data[j] = i*1000 + j;
         }
+        offset[0] = i;
+        dataman_write(data, "aaa", "data", "float", putshape, varshape, offset, 0, 100);
     }
 
-    for (int j=0; j<10000; j++){
-        for (int i=0; i<10; i++){
-            dataman_write(data[i], "aaa", "bbb", "float", putshape, varshape, offset, 0, 100/(i+1));
-        }
-    }
-
+    dataman_flush();
 
 
     return 0;

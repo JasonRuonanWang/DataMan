@@ -73,6 +73,7 @@ int MdtmMan::put(const void *data,
         int priority)
 {
     json msg;
+    msg["operation"] = "put";
     msg["doid"] = doid;
     msg["var"] = var;
     msg["dtype"] = dtype;
@@ -85,6 +86,8 @@ int MdtmMan::put(const void *data,
 
     uint64_t putsize = std::accumulate(putshape.begin(), putshape.end(), dsize(dtype), std::multiplies<uint64_t>());
     msg["putsize"] = putsize;
+    uint64_t varsize = std::accumulate(varshape.begin(), varshape.end(), dsize(dtype), std::multiplies<uint64_t>());
+    msg["varsize"] = varsize;
 
     cout << msg << endl;
 

@@ -1,6 +1,9 @@
 #include <DataManager.h>
 #include <unistd.h>
 #include <iostream>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <numeric>
 using namespace std;
 
 void get(void *data,
@@ -16,8 +19,12 @@ void get(void *data,
     cout << dtype << endl;
     float *dataf = (float*)data;
 
-    cout << dataf[0] << " " << dataf[1] << " " << dataf[2] << " " << endl;
 
+    uint64_t varsize = std::accumulate(varshape.begin(), varshape.end(), 1, std::multiplies<uint64_t>());
+
+    for (int i=0; i<varsize; i++)
+        cout << ((float*)data)[i] << " ";
+    cout << endl;
 
 }
 

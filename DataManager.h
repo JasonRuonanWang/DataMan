@@ -2,6 +2,9 @@
 #include<vector>
 using namespace std;
 
+
+void dataman_flush();
+
 void dataman_write(const void *data,
         string doid,
         string var,
