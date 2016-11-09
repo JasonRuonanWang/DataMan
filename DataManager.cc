@@ -59,9 +59,12 @@ void dataman_write_c_to_cpp(const void *data,
         int priority=100)
 {
     printf("DataManager::dataman_write_c_to_cpp()\n");
+
+
     vector<uint64_t> putshapev;
     vector<uint64_t> varshapev;
     vector<uint64_t> offsetv;
+
     for(int i=1; i<=varshape[0]; i++){
         putshapev.push_back(putshape[i]);
         varshapev.push_back(varshape[i]);

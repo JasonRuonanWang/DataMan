@@ -50,29 +50,6 @@ void StreamMan::cache_it(
     uint64_t SK = 1;
     uint64_t s = 0;
 
-    /*
-    cout << "offset: ";
-    for(int i=0; i<3; i++){
-        cout << offset[i];
-        cout <<  "  ";
-    }
-    cout << endl;
-
-    cout << "varshape: ";
-    for(int i=0; i<3; i++){
-        cout << varshape[i];
-        cout <<  "  ";
-    }
-    cout << endl;
-
-    cout << "putshape: ";
-    for(int i=0; i<3; i++){
-        cout << putshape[i];
-        cout <<  "  ";
-    }
-    cout << endl;
-    */
-
     uint64_t putsize = std::accumulate(putshape.begin(), putshape.end(), 1, std::multiplies<uint64_t>());
     uint64_t varsize = std::accumulate(varshape.begin(), varshape.end(), 1, std::multiplies<uint64_t>());
 
@@ -92,7 +69,6 @@ void StreamMan::cache_it(
             }
         }
     }
-
     cache_shape = varshape;
 }
 
@@ -119,21 +95,22 @@ void StreamMan::zmq_tcp_rep_thread_func(){
                         }
                         cache_it(data, j["varshape"].get<vector<uint64_t>>(), j["putshape"].get<vector<uint64_t>>(), j["offset"].get<vector<uint64_t>>());
                     }
-                    /*
-                    for (int i=0; i<putsize/4; i++)
-                        cout << ((float*)data)[i] << " ";
-                    cout << endl;
-                    */
                     free(data);
                 }
                 if(j["operation"] == "flush"){
-                    get_callback(cache,
-                            "aaa",
-                            "data",
-                            "",
-                            vector<uint64_t>(),
-                            cache_shape,
-                            vector<uint64_t>());
+                    if(get_callback){
+                        get_callback(cache,
+                                "aaa",
+                                "data",
+                                "",
+                                vector<uint64_t>(),
+                                cache_shape,
+                                vector<uint64_t>());
+                    }
+                    uint64_t varsize = accumulate(cache_shape.begin(), cache_shape.end(), 1, multiplies<uint64_t>());
+                    for(int i=0; i<varsize; i++){
+                        ((float*)cache)[i]=numeric_limits<float>::quiet_NaN();
+                    }
                 }
             }
         }
