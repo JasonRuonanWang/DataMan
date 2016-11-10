@@ -57,7 +57,7 @@ MdtmMan::MdtmMan(string local_address,
         }
         if (mode == "receiver"){
             cout << "receiver pipe open" << endl;
-            int fp = open(fullpipename.c_str(), O_RDONLY);
+            int fp = open(fullpipename.c_str(), O_RDONLY | O_NONBLOCK);
             pipes.push_back(fp);
             cout << "init pipe " << fullpipename << endl;
         }
@@ -68,11 +68,12 @@ MdtmMan::MdtmMan(string local_address,
 
     // ZMQ_DataMan_MDTM
 
+/*
     zmq_ipc_req = zmq_socket (zmq_context, ZMQ_REQ);
     zmq_ipc_rep = zmq_socket (zmq_context, ZMQ_REP);
     zmq_connect (zmq_ipc_req, "ipc:///tmp/ADIOS_MDTM_pipe");
     zmq_bind (zmq_ipc_rep, "ipc:///tmp/MDTM_ADIOS_pipe");
-
+*/
     char buffer_return[10];
     zmq_send (zmq_ipc_req, pipe_desc.dump().c_str(), pipe_desc.dump().length(), 0);
     zmq_recv (zmq_ipc_req, buffer_return, 10, 0);
