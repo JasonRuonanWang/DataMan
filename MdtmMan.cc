@@ -51,13 +51,13 @@ MdtmMan::MdtmMan(string local_address,
         cout << fullpipename << endl;
         if (mode == "sender"){
             cout << "sender pipe open" << endl;
-            int fp = open(fullpipename.c_str(), O_WRONLY);
+            int fp = open(fullpipename.c_str(), O_WRONLY | O_NONBLOCK);
             pipes.push_back(fp);
             cout << "init pipe " << fullpipename << endl;
         }
         if (mode == "receiver"){
             cout << "receiver pipe open" << endl;
-            int fp = open(fullpipename.c_str(), O_RDONLY);
+            int fp = open(fullpipename.c_str(), O_RDONLY | O_NONBLOCK);
             pipes.push_back(fp);
             cout << "init pipe " << fullpipename << endl;
         }

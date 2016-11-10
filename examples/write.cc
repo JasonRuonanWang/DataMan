@@ -9,14 +9,15 @@ int main(){
     string sender_address;
     string receiver_address;
 
-    sender_address = "tcp://131.225.2.29:12306";
-    receiver_address = "tcp://131.225.2.31:12307";
 
     sender_address = "tcp://127.0.0.1:12306";
     receiver_address = "tcp://127.0.0.1:12307";
 
+    sender_address = "tcp://131.225.2.31:12306";
+    receiver_address = "tcp://131.225.2.29:12310";
+
     string mode = "sender";
-    string prefix = "/tmp/";
+    string prefix = "/tmp/MdtmManPipes/";
     int num_pipes = 4;
 
     cout << "init" << endl;
@@ -54,7 +55,7 @@ int main(){
         for (int j=0; j<3; j++){
             for (int k=0; k<2; k++){
                 for (int m=0; m<datasize; m++){
-                    data[m] = i*60 + j*10 + m;
+                    data[m] = 1;
                 }
                 offset[0] = i;
                 offset[1] = j*2;
