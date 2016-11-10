@@ -9,14 +9,15 @@ int main(){
     string sender_address;
     string receiver_address;
 
-    sender_address = "tcp://131.225.2.29:12306";
-    receiver_address = "tcp://131.225.2.31:12307";
 
     sender_address = "tcp://127.0.0.1:12306";
     receiver_address = "tcp://127.0.0.1:12307";
 
+    sender_address = "tcp://131.225.2.31:12306";
+    receiver_address = "tcp://131.225.2.29:12307";
+
     string mode = "sender";
-    string prefix = "/tmp/";
+    string prefix = "/tmp/MdtmManPipes/";
     int num_pipes = 4;
 
     cout << "init" << endl;
