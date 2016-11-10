@@ -38,6 +38,29 @@ MdtmMan::MdtmMan(string local_address,
         mkfifo(filename.c_str(), 0666);
     }
 
+
+    for(int i=0; i<num_pipes; i++){
+        stringstream pipename;
+        pipename << pipename_prefix << i;
+        string fullpipename = prefix + pipename.str();
+        cout << fullpipename << endl;
+        if (mode == "sender"){
+            cout << "sender pipe open" << endl;
+            FILE *fp = fopen(fullpipename.c_str(), "wb");
+            pipes.push_back(fp);
+            cout << "init pipe " << fullpipename << endl;
+        }
+        if (mode == "receiver"){
+            cout << "receiver pipe open" << endl;
+            FILE *fp = fopen(fullpipename.c_str(), "rb");
+            pipes.push_back(fp);
+            cout << "init pipe " << fullpipename << endl;
+        }
+        printf("pipe pointer %d ------------------- \n", pipes[i]);
+        pipenames.push_back(pipename.str());
+    }
+
+
     // ZMQ_DataMan_MDTM
 
     zmq_ipc_req = zmq_socket (zmq_context, ZMQ_REQ);
@@ -95,20 +118,41 @@ int MdtmMan::put(const void *data,
     zmq_send(zmq_tcp_req, msg.dump().c_str(), msg.dump().length(), 0);
     zmq_recv(zmq_tcp_req, ret, 10, 0);
 
+    index=0;
+    for(int i=0; i<pipenames.size(); i++){
+        cout << msg["pipe"].dump() << "    " << pipenames[i] << endl;
+        if(rmquote(msg["pipe"].dump()) == pipenames[i]){
+            cout << "found pipe " << msg["pipe"].dump() << "    " << i << endl;
+            index=i;
+        }
+    }
+
     string pipename = rmquote(pipe_desc["pipe_prefix"].dump()) + rmquote(msg["pipe"].dump());
-    FILE *fp = fopen(pipename.c_str(), "wb");
-    fwrite(data, 1, putsize, fp);
-    fclose(fp);
+    fwrite(data, 1, putsize, pipes[index]);
+    fclose(pipes[index]);
+    pipes[index]=fopen(pipename.c_str(), "wb");
 
     return 0;
 }
 
 int MdtmMan::get(void *data, json j){
-    int size = j["putsize"].get<int>();
-    string pipename = rmquote(pipe_desc["pipe_prefix"].dump()) + rmquote(j["pipe"].dump());
-    FILE *f = fopen(pipename.c_str(), "rb");
-    fread(data, 1, size, f);
-    fclose(f);
+    int putsize = j["putsize"].get<int>();
+    int index=0;
+    for(int i=0; i<pipenames.size(); i++){
+        cout << j["pipe"].dump() << "    " << pipenames[i] << endl;
+        if(rmquote(j["pipe"].dump()) == pipenames[i]){
+            index=i;
+            cout << "found pipe " << j["pipe"].dump() << "    " << i << endl;
+        }
+    }
+    cout << "reading from pipe " << pipenames[index] << "  " << putsize << endl;
+//    string pipename = rmquote(pipe_desc["pipe_prefix"].dump()) + rmquote(j["pipe"].dump());
+//    FILE *fp = fopen(pipename.c_str(), "rb");
+    printf("pipe pointer %d ------------------- \n", pipes[index]);
+    fread(data, 1, putsize, pipes[index]);
+//    fread(data, 1, putsize, fp);
+//    fclose(fp);
+    cout << "reading from pipe " << pipenames[index] << " completed" << endl;
     return 0;
 }
 

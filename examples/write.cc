@@ -10,7 +10,7 @@ int main(){
     string receiver_address = "tcp://127.0.0.1:12307";
     string mode = "sender";
     string prefix = "/tmp/";
-    int num_pipes = 10;
+    int num_pipes = 1;
 
     cout << "init" << endl;
     dataman_init(sender_address, receiver_address, mode, prefix, num_pipes);

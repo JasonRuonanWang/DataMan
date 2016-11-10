@@ -24,8 +24,6 @@ class MdtmMan : public StreamMan{
 
         virtual int get(void *data, json j);
 
-
-
     private:
         void *zmq_ipc_req = NULL;
         void *zmq_ipc_rep = NULL;
@@ -35,6 +33,8 @@ class MdtmMan : public StreamMan{
         int zmq_msg_size = 1024;
         string getmode = "callback";
         json pipe_desc;
+        vector<FILE*> pipes;
+        vector<string> pipenames;
 
 };
 
