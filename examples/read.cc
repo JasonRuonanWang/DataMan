@@ -37,7 +37,7 @@ int main(){
     string receiver_address = "tcp://127.0.0.1:12307";
     string mode = "receiver";
     string prefix = "/tmp/";
-    int num_pipes = 1;
+    int num_pipes = 4;
 
     dataman_init(receiver_address, sender_address, mode, prefix, num_pipes);
     dataman_reg_cb(get);

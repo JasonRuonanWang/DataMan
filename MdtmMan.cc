@@ -2,6 +2,11 @@
 #include <unistd.h>
 #include"MdtmMan.h"
 #include"zmq.h"
+#include <fcntl.h>
+#include <fcntl.h>
+#include <stdio.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
 MdtmMan::MdtmMan(string local_address,
         string remote_address,
@@ -46,13 +51,13 @@ MdtmMan::MdtmMan(string local_address,
         cout << fullpipename << endl;
         if (mode == "sender"){
             cout << "sender pipe open" << endl;
-            FILE *fp = fopen(fullpipename.c_str(), "wb");
+            int fp = open(fullpipename.c_str(), O_WRONLY);
             pipes.push_back(fp);
             cout << "init pipe " << fullpipename << endl;
         }
         if (mode == "receiver"){
             cout << "receiver pipe open" << endl;
-            FILE *fp = fopen(fullpipename.c_str(), "rb");
+            int fp = open(fullpipename.c_str(), O_RDONLY);
             pipes.push_back(fp);
             cout << "init pipe " << fullpipename << endl;
         }
@@ -120,18 +125,12 @@ int MdtmMan::put(const void *data,
 
     index=0;
     for(int i=0; i<pipenames.size(); i++){
-        cout << msg["pipe"].dump() << "    " << pipenames[i] << endl;
         if(rmquote(msg["pipe"].dump()) == pipenames[i]){
-            cout << "found pipe " << msg["pipe"].dump() << "    " << i << endl;
             index=i;
         }
     }
-
     string pipename = rmquote(pipe_desc["pipe_prefix"].dump()) + rmquote(msg["pipe"].dump());
-    fwrite(data, 1, putsize, pipes[index]);
-    fclose(pipes[index]);
-    pipes[index]=fopen(pipename.c_str(), "wb");
-
+    write(pipes[index], data, putsize);
     return 0;
 }
 
@@ -145,14 +144,7 @@ int MdtmMan::get(void *data, json j){
             cout << "found pipe " << j["pipe"].dump() << "    " << i << endl;
         }
     }
-    cout << "reading from pipe " << pipenames[index] << "  " << putsize << endl;
-//    string pipename = rmquote(pipe_desc["pipe_prefix"].dump()) + rmquote(j["pipe"].dump());
-//    FILE *fp = fopen(pipename.c_str(), "rb");
-    printf("pipe pointer %d ------------------- \n", pipes[index]);
-    fread(data, 1, putsize, pipes[index]);
-//    fread(data, 1, putsize, fp);
-//    fclose(fp);
-    cout << "reading from pipe " << pipenames[index] << " completed" << endl;
+    read(pipes[index], data, putsize);
     return 0;
 }
 
