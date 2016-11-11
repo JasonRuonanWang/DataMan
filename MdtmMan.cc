@@ -44,14 +44,38 @@ MdtmMan::MdtmMan(string local_address,
     }
 
 
+    // ZMQ_DataMan_MDTM
+
+    zmq_ipc_req = zmq_socket (zmq_context, ZMQ_REQ);
+    zmq_ipc_rep = zmq_socket (zmq_context, ZMQ_REP);
+    zmq_connect (zmq_ipc_req, "ipc:///tmp/ADIOS_MDTM_pipe");
+    zmq_bind (zmq_ipc_rep, "ipc:///tmp/MDTM_ADIOS_pipe");
+
+    char buffer_return[10];
+    zmq_send (zmq_ipc_req, pipe_desc.dump().c_str(), pipe_desc.dump().length(), 0);
+    zmq_recv (zmq_ipc_req, buffer_return, 10, 0);
+
+    zmq_ipc_rep_thread_active = true;
+    zmq_ipc_rep_thread = new thread(&MdtmMan::zmq_ipc_rep_thread_func, this);
+
+
     for(int i=0; i<num_pipes; i++){
         stringstream pipename;
         pipename << pipename_prefix << i;
         string fullpipename = prefix + pipename.str();
         cout << fullpipename << endl;
         if (mode == "sender"){
+    //FILE *fp = fopen("/tmp/MdtmManPipe0", "wb");
+    FILE *fp = fopen(fullpipename.c_str(),"wb");
+    int flags;
+    int fd;
+
+    fd = fileno(fp);
+    flags = fcntl(fd, F_GETFL);
+    fcntl(fd, F_SETFL, flags|O_NONBLOCK);	
+
             cout << "sender pipe open" << endl;
-            int fp = open(fullpipename.c_str(), O_WRONLY);
+//            int fp = open(fullpipename.c_str(), O_WRONLY);
             pipes.push_back(fp);
             cout << "init pipe " << fullpipename << endl;
         }
@@ -67,7 +91,6 @@ MdtmMan::MdtmMan(string local_address,
 
 
     // ZMQ_DataMan_MDTM
-
 /*
     zmq_ipc_req = zmq_socket (zmq_context, ZMQ_REQ);
     zmq_ipc_rep = zmq_socket (zmq_context, ZMQ_REP);
@@ -80,7 +103,7 @@ MdtmMan::MdtmMan(string local_address,
 
     zmq_ipc_rep_thread_active = true;
     zmq_ipc_rep_thread = new thread(&MdtmMan::zmq_ipc_rep_thread_func, this);
-
+*/
 }
 
 MdtmMan::~MdtmMan(){
@@ -131,7 +154,7 @@ int MdtmMan::put(const void *data,
         }
     }
     string pipename = rmquote(pipe_desc["pipe_prefix"].dump()) + rmquote(msg["pipe"].dump());
-    write(pipes[index], data, putsize);
+    fwrite(data, 1, putsize, pipes[index]);
     return 0;
 }
 
@@ -145,7 +168,7 @@ int MdtmMan::get(void *data, json j){
             cout << "found pipe " << j["pipe"].dump() << "    " << i << endl;
         }
     }
-    read(pipes[index], data, putsize);
+    fread(data, 1, putsize, pipes[index]);
     return 0;
 }
 

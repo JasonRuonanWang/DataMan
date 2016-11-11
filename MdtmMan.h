@@ -33,7 +33,7 @@ class MdtmMan : public StreamMan{
         int zmq_msg_size = 1024;
         string getmode = "callback";
         json pipe_desc;
-        vector<int> pipes;
+        vector<FILE*> pipes;
         vector<string> pipenames;
 
 };
