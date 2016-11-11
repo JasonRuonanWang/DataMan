@@ -1,5 +1,5 @@
 all:
-	c++ -fPIC *.cc --shared -o libDataMan.so -std=c++11 -lzmq
+	c++ -fPIC *.cc --shared -o libdataman.so -std=c++11 -lzmq
 
 install: all
 	cp *.so $(libpath)/DataMan/lib/
