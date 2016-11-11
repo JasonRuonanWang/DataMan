@@ -42,7 +42,7 @@ int main(){
 
     string mode = "receiver";
     string prefix = "/tmp/MdtmManPipes/";
-    int num_pipes = 4;
+    int num_pipes = 1;
 
     dataman_init(receiver_address, sender_address, mode, prefix, num_pipes);
     dataman_reg_cb(get);
