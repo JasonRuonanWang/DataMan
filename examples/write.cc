@@ -16,7 +16,7 @@ int main(){
     receiver_address = "tcp://127.0.0.1:12307";
 
     string mode = "sender";
-    string prefix = "/tmp/";
+    string prefix = "/tmp/MdtmManPipes/";
     int num_pipes = 4;
 
     cout << "init" << endl;

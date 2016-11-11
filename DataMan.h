@@ -44,10 +44,32 @@ class DataMan{
         }
 
         inline unsigned int dsize(string dtype){
-            if (dtype == "float")
-                return sizeof(float);
+            if (dtype == "char")
+                return sizeof(char);
+            if (dtype == "short")
+                return sizeof(short);
             if (dtype == "int")
                 return sizeof(int);
+            if (dtype == "long")
+                return sizeof(long);
+            if (dtype == "unsigned char")
+                return sizeof(unsigned char);
+            if (dtype == "unsigned short")
+                return sizeof(unsigned short);
+            if (dtype == "unsigned int")
+                return sizeof(unsigned int);
+            if (dtype == "unsigned long")
+                return sizeof(unsigned long);
+            if (dtype == "float")
+                return sizeof(float);
+            if (dtype == "double")
+                return sizeof(double);
+            if (dtype == "long double")
+                return sizeof(long double);
+            if (dtype == "complex<float>")
+                return sizeof(float)*2;
+            if (dtype == "complex<double>")
+                return sizeof(double)*2;
             return 0;
         }
 

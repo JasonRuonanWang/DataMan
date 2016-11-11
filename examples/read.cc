@@ -22,11 +22,9 @@ void get(void *data,
 
     uint64_t varsize = std::accumulate(varshape.begin(), varshape.end(), 1, std::multiplies<uint64_t>());
 
-    /*
     for (int i=0; i<varsize; i++)
         cout << ((float*)data)[i] << " ";
     cout << endl;
-    */
 
 }
 
@@ -43,7 +41,7 @@ int main(){
     receiver_address = "tcp://127.0.0.1:12307";
 
     string mode = "receiver";
-    string prefix = "/tmp/";
+    string prefix = "/tmp/MdtmManPipes/";
     int num_pipes = 4;
 
     dataman_init(receiver_address, sender_address, mode, prefix, num_pipes);
