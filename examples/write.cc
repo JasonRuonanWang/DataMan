@@ -18,7 +18,7 @@ int main(){
 
     string mode = "sender";
     string prefix = "/tmp/MdtmManPipes/";
-    int num_pipes = 4;
+    int num_pipes = 1;
 
     cout << "init" << endl;
     dataman_init(sender_address, receiver_address, mode, prefix, num_pipes);
@@ -51,11 +51,14 @@ int main(){
 
     float data[datasize];
 
+	cout << "writing data ... " << endl;
+
     for (int i=0; i<4; i++){
         for (int j=0; j<3; j++){
             for (int k=0; k<2; k++){
                 for (int m=0; m<datasize; m++){
-                    data[m] = 1;
+                    data[m] = 'A' + 1;
+cout << data[m] << "  ";
                 }
                 offset[0] = i;
                 offset[1] = j*2;
@@ -64,6 +67,7 @@ int main(){
             }
         }
 
+cout << endl;
 
 
     }
