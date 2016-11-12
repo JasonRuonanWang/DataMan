@@ -56,6 +56,7 @@ void StreamMan::cache_it(
     float *cachef = (float*) cache;
     float *dataf = (float*) data;
 
+    // hardcoded for 3d array
     for(uint64_t i=0; i<putshape[0]; i++){
         for(uint64_t j=0; j<putshape[1]; j++){
             for(uint64_t k=0; k<putshape[2]; k++){
@@ -93,7 +94,10 @@ void StreamMan::zmq_tcp_rep_thread_func(){
                                 ((float*)cache)[i]=numeric_limits<float>::quiet_NaN();
                             }
                         }
-                        cache_it(data, j["varshape"].get<vector<uint64_t>>(), j["putshape"].get<vector<uint64_t>>(), j["offset"].get<vector<uint64_t>>());
+                        cache_it(data,
+                                j["varshape"].get<vector<uint64_t>>(),
+                                j["putshape"].get<vector<uint64_t>>(),
+                                j["offset"].get<vector<uint64_t>>());
                     }
                     free(data);
                 }

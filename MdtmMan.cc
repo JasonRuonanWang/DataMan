@@ -144,22 +144,16 @@ int MdtmMan::get(void *data, json msg){
     for(int i=0; i<pipenames.size(); i++){
         if(rmquote(msg["pipe"].dump()) == pipenames[i]){
             index=i;
-            cout << "found pipe " << msg["pipe"].dump() << "    " << i << endl;
         }
     }
     string pipename = rmquote(pipe_desc["pipe_prefix"].dump()) + rmquote(msg["pipe"].dump());
     int s = 0;
+
     while (s<putsize){
-        cout << "trying to read " << putsize - s << endl;
-        int ret = read(pipes[index], ((char*)data) + s * 4, putsize - s);
+        int ret = read(pipes[index], ((char*)data) + s, putsize - s);
         if(ret > 0){
-            cout << "actually read " << ret << endl;
             s += ret;
-            cout << "already read  " << s << " for this operation" << endl;
-            cout << "lacking " << putsize -s << endl;
         }
-        else
-            usleep(10000);
     }
     return 0;
 }
