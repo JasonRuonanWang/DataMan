@@ -83,23 +83,16 @@ void StreamMan::zmq_tcp_rep_thread_func(){
             json j = json::parse(msg);
             if(getmode == "callback"){
                 if(j["operation"] == "put"){
-                    uint64_t putsize = j["putsize"].get<uint64_t>();
-                    void *data = malloc(putsize);
-                    get(data, j);
                     if(j["var"] == "data"){
-                        uint64_t varsize = j["varsize"].get<uint64_t>();
                         if(!cache){
+                            uint64_t varsize = j["varsize"].get<uint64_t>();
                             cache = malloc(varsize);
                             for(int i=0; i<varsize/4; i++){
                                 ((float*)cache)[i]=numeric_limits<float>::quiet_NaN();
                             }
                         }
-                        cache_it(data,
-                                j["varshape"].get<vector<uint64_t>>(),
-                                j["putshape"].get<vector<uint64_t>>(),
-                                j["offset"].get<vector<uint64_t>>());
                     }
-                    free(data);
+                    get(j);
                 }
                 if(j["operation"] == "flush"){
                     if(get_callback){

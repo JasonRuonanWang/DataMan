@@ -40,7 +40,8 @@ void dataman_write(const void *data,
     printf("DataManager::dataman_write()\n");
     if(!dman)
         dataman_init();
-    dman->put(data, doid, var, dtype, putshape, varshape, offset, tolerance, priority);
+    if(var == "data")
+        dman->put(data, doid, var, dtype, putshape, varshape, offset, tolerance, priority);
 }
 
 

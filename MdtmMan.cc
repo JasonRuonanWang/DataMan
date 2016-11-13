@@ -142,13 +142,8 @@ cout << "after write" << endl;
 }
 
 
-void* MdtmMan::get(json j){
+void MdtmMan::get(json j){
 
-
-    return NULL;
-}
-
-int MdtmMan::get(void *data, json j){
     cout << "get" << endl;
 
     // push new request
@@ -184,7 +179,10 @@ int MdtmMan::get(void *data, json j){
     cout << s << "  " << putsize << endl;
 
     if(s == putsize){
-        memcpy(data, bqueue.front(), putsize);
+        cache_it(bqueue.front(),
+                msg["varshape"].get<vector<uint64_t>>(),
+                msg["putshape"].get<vector<uint64_t>>(),
+                msg["offset"].get<vector<uint64_t>>());
         free(bqueue.front());
         bqueue.pop();
         iqueue.pop();
@@ -194,6 +192,10 @@ int MdtmMan::get(void *data, json j){
         iqueue.front()=s;
     }
 
+
+}
+
+int MdtmMan::get(void *data, json j){
     return 0;
 }
 

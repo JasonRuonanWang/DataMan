@@ -24,7 +24,7 @@ class MdtmMan : public StreamMan{
                 int priority);
 
         virtual int get(void *data, json j);
-        virtual void* get(json j);
+        virtual void get(json j);
 
     private:
         void *zmq_ipc_req = NULL;
