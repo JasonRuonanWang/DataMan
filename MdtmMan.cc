@@ -64,16 +64,12 @@ MdtmMan::MdtmMan(string local_address,
         string fullpipename = prefix + pipename.str();
         cout << fullpipename << endl;
         if (mode == "sender"){
-            cout << "sender pipe open" << endl;
             int fp = open(fullpipename.c_str(), O_WRONLY);
             pipes.push_back(fp);
-            cout << "init pipe " << fullpipename << endl;
         }
         if (mode == "receiver"){
-            cout << "receiver pipe open" << endl;
             int fp = open(fullpipename.c_str(), O_RDONLY | O_NONBLOCK);
             pipes.push_back(fp);
-            cout << "init pipe " << fullpipename << endl;
         }
         printf("pipe pointer %d ------------------- \n", pipes[i]);
         pipenames.push_back(pipename.str());
@@ -124,7 +120,6 @@ int MdtmMan::put(const void *data,
     char ret[10];
     zmq_send(zmq_tcp_req, msg.dump().c_str(), msg.dump().length(), 0);
     zmq_recv(zmq_tcp_req, ret, 10, 0);
-cout << ret << endl;
 
     index=0;
     for(int i=0; i<pipenames.size(); i++){
@@ -134,9 +129,7 @@ cout << ret << endl;
     }
     string pipename = rmquote(pipe_desc["pipe_prefix"].dump()) + rmquote(msg["pipe"].dump());
 
-cout << "before write" << endl;
     write(pipes[index], data, putsize);
-cout << "after write" << endl;
 
     return 0;
 }
@@ -175,12 +168,10 @@ void MdtmMan::get(json j){
                 break;
             }
         }
-        cout << "read " << s << " of " << putsize << endl;
 
 	if(s == putsize){
 
-		cout << j["offset"].get<vector<uint64_t>>()[1] << "  <-  " << last_dim2 << endl;
-		if(j["offset"].get<vector<uint64_t>>()[1] < last_dim2){
+		if(msg["offset"].get<vector<uint64_t>>()[1] < last_dim2){
 			if(get_callback){
 				get_callback(cache,
 						"aaa",
@@ -196,7 +187,7 @@ void MdtmMan::get(json j){
 			}
 		}
 
-		last_dim2 = j["offset"].get<vector<uint64_t>>()[1];
+		last_dim2 = msg["offset"].get<vector<uint64_t>>()[1];
 
 		cache_it(bqueue.front(),
 				msg["varshape"].get<vector<uint64_t>>(),
