@@ -95,19 +95,6 @@ void StreamMan::zmq_tcp_rep_thread_func(){
                     get(j);
                 }
                 if(j["operation"] == "flush"){
-                    if(get_callback){
-                        get_callback(cache,
-                                "aaa",
-                                "data",
-                                "",
-                                vector<uint64_t>(),
-                                cache_shape,
-                                vector<uint64_t>());
-                    }
-                    uint64_t varsize = accumulate(cache_shape.begin(), cache_shape.end(), 1, multiplies<uint64_t>());
-                    for(int i=0; i<varsize; i++){
-                        ((float*)cache)[i]=numeric_limits<float>::quiet_NaN();
-                    }
                 }
             }
         }

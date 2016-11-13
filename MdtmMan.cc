@@ -144,7 +144,21 @@ cout << "after write" << endl;
 
 void MdtmMan::get(json j){
 
-    cout << "get" << endl;
+    if(j["offset"].get<vector<uint64_t>>()[1] < last_dim2){
+        if(get_callback){
+            get_callback(cache,
+                    "aaa",
+                    "data",
+                    "",
+                    vector<uint64_t>(),
+                    cache_shape,
+                    vector<uint64_t>());
+        }
+        uint64_t varsize = accumulate(cache_shape.begin(), cache_shape.end(), 1, multiplies<uint64_t>());
+        for(int i=0; i<varsize; i++){
+            ((float*)cache)[i]=numeric_limits<float>::quiet_NaN();
+        }
+    }
 
     // push new request
     jqueue.push(j);
@@ -153,46 +167,49 @@ void MdtmMan::get(json j){
     bqueue.push(buf);
     iqueue.push(0);
 
-for(int outloop=0; outloop<10; outloop++){
-    // determine the pipe for the head request
-    json msg = jqueue.front();
-    int index=0;
-    for(int i=0; i<pipenames.size(); i++){
-        if(rmquote(msg["pipe"]) == pipenames[i]){
-            index=i;
+    for(int outloop=0; outloop<10; outloop++){
+        // determine the pipe for the head request
+        json msg = jqueue.front();
+        int index=0;
+        for(int i=0; i<pipenames.size(); i++){
+            if(rmquote(msg["pipe"]) == pipenames[i]){
+                index=i;
+            }
         }
-    }
 
-    // read the head request
-    int s = iqueue.front();
-    putsize = msg["putsize"].get<int>();
-    while(s<putsize){
-        int ret = read(pipes[index], ((char*)bqueue.front()) + s, putsize - s);
-        if(ret > 0){
-            s += ret;
+        // read the head request
+        int s = iqueue.front();
+        putsize = msg["putsize"].get<int>();
+        while(s<putsize){
+            int ret = read(pipes[index], ((char*)bqueue.front()) + s, putsize - s);
+            if(ret > 0){
+                s += ret;
+            }
+            else{
+                //                usleep(100);
+                break;
+            }
+        }
+        cout << "read " << s << " of " << putsize << endl;
+
+        if(s == putsize){
+            cache_it(bqueue.front(),
+                    msg["varshape"].get<vector<uint64_t>>(),
+                    msg["putshape"].get<vector<uint64_t>>(),
+                    msg["offset"].get<vector<uint64_t>>());
+            last_dim2 = msg["offset"].get<vector<uint64_t>>()[1];
+            free(bqueue.front());
+            bqueue.pop();
+            iqueue.pop();
+            jqueue.pop();
         }
         else{
-//            usleep(100);
-            break;
+            iqueue.front()=s;
         }
-    }
-    cout << "read " << s << " of " << putsize << endl;
 
-    if(s == putsize){
-        cache_it(bqueue.front(),
-                msg["varshape"].get<vector<uint64_t>>(),
-                msg["putshape"].get<vector<uint64_t>>(),
-                msg["offset"].get<vector<uint64_t>>());
-        free(bqueue.front());
-        bqueue.pop();
-        iqueue.pop();
-        jqueue.pop();
-    }
-    else{
-        iqueue.front()=s;
     }
 
-}
+
 
 }
 

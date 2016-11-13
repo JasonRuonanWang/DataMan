@@ -40,6 +40,7 @@ class MdtmMan : public StreamMan{
         queue<json> jqueue;
         queue<void*> bqueue;
         queue<int> iqueue;
+        uint64_t last_dim2;
 
 };
 
