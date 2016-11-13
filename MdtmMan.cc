@@ -37,8 +37,6 @@ MdtmMan::MdtmMan(string local_address,
         }
     }
 
-
-
     // ZMQ_DataMan_MDTM
 
     if(mode=="sender"){
@@ -54,7 +52,6 @@ MdtmMan::MdtmMan(string local_address,
         zmq_ipc_rep_thread_active = true;
         zmq_ipc_rep_thread = new thread(&MdtmMan::zmq_ipc_rep_thread_func, this);
     }
-
     // Pipes
     for (int i=0; i<pipe_desc["pipe_names"].size(); i++){
         string filename = prefix + rmquote(pipe_desc["pipe_names"][i].dump());
@@ -81,6 +78,9 @@ MdtmMan::MdtmMan(string local_address,
         printf("pipe pointer %d ------------------- \n", pipes[i]);
         pipenames.push_back(pipename.str());
     }
+
+
+
 
 }
 
@@ -124,6 +124,7 @@ int MdtmMan::put(const void *data,
     char ret[10];
     zmq_send(zmq_tcp_req, msg.dump().c_str(), msg.dump().length(), 0);
     zmq_recv(zmq_tcp_req, ret, 10, 0);
+cout << ret << endl;
 
     index=0;
     for(int i=0; i<pipenames.size(); i++){
@@ -133,7 +134,9 @@ int MdtmMan::put(const void *data,
     }
     string pipename = rmquote(pipe_desc["pipe_prefix"].dump()) + rmquote(msg["pipe"].dump());
 
+cout << "before write" << endl;
     write(pipes[index], data, putsize);
+cout << "after write" << endl;
 
     return 0;
 }

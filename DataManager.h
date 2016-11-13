@@ -15,11 +15,13 @@ void dataman_write(const void *data,
         int tolerance=0,
         int priority=100);
 
-void dataman_init(string local_address ="tcp://127.0.0.1:12306",
-        string remote_address="tcp://127.0.0.1:12307",
+//void dataman_init(string local_address ="tcp://127.0.0.1:12306",
+////        string remote_address="tcp://127.0.0.1:12307",
+void dataman_init(string local_address ="tcp://131.225.2.31:12306",
+        string remote_address="tcp://131.225.2.29:12307",
         string mode="sender",
-        string prefix="/tmp/",
-        int num_pipes=10,
+        string prefix="/tmp/MdtmManPipes/",
+        int num_pipes=1,
         vector<int> tolerance=vector<int>(),
         vector<int> priority=vector<int>());
 
