@@ -153,6 +153,7 @@ void MdtmMan::get(json j){
     bqueue.push(buf);
     iqueue.push(0);
 
+for(int outloop=0; outloop<10; outloop++){
     // determine the pipe for the head request
     json msg = jqueue.front();
     int index=0;
@@ -167,16 +168,15 @@ void MdtmMan::get(json j){
     putsize = msg["putsize"].get<int>();
     while(s<putsize){
         int ret = read(pipes[index], ((char*)bqueue.front()) + s, putsize - s);
-        cout << "read " << ret << endl;
         if(ret > 0){
             s += ret;
         }
         else{
-            usleep(100);
-//            break;
+//            usleep(100);
+            break;
         }
     }
-    cout << s << "  " << putsize << endl;
+    cout << "read " << s << " of " << putsize << endl;
 
     if(s == putsize){
         cache_it(bqueue.front(),
@@ -192,6 +192,7 @@ void MdtmMan::get(json j){
         iqueue.front()=s;
     }
 
+}
 
 }
 
