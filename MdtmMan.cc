@@ -141,23 +141,59 @@ cout << "after write" << endl;
     return 0;
 }
 
-int MdtmMan::get(void *data, json msg){
-    int putsize = msg["putsize"].get<int>();
+
+void* MdtmMan::get(json j){
+
+
+    return NULL;
+}
+
+int MdtmMan::get(void *data, json j){
+    cout << "get" << endl;
+
+    // push new request
+    jqueue.push(j);
+    int putsize = j["putsize"].get<int>();
+    void *buf = malloc(putsize);
+    bqueue.push(buf);
+    iqueue.push(0);
+
+    // determine the pipe for the head request
+    json msg = jqueue.front();
     int index=0;
     for(int i=0; i<pipenames.size(); i++){
-        if(rmquote(msg["pipe"].dump()) == pipenames[i]){
+        if(rmquote(msg["pipe"]) == pipenames[i]){
             index=i;
         }
     }
-    string pipename = rmquote(pipe_desc["pipe_prefix"].dump()) + rmquote(msg["pipe"].dump());
-    int s = 0;
 
-    while (s<putsize){
-        int ret = read(pipes[index], ((char*)data) + s, putsize - s);
+    // read the head request
+    int s = iqueue.front();
+    putsize = msg["putsize"].get<int>();
+    while(s<putsize){
+        int ret = read(pipes[index], ((char*)bqueue.front()) + s, putsize - s);
+        cout << "read " << ret << endl;
         if(ret > 0){
             s += ret;
         }
+        else{
+            usleep(100);
+//            break;
+        }
     }
+    cout << s << "  " << putsize << endl;
+
+    if(s == putsize){
+        memcpy(data, bqueue.front(), putsize);
+        free(bqueue.front());
+        bqueue.pop();
+        iqueue.pop();
+        jqueue.pop();
+    }
+    else{
+        iqueue.front()=s;
+    }
+
     return 0;
 }
 

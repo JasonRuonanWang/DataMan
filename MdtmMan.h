@@ -1,4 +1,5 @@
 #include"StreamMan.h"
+#include <queue>
 
 class MdtmMan : public StreamMan{
     public:
@@ -23,6 +24,7 @@ class MdtmMan : public StreamMan{
                 int priority);
 
         virtual int get(void *data, json j);
+        virtual void* get(json j);
 
     private:
         void *zmq_ipc_req = NULL;
@@ -35,6 +37,9 @@ class MdtmMan : public StreamMan{
         json pipe_desc;
         vector<int> pipes;
         vector<string> pipenames;
+        queue<json> jqueue;
+        queue<void*> bqueue;
+        queue<int> iqueue;
 
 };
 

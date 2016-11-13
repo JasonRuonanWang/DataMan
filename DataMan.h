@@ -20,6 +20,7 @@ class DataMan{
                 int priority) = 0;
 
         virtual int get(void *data, json j) = 0;
+        virtual void* get(json j) = 0;
 
         virtual void flush() = 0;
 
