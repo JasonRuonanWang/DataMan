@@ -148,26 +148,26 @@ void MdtmMan::get(json j){
     bqueue.push(buf);
     iqueue.push(0);
 
-    if(jqueue.front()["operation"] == "flush"){
-        if(get_callback){
-            get_callback(cache,
-                    "aaa",
-                    "data",
-                    "",
-                    vector<uint64_t>(),
-                    cache_shape,
-                    vector<uint64_t>());
-        }
-        uint64_t varsize = accumulate(cache_shape.begin(), cache_shape.end(), 1, multiplies<uint64_t>());
-        for(int i=0; i<varsize; i++){
-            ((float*)cache)[i]=numeric_limits<float>::quiet_NaN();
-        }
-        bqueue.pop();
-        iqueue.pop();
-        jqueue.pop();
-    }
 
     for(int outloop=0; outloop<10; outloop++){
+	    if(jqueue.front()["operation"] == "flush"){
+		    if(get_callback){
+			    get_callback(cache,
+					    "aaa",
+					    "data",
+					    "",
+					    vector<uint64_t>(),
+					    cache_shape,
+					    vector<uint64_t>());
+		    }
+		    uint64_t varsize = accumulate(cache_shape.begin(), cache_shape.end(), 1, multiplies<uint64_t>());
+		    for(int i=0; i<varsize; i++){
+			    ((float*)cache)[i]=numeric_limits<float>::quiet_NaN();
+		    }
+		    bqueue.pop();
+		    iqueue.pop();
+		    jqueue.pop();
+	    }
         // determine the pipe for the head request
         json msg = jqueue.front();
         int index=0;
