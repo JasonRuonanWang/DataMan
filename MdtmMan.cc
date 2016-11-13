@@ -144,21 +144,6 @@ cout << "after write" << endl;
 
 void MdtmMan::get(json j){
 
-    if(j["offset"].get<vector<uint64_t>>()[1] < last_dim2){
-        if(get_callback){
-            get_callback(cache,
-                    "aaa",
-                    "data",
-                    "",
-                    vector<uint64_t>(),
-                    cache_shape,
-                    vector<uint64_t>());
-        }
-        uint64_t varsize = accumulate(cache_shape.begin(), cache_shape.end(), 1, multiplies<uint64_t>());
-        for(int i=0; i<varsize; i++){
-            ((float*)cache)[i]=numeric_limits<float>::quiet_NaN();
-        }
-    }
 
     // push new request
     jqueue.push(j);
@@ -192,20 +177,39 @@ void MdtmMan::get(json j){
         }
         cout << "read " << s << " of " << putsize << endl;
 
-        if(s == putsize){
-            cache_it(bqueue.front(),
-                    msg["varshape"].get<vector<uint64_t>>(),
-                    msg["putshape"].get<vector<uint64_t>>(),
-                    msg["offset"].get<vector<uint64_t>>());
-            last_dim2 = msg["offset"].get<vector<uint64_t>>()[1];
-            free(bqueue.front());
-            bqueue.pop();
-            iqueue.pop();
-            jqueue.pop();
-        }
-        else{
-            iqueue.front()=s;
-        }
+	if(s == putsize){
+
+		cout << j["offset"].get<vector<uint64_t>>()[1] << "  <-  " << last_dim2 << endl;
+		if(j["offset"].get<vector<uint64_t>>()[1] < last_dim2){
+			if(get_callback){
+				get_callback(cache,
+						"aaa",
+						"data",
+						"",
+						vector<uint64_t>(),
+						cache_shape,
+						vector<uint64_t>());
+			}
+			uint64_t varsize = accumulate(cache_shape.begin(), cache_shape.end(), 1, multiplies<uint64_t>());
+			for(int i=0; i<varsize; i++){
+				((float*)cache)[i]=numeric_limits<float>::quiet_NaN();
+			}
+		}
+
+		last_dim2 = j["offset"].get<vector<uint64_t>>()[1];
+
+		cache_it(bqueue.front(),
+				msg["varshape"].get<vector<uint64_t>>(),
+				msg["putshape"].get<vector<uint64_t>>(),
+				msg["offset"].get<vector<uint64_t>>());
+		free(bqueue.front());
+		bqueue.pop();
+		iqueue.pop();
+		jqueue.pop();
+	}
+	else{
+		iqueue.front()=s;
+	}
 
     }
 
@@ -214,16 +218,16 @@ void MdtmMan::get(json j){
 }
 
 int MdtmMan::get(void *data, json j){
-    return 0;
+	return 0;
 }
 
 void MdtmMan::zmq_ipc_rep_thread_func(){
-    while (zmq_ipc_rep_thread_active){
-        char msg[1024];
-        zmq_recv (zmq_ipc_rep, msg, 1024, ZMQ_NOBLOCK);
-        zmq_send (zmq_ipc_rep, "OK", 10, 0);
-        usleep(10000);
-    }
+	while (zmq_ipc_rep_thread_active){
+		char msg[1024];
+		zmq_recv (zmq_ipc_rep, msg, 1024, ZMQ_NOBLOCK);
+		zmq_send (zmq_ipc_rep, "OK", 10, 0);
+		usleep(10000);
+	}
 }
 
 
