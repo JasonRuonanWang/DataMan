@@ -137,13 +137,35 @@ int MdtmMan::put(const void *data,
 
 void MdtmMan::get(json j){
 
-
     // push new request
+    void *buf=0;
+    uint64_t putsize;
+    if(j["operation"] == "put"){
+        putsize = j["putsize"].get<uint64_t>();
+        buf = malloc(putsize);
+    }
     jqueue.push(j);
-    int putsize = j["putsize"].get<int>();
-    void *buf = malloc(putsize);
     bqueue.push(buf);
     iqueue.push(0);
+
+    if(jqueue.front()["operation"] == "flush"){
+        if(get_callback){
+            get_callback(cache,
+                    "aaa",
+                    "data",
+                    "",
+                    vector<uint64_t>(),
+                    cache_shape,
+                    vector<uint64_t>());
+        }
+        uint64_t varsize = accumulate(cache_shape.begin(), cache_shape.end(), 1, multiplies<uint64_t>());
+        for(int i=0; i<varsize; i++){
+            ((float*)cache)[i]=numeric_limits<float>::quiet_NaN();
+        }
+        bqueue.pop();
+        iqueue.pop();
+        jqueue.pop();
+    }
 
     for(int outloop=0; outloop<10; outloop++){
         // determine the pipe for the head request
@@ -171,23 +193,6 @@ void MdtmMan::get(json j){
 
         if(s == putsize){
 
-            if(msg["offset"].get<vector<uint64_t>>()[1] < last_dim2){
-                if(get_callback){
-                    get_callback(cache,
-                            "aaa",
-                            "data",
-                            "",
-                            vector<uint64_t>(),
-                            cache_shape,
-                            vector<uint64_t>());
-                }
-                uint64_t varsize = accumulate(cache_shape.begin(), cache_shape.end(), 1, multiplies<uint64_t>());
-                for(int i=0; i<varsize; i++){
-                    ((float*)cache)[i]=numeric_limits<float>::quiet_NaN();
-                }
-            }
-
-            last_dim2 = msg["offset"].get<vector<uint64_t>>()[1];
 
             cache_it(bqueue.front(),
                     msg["varshape"].get<vector<uint64_t>>(),

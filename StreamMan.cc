@@ -92,10 +92,10 @@ void StreamMan::zmq_tcp_rep_thread_func(){
                             }
                         }
                     }
-                    get(j);
                 }
                 if(j["operation"] == "flush"){
                 }
+                get(j);
             }
         }
         usleep(10000);
