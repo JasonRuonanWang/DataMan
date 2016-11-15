@@ -18,6 +18,7 @@ StreamMan::StreamMan(string local_address, string remote_address)
 }
 
 StreamMan::~StreamMan(){
+    cout << "~StreamMan" << endl;
     zmq_close (zmq_tcp_req);
     zmq_close (zmq_tcp_rep);
     zmq_ctx_destroy (zmq_context);

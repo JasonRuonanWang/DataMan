@@ -4,4 +4,4 @@ all:
 	g++ -g write2.cc -o write2 -ldataman
 
 clean:
-	rm -rf write read *.dSYM
+	rm -rf write write2 read *.dSYM

@@ -62,7 +62,6 @@ MdtmMan::MdtmMan(string local_address,
         stringstream pipename;
         pipename << pipename_prefix << i;
         string fullpipename = prefix + pipename.str();
-        cout << fullpipename << endl;
         if (mode == "sender"){
             int fp = open(fullpipename.c_str(), O_WRONLY);
             pipes.push_back(fp);
@@ -81,6 +80,7 @@ MdtmMan::MdtmMan(string local_address,
 }
 
 MdtmMan::~MdtmMan(){
+    cout << "~MdtmMan" << endl;
     if(zmq_ipc_rep) zmq_close (zmq_ipc_rep);
     if(zmq_ipc_req) zmq_close (zmq_ipc_req);
     zmq_ipc_rep_thread_active = false;
@@ -138,6 +138,7 @@ int MdtmMan::put(const void *data,
 void MdtmMan::get(json j){
 
     // push new request
+
     void *buf=0;
     uint64_t putsize;
     if(j["operation"] == "put"){
@@ -167,50 +168,44 @@ void MdtmMan::get(json j){
         jqueue.pop();
     }
 
-    for(int outloop=0; outloop<10; outloop++){
-        // determine the pipe for the head request
-        json msg = jqueue.front();
-        int index=0;
-        for(int i=0; i<pipenames.size(); i++){
-            if(rmquote(msg["pipe"]) == pipenames[i]){
-                index=i;
+    if(jqueue.front()["operation"] == "put"){
+        for(int outloop=0; outloop<10; outloop++){
+            // determine the pipe for the head request
+            json msg = jqueue.front();
+            if(msg == nullptr) break;
+            int index=0;
+            for(int i=0; i<pipenames.size(); i++){
+                if(rmquote(msg["pipe"]) == pipenames[i]){
+                    index=i;
+                }
             }
-        }
-
-        // read the head request
-        int s = iqueue.front();
-        putsize = msg["putsize"].get<int>();
-        while(s<putsize){
-            int ret = read(pipes[index], ((char*)bqueue.front()) + s, putsize - s);
-            if(ret > 0){
-                s += ret;
+            // read the head request
+            int s = iqueue.front();
+            putsize = msg["putsize"].get<int>();
+            while(s<putsize){
+                int ret = read(pipes[index], ((char*)bqueue.front()) + s, putsize - s);
+                if(ret > 0){
+                    s += ret;
+                }
+                else{
+                    break;
+                }
+            }
+            if(s == putsize){
+                cache_it(bqueue.front(),
+                        msg["varshape"].get<vector<uint64_t>>(),
+                        msg["putshape"].get<vector<uint64_t>>(),
+                        msg["offset"].get<vector<uint64_t>>());
+                free(bqueue.front());
+                bqueue.pop();
+                iqueue.pop();
+                jqueue.pop();
             }
             else{
-                //                usleep(100);
-                break;
+                iqueue.front()=s;
             }
         }
-
-        if(s == putsize){
-
-
-            cache_it(bqueue.front(),
-                    msg["varshape"].get<vector<uint64_t>>(),
-                    msg["putshape"].get<vector<uint64_t>>(),
-                    msg["offset"].get<vector<uint64_t>>());
-            free(bqueue.front());
-            bqueue.pop();
-            iqueue.pop();
-            jqueue.pop();
-        }
-        else{
-            iqueue.front()=s;
-        }
-
     }
-
-
-
 }
 
 int MdtmMan::get(void *data, json j){

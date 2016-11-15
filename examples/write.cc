@@ -68,6 +68,7 @@ int main(){
     }
 
     dataman_flush();
+    dataman_terminate();
 
 
     return 0;

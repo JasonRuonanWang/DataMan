@@ -5,6 +5,7 @@ DataMan::DataMan(){
 }
 
 DataMan::~DataMan(){
+    cout << "~DataMan" << endl;
 }
 
 
