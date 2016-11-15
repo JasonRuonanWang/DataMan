@@ -168,42 +168,40 @@ void MdtmMan::get(json j){
         jqueue.pop();
     }
 
-    if(jqueue.front()["operation"] == "put"){
-        for(int outloop=0; outloop<10; outloop++){
-            // determine the pipe for the head request
-            json msg = jqueue.front();
-            if(msg == nullptr) break;
-            int index=0;
-            for(int i=0; i<pipenames.size(); i++){
-                if(rmquote(msg["pipe"]) == pipenames[i]){
-                    index=i;
-                }
+    for(int outloop=0; outloop<10; outloop++){
+        // determine the pipe for the head request
+        json msg = jqueue.front();
+        if(msg == nullptr) break;
+        int index=0;
+        for(int i=0; i<pipenames.size(); i++){
+            if(rmquote(msg["pipe"]) == pipenames[i]){
+                index=i;
             }
-            // read the head request
-            int s = iqueue.front();
-            putsize = msg["putsize"].get<int>();
-            while(s<putsize){
-                int ret = read(pipes[index], ((char*)bqueue.front()) + s, putsize - s);
-                if(ret > 0){
-                    s += ret;
-                }
-                else{
-                    break;
-                }
-            }
-            if(s == putsize){
-                cache_it(bqueue.front(),
-                        msg["varshape"].get<vector<uint64_t>>(),
-                        msg["putshape"].get<vector<uint64_t>>(),
-                        msg["offset"].get<vector<uint64_t>>());
-                free(bqueue.front());
-                bqueue.pop();
-                iqueue.pop();
-                jqueue.pop();
+        }
+        // read the head request
+        int s = iqueue.front();
+        putsize = msg["putsize"].get<int>();
+        while(s<putsize){
+            int ret = read(pipes[index], ((char*)bqueue.front()) + s, putsize - s);
+            if(ret > 0){
+                s += ret;
             }
             else{
-                iqueue.front()=s;
+                break;
             }
+        }
+        if(s == putsize){
+            cache_it(bqueue.front(),
+                    msg["varshape"].get<vector<uint64_t>>(),
+                    msg["putshape"].get<vector<uint64_t>>(),
+                    msg["offset"].get<vector<uint64_t>>());
+            free(bqueue.front());
+            bqueue.pop();
+            iqueue.pop();
+            jqueue.pop();
+        }
+        else{
+            iqueue.front()=s;
         }
     }
 }
