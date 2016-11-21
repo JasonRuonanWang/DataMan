@@ -21,7 +21,6 @@ class DataMan{
 
         virtual int get(void *data, json j) = 0;
         virtual void get(json j) = 0;
-
         virtual void flush() = 0;
 
         void (*get_callback)(void *data,
@@ -32,9 +31,8 @@ class DataMan{
                 vector<uint64_t> varshape,
                 vector<uint64_t> offset) = NULL;
 
-
     protected:
-        inline unsigned int product(unsigned int *shape){
+        inline uint64_t product(unsigned int *shape){
             unsigned int s = 1;
             if(shape){
                 for (unsigned int i=1; i<=shape[0]; i++){
@@ -42,6 +40,10 @@ class DataMan{
                 }
             }
             return s;
+        }
+
+        inline uint64_t product(vector<uint64_t> shape, uint64_t size=1){
+            return accumulate(shape.begin(), shape.end(), size, multiplies<uint64_t>());
         }
 
         inline unsigned int dsize(string dtype){
@@ -112,6 +114,26 @@ class DataMan{
                 }
             }
             return k;
+        }
+
+        inline uint64_t multi2one(const vector<uint64_t> &v, const vector<uint64_t> &p){
+            uint64_t index=0;
+            for (int i=1; i<v.size(); i++){
+                index += accumulate(v.begin() + i, v.end(), p[i-1], multiplies<uint64_t>());
+            }
+            index += p.back();
+            return index;
+        }
+
+        inline vector<uint64_t> one2multi(const vector<uint64_t> &v, uint64_t p){
+            vector<uint64_t> index(v.size());
+            for (int i=1; i<v.size(); i++){
+                uint64_t s = accumulate(v.begin() + i, v.end(), 1, multiplies<uint64_t>());
+                index[i-1] = p / s;
+                p -= index[i-1] * s;
+            }
+            index.back()=p;
+            return index;
         }
 
         void *cache = NULL;

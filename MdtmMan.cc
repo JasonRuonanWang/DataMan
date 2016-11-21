@@ -1,8 +1,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
-#include"MdtmMan.h"
-#include"zmq.h"
-#include <fcntl.h>
+#include "MdtmMan.h"
+#include "zmq.h"
 #include <fcntl.h>
 #include <stdio.h>
 #include <sys/stat.h>
@@ -110,7 +109,7 @@ int MdtmMan::put(const void *data,
     int index = closest(priority, pipe_desc["priority"], true);
     msg["pipe"] = pipe_desc["pipe_names"][index];
 
-    uint64_t putsize = std::accumulate(putshape.begin(), putshape.end(), dsize(dtype), std::multiplies<uint64_t>());
+    uint64_t putsize = product(putshape, dsize(dtype));
     msg["putsize"] = putsize;
     uint64_t varsize = std::accumulate(varshape.begin(), varshape.end(), dsize(dtype), std::multiplies<uint64_t>());
     msg["varsize"] = varsize;

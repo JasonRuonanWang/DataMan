@@ -1,14 +1,34 @@
 #include "DataMan.h"
 
-class CacheItem{
+
+class CacheItem : public DataMan{
     public:
-        CacheItem();
+        CacheItem(string d,
+                string v,
+                uint8_t b,
+                vector<uint64_t> s);
         ~CacheItem();
 
+        int put(const void *data,
+                string doid,
+                string var,
+                string dtype,
+                vector<uint64_t> putshape,
+                vector<uint64_t> varshape,
+                vector<uint64_t> offset,
+                int tolerance,
+                int priority);
+
+        int get(void *data, json j);
+        void get(json j);
+        void flush();
+
     private:
-        void *buffers;
-        string vars;
-        vector<uint64_t> varshapes;
+        void *buffer=NULL;
+        string doid;
+        string var;
+        uint8_t bytes;
+        vector<uint64_t> shape;
         bool completed;
 
 };
@@ -23,17 +43,16 @@ class CacheMan : public DataMan{
                 string doid,
                 string var,
                 string dtype,
-                vector<unsigned long> putshape,
-                vector<unsigned long> varshape,
-                vector<unsigned long> offset,
+                vector<uint64_t> putshape,
+                vector<uint64_t> varshape,
+                vector<uint64_t> offset,
                 int tolerance,
                 int priority);
 
         virtual int get(void *data, json j);
 
     private:
-        vector<CacheItem> cache;
-
+        map<string, CacheItem> cache;
 
 };
 
