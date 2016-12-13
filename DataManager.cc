@@ -3,7 +3,6 @@
 #include"MdtmMan.h"
 #include"DataManager.h"
 
-
 DataMan *dman = NULL;
 
 void dataman_init(string local_address,
@@ -41,7 +40,7 @@ void dataman_write(const void *data,
     if(!dman)
         dataman_init();
     if(var == "data")
-        dman->put(data, doid, var, dtype, putshape, varshape, offset, tolerance, priority);
+        dman->put(data, doid, var, dtype, putshape, varshape, offset, 0, tolerance, priority);
 }
 
 
@@ -80,14 +79,13 @@ void dataman_terminate(){
     if(dman) delete dman;
 }
 
-void dataman_reg_cb(void (*cb)
-        (void *data,
+void dataman_reg_cb(
+        void (*cb)
+        (const void *data,
          string doid,
          string var,
          string dtype,
-         vector<uint64_t> putshape,
-         vector<uint64_t> varshape,
-         vector<uint64_t> offset)
+         vector<uint64_t> varshape)
         )
 {
     dman->get_callback = cb;

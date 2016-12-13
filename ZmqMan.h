@@ -19,6 +19,7 @@ class ZmqMan : public StreamMan{
                 vector<unsigned long> putshape,
                 vector<unsigned long> varshape,
                 vector<unsigned long> offset,
+                uint64_t timestep,
                 int tolerance,
                 int priority);
 

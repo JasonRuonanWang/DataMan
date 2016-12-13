@@ -1,3 +1,6 @@
+#ifndef DATAMAN_H_INCLUDED
+#define DATAMAN_H_INCLUDED
+
 #include<string>
 #include<iostream>
 #include"json/json.hpp"
@@ -16,20 +19,36 @@ class DataMan{
                 vector<uint64_t> putshape,
                 vector<uint64_t> varshape,
                 vector<uint64_t> offset,
+                uint64_t timestep,
                 int tolerance,
                 int priority) = 0;
 
-        virtual int get(void *data, json j) = 0;
-        virtual void get(json j) = 0;
+        virtual int get(void *data,
+                string doid,
+                string var,
+                string &dtype,
+                vector<uint64_t> &getshape,
+                vector<uint64_t> &varshape,
+                vector<uint64_t> &offset,
+                uint64_t &timestep,
+                int &tolerance,
+                int &priority) = 0;
+
+        virtual int get(void *data,
+                string doid,
+                string var,
+                string &dtype,
+                vector<uint64_t> &varshape,
+                uint64_t &timestep
+                ) = 0;
+
         virtual void flush() = 0;
 
-        void (*get_callback)(void *data,
+        void (*get_callback)(const void *data,
                 string doid,
                 string var,
                 string dtype,
-                vector<uint64_t> putshape,
-                vector<uint64_t> varshape,
-                vector<uint64_t> offset) = NULL;
+                vector<uint64_t> varshape) = NULL;
 
     protected:
         inline uint64_t product(unsigned int *shape){
@@ -46,7 +65,7 @@ class DataMan{
             return accumulate(shape.begin(), shape.end(), size, multiplies<uint64_t>());
         }
 
-        inline unsigned int dsize(string dtype){
+        inline uint8_t dsize(string dtype){
             if (dtype == "char")
                 return sizeof(char);
             if (dtype == "short")
@@ -73,6 +92,23 @@ class DataMan{
                 return sizeof(float)*2;
             if (dtype == "complex<double>")
                 return sizeof(double)*2;
+
+            if (dtype == "int8_t")
+                return sizeof(int8_t);
+            if (dtype == "uint8_t")
+                return sizeof(uint8_t);
+            if (dtype == "int16_t")
+                return sizeof(int16_t);
+            if (dtype == "uint16_t")
+                return sizeof(uint16_t);
+            if (dtype == "int32_t")
+                return sizeof(int32_t);
+            if (dtype == "uint32_t")
+                return sizeof(uint32_t);
+            if (dtype == "int64_t")
+                return sizeof(int64_t);
+            if (dtype == "uint64_t")
+                return sizeof(uint64_t);
             return 0;
         }
 
@@ -116,31 +152,11 @@ class DataMan{
             return k;
         }
 
-        inline uint64_t multi2one(const vector<uint64_t> &v, const vector<uint64_t> &p){
-            uint64_t index=0;
-            for (int i=1; i<v.size(); i++){
-                index += accumulate(v.begin() + i, v.end(), p[i-1], multiplies<uint64_t>());
-            }
-            index += p.back();
-            return index;
-        }
 
-        inline vector<uint64_t> one2multi(const vector<uint64_t> &v, uint64_t p){
-            vector<uint64_t> index(v.size());
-            for (int i=1; i<v.size(); i++){
-                uint64_t s = accumulate(v.begin() + i, v.end(), 1, multiplies<uint64_t>());
-                index[i-1] = p / s;
-                p -= index[i-1] * s;
-            }
-            index.back()=p;
-            return index;
-        }
-
-        void *cache = NULL;
-        vector<uint64_t> cache_shape;
         string getmode = "callback"; // graph, callback
         DataMan *next = NULL;
-
 };
 
 
+
+#endif

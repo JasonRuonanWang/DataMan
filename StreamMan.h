@@ -1,5 +1,6 @@
-#include"DataMan.h"
-#include<thread>
+#include "DataMan.h"
+#include "CacheMan.h"
+#include <thread>
 
 using namespace std;
 
@@ -15,24 +16,21 @@ class StreamMan : public DataMan{
                 vector<uint64_t> putshape,
                 vector<uint64_t> varshape,
                 vector<uint64_t> offset,
+                uint64_t timestep,
                 int tolerance,
                 int priority) = 0;
-        virtual int get(void *data, json j) = 0;
-        virtual void get(json j) = 0;
+        virtual void on_recv(json j) = 0;
         void flush();
     protected:
         void *zmq_context = NULL;
         void *zmq_tcp_req = NULL;
         void *zmq_tcp_rep = NULL;
-        void cache_it(
-                void *data,
-                vector<uint64_t> varshape,
-                vector<uint64_t> putshape,
-                vector<uint64_t> offset);
+        CacheMan m_cache;
     private:
         void zmq_tcp_rep_thread_func();
         bool zmq_tcp_rep_thread_active;
         thread *zmq_tcp_rep_thread;
+
 
 
 

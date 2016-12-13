@@ -87,6 +87,30 @@ MdtmMan::~MdtmMan(){
     delete zmq_ipc_rep_thread;
 }
 
+int MdtmMan::get(void *data,
+        string doid,
+        string var,
+        string &dtype,
+        vector<uint64_t> &getshape,
+        vector<uint64_t> &varshape,
+        vector<uint64_t> &offset,
+        uint64_t &timestep,
+        int &tolerance,
+        int &priority){
+
+    return 0;
+}
+
+int MdtmMan::get(void *data,
+        string doid,
+        string var,
+        string &dtype,
+        vector<uint64_t> &varshape,
+        uint64_t &timestep){
+
+    return 0;
+}
+
 int MdtmMan::put(const void *data,
         string doid,
         string var,
@@ -94,6 +118,7 @@ int MdtmMan::put(const void *data,
         vector<uint64_t> putshape,
         vector<uint64_t> varshape,
         vector<uint64_t> offset,
+        uint64_t timestep,
         int tolerance,
         int priority)
 {
@@ -134,7 +159,7 @@ int MdtmMan::put(const void *data,
 }
 
 
-void MdtmMan::get(json j){
+void MdtmMan::on_recv(json j){
 
     // push new request
 
@@ -150,18 +175,14 @@ void MdtmMan::get(json j){
 
     if(jqueue.front()["operation"] == "flush"){
         if(get_callback){
-            get_callback(cache,
-                    "aaa",
-                    "data",
-                    "",
-                    vector<uint64_t>(),
-                    cache_shape,
-                    vector<uint64_t>());
+            get_callback(m_cache.get_buffer(jqueue.front()["var"]),
+                    jqueue.front()["doid"],
+                    jqueue.front()["var"],
+                    jqueue.front()["dtype"],
+                    jqueue.front()["varshape"].get<vector<uint64_t>>()
+                    );
         }
-        uint64_t varsize = accumulate(cache_shape.begin(), cache_shape.end(), 1, multiplies<uint64_t>());
-        for(int i=0; i<varsize; i++){
-            ((float*)cache)[i]=numeric_limits<float>::quiet_NaN();
-        }
+        m_cache.clean(jqueue.front()["var"], "nan");
         bqueue.pop();
         iqueue.pop();
         jqueue.pop();
@@ -190,10 +211,17 @@ void MdtmMan::get(json j){
             }
         }
         if(s == putsize){
-            cache_it(bqueue.front(),
-                    msg["varshape"].get<vector<uint64_t>>(),
-                    msg["putshape"].get<vector<uint64_t>>(),
-                    msg["offset"].get<vector<uint64_t>>());
+            m_cache.put(bqueue.front(),
+                    msg["doid"],
+                    msg["var"],
+                    msg["dtype"],
+                    msg["putshape"],
+                    msg["varshape"],
+                    msg["offset"],
+                    msg["timestep"],
+                    0,
+                    100);
+
             free(bqueue.front());
             bqueue.pop();
             iqueue.pop();
@@ -205,9 +233,6 @@ void MdtmMan::get(json j){
     }
 }
 
-int MdtmMan::get(void *data, json j){
-    return 0;
-}
 
 void MdtmMan::zmq_ipc_rep_thread_func(){
     while (zmq_ipc_rep_thread_active){
