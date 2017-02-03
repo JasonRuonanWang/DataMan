@@ -6,19 +6,17 @@
 #include <numeric>
 using namespace std;
 
-void get(void *data,
+void get(const void *data,
          string doid,
          string var,
          string dtype,
-         vector<uint64_t> putshape,
-         vector<uint64_t> varshape,
-         vector<uint64_t> offset){
+         vector<uint64_t> varshape
+         ){
 
     cout << doid << endl;
     cout << var << endl;
     cout << dtype << endl;
     float *dataf = (float*)data;
-
 
     uint64_t varsize = std::accumulate(varshape.begin(), varshape.end(), 1, std::multiplies<uint64_t>());
 
@@ -45,12 +43,14 @@ int main(){
     int num_pipes = 4;
 
     dataman_init(receiver_address, sender_address, mode, prefix, num_pipes);
-    dataman_reg_cb(get);
+    dataman_reg_cb(get, "data", "aaa");
 
-    while (1){
+    for (int i=0; i<3; i++){
         cout << "1 second" << endl;
         usleep(1000000);
     }
+
+    dataman_terminate();
 
     return 0;
 }

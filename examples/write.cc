@@ -59,7 +59,7 @@ int main(){
                 offset[0] = i;
                 offset[1] = j*2;
                 offset[2] = k*5;
-                dataman_write(data, "aaa", "data", "float", putshape, varshape, offset, 0, 100);
+                dataman_write(data, "aaa", "data", "float", putshape, varshape, offset, 0, 0, 100);
             }
         }
 

@@ -40,18 +40,15 @@ MdtmMan::MdtmMan(string local_address,
 
     if(mode=="sender"){
         zmq_ipc_req = zmq_socket (zmq_context, ZMQ_REQ);
-        zmq_ipc_rep = zmq_socket (zmq_context, ZMQ_REP);
         zmq_connect (zmq_ipc_req, "ipc:///tmp/ADIOS_MDTM_pipe");
-        zmq_bind (zmq_ipc_rep, "ipc:///tmp/MDTM_ADIOS_pipe");
 
         char buffer_return[10];
         zmq_send (zmq_ipc_req, pipe_desc.dump().c_str(), pipe_desc.dump().length(), 0);
         zmq_recv (zmq_ipc_req, buffer_return, 10, 0);
 
-        zmq_ipc_rep_thread_active = true;
-        zmq_ipc_rep_thread = new thread(&MdtmMan::zmq_ipc_rep_thread_func, this);
     }
     // Pipes
+    mkdir(prefix.c_str(), 0755);
     for (int i=0; i<pipe_desc["pipe_names"].size(); i++){
         string filename = prefix + rmquote(pipe_desc["pipe_names"][i].dump());
         mkfifo(filename.c_str(), 0666);
@@ -72,19 +69,10 @@ MdtmMan::MdtmMan(string local_address,
         printf("pipe pointer %d ------------------- \n", pipes[i]);
         pipenames.push_back(pipename.str());
     }
-
-
-
-
 }
 
 MdtmMan::~MdtmMan(){
-    cout << "~MdtmMan" << endl;
-    if(zmq_ipc_rep) zmq_close (zmq_ipc_rep);
-    if(zmq_ipc_req) zmq_close (zmq_ipc_req);
-    zmq_ipc_rep_thread_active = false;
-    zmq_ipc_rep_thread->join();
-    delete zmq_ipc_rep_thread;
+    if(zmq_ipc_req) zmq_close(zmq_ipc_req);
 }
 
 int MdtmMan::get(void *data,
@@ -130,6 +118,7 @@ int MdtmMan::put(const void *data,
     msg["putshape"] = putshape;
     msg["varshape"] = varshape;
     msg["offset"] = offset;
+    msg["timestep"] = timestep;
 
     int index = closest(priority, pipe_desc["priority"], true);
     msg["pipe"] = pipe_desc["pipe_names"][index];
@@ -163,16 +152,12 @@ void MdtmMan::on_recv(json j){
 
     // push new request
 
-    void *buf=0;
-    uint64_t putsize;
-    if(j["operation"] == "put"){
-        putsize = j["putsize"].get<uint64_t>();
-        buf = malloc(putsize);
-    }
     jqueue.push(j);
-    bqueue.push(buf);
+    bqueue.push(NULL);
     iqueue.push(0);
 
+    // for flush
+    /*
     if(jqueue.front()["operation"] == "flush"){
         if(get_callback){
             get_callback(m_cache.get_buffer(jqueue.front()["var"]),
@@ -187,59 +172,64 @@ void MdtmMan::on_recv(json j){
         iqueue.pop();
         jqueue.pop();
     }
+    */
 
+
+    // for put
     for(int outloop=0; outloop<10; outloop++){
-        // determine the pipe for the head request
-        json msg = jqueue.front();
-        if(msg == nullptr) break;
-        int index=0;
-        for(int i=0; i<pipenames.size(); i++){
-            if(rmquote(msg["pipe"]) == pipenames[i]){
-                index=i;
+
+        // allocate buffer
+        if(jqueue.front()["operation"] == "put"){
+
+            uint64_t putsize = jqueue.front()["putsize"].get<uint64_t>();
+            if(bqueue.front() == NULL) bqueue.front() = malloc(putsize);
+
+            // determine the pipe for the head request
+            json msg = jqueue.front();
+            if(msg == nullptr) break;
+            int pipeindex=0;
+            for(int i=0; i<pipenames.size(); i++){
+                if(rmquote(msg["pipe"]) == pipenames[i]){
+                    pipeindex=i;
+                }
             }
-        }
-        // read the head request
-        int s = iqueue.front();
-        putsize = msg["putsize"].get<int>();
-        while(s<putsize){
-            int ret = read(pipes[index], ((char*)bqueue.front()) + s, putsize - s);
-            if(ret > 0){
-                s += ret;
+
+            // read the head request
+            int s = iqueue.front();
+            putsize = msg["putsize"].get<int>();
+            while(s<putsize){
+                int ret = read(pipes[pipeindex], ((char*)bqueue.front()) + s, putsize - s);
+                if(ret > 0){
+                    s += ret;
+                }
+                else{
+                    break;
+                }
+            }
+
+            cout << "--------------------------" << endl;
+            cout << msg << endl;
+
+            if(s == putsize){
+                m_cache.put(bqueue.front(),
+                        msg["doid"],
+                        msg["var"],
+                        msg["dtype"],
+                        msg["putshape"],
+                        msg["varshape"],
+                        msg["offset"],
+                        msg["timestep"],
+                        0,
+                        100);
+                if(bqueue.front()) free(bqueue.front());
+                bqueue.pop();
+                iqueue.pop();
+                jqueue.pop();
             }
             else{
-                break;
+                iqueue.front()=s;
             }
         }
-        if(s == putsize){
-            m_cache.put(bqueue.front(),
-                    msg["doid"],
-                    msg["var"],
-                    msg["dtype"],
-                    msg["putshape"],
-                    msg["varshape"],
-                    msg["offset"],
-                    msg["timestep"],
-                    0,
-                    100);
-
-            free(bqueue.front());
-            bqueue.pop();
-            iqueue.pop();
-            jqueue.pop();
-        }
-        else{
-            iqueue.front()=s;
-        }
-    }
-}
-
-
-void MdtmMan::zmq_ipc_rep_thread_func(){
-    while (zmq_ipc_rep_thread_active){
-        char msg[1024];
-        zmq_recv (zmq_ipc_rep, msg, 1024, ZMQ_NOBLOCK);
-        zmq_send (zmq_ipc_rep, "OK", 10, 0);
-        usleep(10000);
     }
 }
 

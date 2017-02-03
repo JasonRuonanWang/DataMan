@@ -19,11 +19,11 @@ StreamMan::StreamMan(string local_address, string remote_address)
 
 StreamMan::~StreamMan(){
     cout << "~StreamMan" << endl;
-    zmq_close (zmq_tcp_req);
-    zmq_close (zmq_tcp_rep);
-    zmq_ctx_destroy (zmq_context);
+    if(zmq_tcp_req) zmq_close(zmq_tcp_req);
+    if(zmq_tcp_rep) zmq_close(zmq_tcp_rep);
+    if(zmq_context) zmq_ctx_destroy(zmq_context);
     zmq_tcp_rep_thread_active = false;
-    zmq_tcp_rep_thread->join();
+    if(zmq_tcp_rep_thread->joinable()) zmq_tcp_rep_thread->join();
     if(zmq_tcp_rep_thread) delete zmq_tcp_rep_thread;
 }
 
@@ -34,7 +34,6 @@ void StreamMan::flush(){
     zmq_send(zmq_tcp_req, msg.dump().c_str(), msg.dump().length(), 0);
     zmq_recv(zmq_tcp_req, ret, 10, 0);
 }
-
 
 void StreamMan::zmq_tcp_rep_thread_func(){
     while (zmq_tcp_rep_thread_active){
@@ -51,8 +50,4 @@ void StreamMan::zmq_tcp_rep_thread_func(){
         usleep(10000);
     }
 }
-
-
-
-
 

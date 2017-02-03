@@ -66,6 +66,7 @@ int CacheItem::put(const void *p_data,
 
 void CacheItem::flush(){
 }
+
 void CacheItem::clean(string mode){
     if(mode == "zero"){
         for(int i=0; i<m_varsize; i++){
@@ -86,11 +87,12 @@ const void *CacheItem::get_buffer(){
 }
 
 CacheMan::CacheMan(){
-
 }
 
 CacheMan::~CacheMan(){
-
+    for(map<string, CacheItem*>::const_iterator it = cache.begin(); it != cache.end(); ++it){
+        if(it->second) delete it->second;
+    }
 }
 
 int CacheMan::put(const void *p_data,
@@ -105,10 +107,9 @@ int CacheMan::put(const void *p_data,
         int p_priority){
 
     if(cache.count(p_var) == 0){
-        cache.insert(pair<string,CacheItem>(p_var, CacheItem(p_doid, p_var, dsize(p_dtype), p_varshape)));
+        cache.insert(pair<string,CacheItem*>(p_var,new CacheItem(p_doid, p_var, dsize(p_dtype), p_varshape)));
     }
-    cache[p_var].put(p_data, p_doid, p_var, p_dtype, p_putshape, p_varshape, p_offset, p_timestep, p_tolerance, p_priority);
-
+    cache[p_var]->put(p_data, p_doid, p_var, p_dtype, p_putshape, p_varshape, p_offset, p_timestep, p_tolerance, p_priority);
     return 0;
 }
 
@@ -140,9 +141,9 @@ void CacheMan::flush(){
 }
 
 const void *CacheMan::get_buffer(string var){
-    return cache[var].get_buffer();
+    return cache[var]->get_buffer();
 }
 
 void CacheMan::clean(string var, string mode){
-    cache[var].clean(mode);
+    cache[var]->clean(mode);
 }

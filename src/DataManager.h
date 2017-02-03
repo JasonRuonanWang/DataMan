@@ -10,9 +10,10 @@ void dataman_write(const void *data,
         string doid,
         string var,
         string dtype,
-        vector<uint64_t> putshape = vector<uint64_t>(),
-        vector<uint64_t> varshape = vector<uint64_t>(),
-        vector<uint64_t> offset = vector<uint64_t>(),
+        vector<uint64_t> putshape,
+        vector<uint64_t> varshape,
+        vector<uint64_t> offset,
+        uint64_t timestep,
         int tolerance=0,
         int priority=100);
 
@@ -27,12 +28,12 @@ void dataman_init(string local_address ="tcp://127.0.0.1:12306",
         vector<int> priority=vector<int>());
 
 void dataman_reg_cb(void (*cb)
-        (void *data,
+        (const void *data,
          string doid,
          string var,
          string dtype,
-         vector<uint64_t> putshape,
-         vector<uint64_t> varshape,
-         vector<uint64_t> offset)
+         vector<uint64_t> varshape),
+        string var,
+        string doid
         );
 

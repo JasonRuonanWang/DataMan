@@ -1,11 +1,25 @@
-all:
-	c++ -fPIC *.cc --shared -o libdataman.so -std=c++11 -lzmq
+CXX=g++-6
+CXX_FLAGS=-std=c++11
+LINK_LIBS=-lzmq
+INSTALL_PREFIX=$(libpath)
+
+all:mdtmman
+
+dataman:
+	$(CXX) $(CXX_FLAGS) $(LINK_LIBS) src/DataMan.cc --shared -o lib/libdataman.so
+
+streamman:dataman cacheman
+	$(CXX) $(CXX_FLAGS) $(LINK_LIBS) src/StreamMan.cc --shared -o lib/libstreamman.so lib/libdataman.so lib/libcacheman.so
+
+cacheman:
+	$(CXX) $(CXX_FLAGS) $(LINK_LIBS) src/CacheMan.cc --shared -o lib/libcacheman.so lib/libdataman.so
+
+mdtmman:dataman streamman cacheman
+	$(CXX) $(CXX_FLAGS) $(LINK_LIBS) src/MdtmMan.cc --shared -o lib/libmdtmman.so lib/libstreamman.so lib/libdataman.so lib/libcacheman.so
 
 install: all
-	cp *.so $(libpath)/DataMan/lib/
-	cp DataManager.h $(libpath)/DataMan/include
-
-
+	cp lib/*.so $(INSTALL_PREFIX)/DataMan/lib/
+	cp src/DataManager.h $(INSTALL_PREFIX)/DataMan/include
 
 clean:
 	rm -rf *.o *.so*

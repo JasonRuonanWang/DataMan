@@ -33,6 +33,7 @@ void dataman_write(const void *data,
         vector<uint64_t> putshape,
         vector<uint64_t> varshape,
         vector<uint64_t> offset,
+        uint64_t timestep,
         int tolerance,
         int priority)
 {
@@ -52,9 +53,10 @@ void dataman_write_c_to_cpp(const void *data,
         string doid,
         string var,
         string dtype,
-        uint64_t *putshape = NULL,
-        uint64_t *varshape = NULL,
-        uint64_t *offset = NULL,
+        uint64_t *putshape,
+        uint64_t *varshape,
+        uint64_t *offset,
+        uint64_t timestep,
         int tolerance=0,
         int priority=100)
 {
@@ -85,7 +87,9 @@ void dataman_reg_cb(
          string doid,
          string var,
          string dtype,
-         vector<uint64_t> varshape)
+         vector<uint64_t> varshape),
+        string var,
+        string doid=""
         )
 {
     dman->get_callback = cb;
@@ -104,10 +108,11 @@ extern "C"
             const char *datatype,
             uint64_t *putshape,
             uint64_t *varshape,
-            uint64_t *offset)
+            uint64_t *offset,
+            uint64_t timestep)
     {
         printf("DataManager::dataman_write_c()\n");
-        dataman_write_c_to_cpp(data, doid, var, datatype, putshape, varshape, offset);
+        dataman_write_c_to_cpp(data, doid, var, datatype, putshape, varshape, offset, timestep);
     }
     void dataman_flush_c(){
         dataman_flush();

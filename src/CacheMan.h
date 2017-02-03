@@ -122,9 +122,8 @@ class CacheMan : public DataMan{
         const void *get_buffer(string var);
         void clean(string var, string mode);
 
-
     private:
-        map<string, CacheItem> cache;
+        map<string, CacheItem*> cache;
 
 };
 

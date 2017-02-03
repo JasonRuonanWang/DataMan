@@ -29,7 +29,7 @@ class StreamMan : public DataMan{
     private:
         void zmq_tcp_rep_thread_func();
         bool zmq_tcp_rep_thread_active;
-        thread *zmq_tcp_rep_thread;
+        thread *zmq_tcp_rep_thread=NULL;
 
 
 
