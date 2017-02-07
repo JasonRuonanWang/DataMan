@@ -6,6 +6,7 @@ using namespace std;
 
 class StreamMan : public DataMan{
     public:
+        StreamMan();
         StreamMan(string local_address,
                 string remote_address);
         ~StreamMan();
@@ -30,12 +31,6 @@ class StreamMan : public DataMan{
         void zmq_tcp_rep_thread_func();
         bool zmq_tcp_rep_thread_active;
         thread *zmq_tcp_rep_thread=NULL;
-
-
-
-
 };
-
-
 
 

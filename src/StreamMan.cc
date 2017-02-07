@@ -6,6 +6,9 @@
 
 using namespace std;
 
+StreamMan::StreamMan(){
+}
+
 StreamMan::StreamMan(string local_address, string remote_address)
 {
     zmq_context = zmq_ctx_new ();
@@ -50,4 +53,6 @@ void StreamMan::zmq_tcp_rep_thread_func(){
         usleep(10000);
     }
 }
+
+
 

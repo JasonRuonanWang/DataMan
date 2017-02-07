@@ -1,4 +1,4 @@
-#include <DataManager.h>
+#include <MdtmMan.h>
 #include <unistd.h>
 #include <iostream>
 #include <sys/stat.h>
@@ -42,15 +42,20 @@ int main(){
     string prefix = "/tmp/MdtmManPipes/";
     int num_pipes = 4;
 
-    dataman_init(receiver_address, sender_address, mode, prefix, num_pipes);
-    dataman_reg_cb(get, "data", "aaa");
+    vector<int> tolerance;
+    vector<int> priority;
+    tolerance.assign(num_pipes, 0);
+    priority.assign(num_pipes, 0);
+
+    MdtmMan mdtmman(receiver_address, sender_address, mode, prefix, num_pipes, tolerance, priority);
+    mdtmman.get_callback = get;
+
 
     for (int i=0; i<3; i++){
         cout << "1 second" << endl;
         usleep(1000000);
     }
 
-    dataman_terminate();
 
     return 0;
 }

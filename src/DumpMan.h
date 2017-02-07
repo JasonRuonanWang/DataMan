@@ -1,17 +1,9 @@
-#include"StreamMan.h"
-#include <queue>
+#include "DataMan.h"
 
-class MdtmMan : public StreamMan{
+class DumpMan : public DataMan{
     public:
-        MdtmMan();
-        ~MdtmMan();
-        MdtmMan(string local_ip,
-                string remote_ip,
-                string mode,
-                string prefix,
-                int num_pipes,
-                vector<int> tolerance,
-                vector<int> priority);
+        DumpMan();
+        ~DumpMan();
 
         int put(const void *data,
                 string doid,
@@ -42,23 +34,11 @@ class MdtmMan : public StreamMan{
                 vector<uint64_t> &varshape,
                 uint64_t &timestep);
 
-        void on_recv(json j);
-
-    private:
-        void *zmq_ipc_req = NULL;
-        int zmq_msg_size = 1024;
-        string getmode = "callback";
-        json pipe_desc;
-        vector<int> pipes;
-        vector<string> pipenames;
-        queue<json> jqueue;
-        queue<void*> bqueue;
-        queue<int> iqueue;
-
+        void flush();
 };
 
-std::unique_ptr<MdtmMan> getMdtmMan(){
-    std::unique_ptr<MdtmMan> p(new MdtmMan);
+std::unique_ptr<DumpMan> getDumpMan(){
+    std::unique_ptr<DumpMan> p(new DumpMan);
     return std::move(p);
 }
 

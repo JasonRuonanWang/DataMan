@@ -7,6 +7,10 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+MdtmMan::MdtmMan(){
+
+}
+
 MdtmMan::MdtmMan(string local_address,
         string remote_address,
         string mode,
