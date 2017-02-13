@@ -6,41 +6,78 @@ class ZmqMan : public StreamMan{
         ~ZmqMan();
         ZmqMan(string local_ip,
                 string remote_ip,
-                string mode,
-                string prefix,
-                int num_pipes,
-                int *tolerance,
-                int *priority);
+                int local_port,
+                int remote_port,
+                int num_channels,
+                vector<int> tolerance,
+                vector<int> priority);
 
-        virtual int put(void *data,
+        void init(
+                string local_ip,
+                string remote_ip,
+                int local_port,
+                int remote_port,
+                int num_channels,
+                vector<int> tolerance,
+                vector<int> priority);
+
+        virtual int put(const void *data,
                 string doid,
                 string var,
                 string dtype,
-                vector<unsigned long> putshape,
-                vector<unsigned long> varshape,
-                vector<unsigned long> offset,
+                vector<uint64_t> putshape,
+                vector<uint64_t> varshape,
+                vector<uint64_t> offset,
                 uint64_t timestep,
                 int tolerance,
                 int priority);
 
-        virtual int get(void *data, json j);
+        int get(void *data,
+                string doid,
+                string var,
+                string &dtype,
+                vector<uint64_t> &getshape,
+                vector<uint64_t> &varshape,
+                vector<uint64_t> &offset,
+                uint64_t &timestep,
+                int &tolerance,
+                int &priority){}
 
+        virtual int get(void *data,
+                string doid,
+                string var,
+                string &dtype,
+                vector<uint64_t> &varshape,
+                uint64_t &timestep
+                ){}
+
+        virtual void on_recv(json j);
+
+    protected:
+        inline string make_address(string ip, int port, string protocol){
+            stringstream address;
+            address << protocol << "://" << ip << ":" << port;
+            return address.str();
+        }
 
     private:
-        void *zmq_ipc_req = NULL;
-        void *zmq_ipc_rep = NULL;
-        void zmq_ipc_rep_thread_func();
-        bool zmq_ipc_rep_thread_active;
-        thread *zmq_ipc_rep_thread;
-        int zmq_msg_size = 1024;
+        void *zmq_data_req = NULL;
+        void *zmq_data_rep = NULL;
+
         string getmode = "callback";
-        json pipe_desc;
+        string m_local_ip;
+        string m_remote_ip;
+        int m_local_port;
+        int m_remote_port;
+        int m_num_channels = 1;
 
 };
 
 
-
-
+std::unique_ptr<ZmqMan> getZmqMan(){
+    std::unique_ptr<ZmqMan> p(new ZmqMan);
+    return std::move(p);
+}
 
 
 

@@ -1,32 +1,36 @@
-#include <DataManager.h>
 #include <unistd.h>
 #include <iostream>
+#include <vector>
+
+#include <ZmqMan.h>
 
 using namespace std;
 
 int main(){
 
-    string sender_address;
-    string receiver_address;
+    string local_ip, remote_ip;
+    int local_port, remote_port;
 
-    sender_address = "tcp://131.225.2.29:12306";
-    receiver_address = "tcp://131.225.2.31:12307";
+    local_ip = "131.225.2.29";
+    remote_ip = "131.225.2.31";
 
-    sender_address = "tcp://127.0.0.1:12306";
-    receiver_address = "tcp://127.0.0.1:12307";
+    local_ip = "127.0.0.1";
+    remote_ip = "127.0.0.1";
 
-    string mode = "sender";
-    string prefix = "/tmp/MdtmManPipes/";
-    int num_pipes = 4;
+    local_port = 12306;
+    remote_port = 12307;
 
-    cout << "init" << endl;
-    dataman_init(sender_address, receiver_address, mode, prefix, num_pipes);
+    int num_channels = 1;
 
+    vector<int> tolerance;
+    vector<int> priority;
+    tolerance.assign(num_channels, 0);
+    priority.assign(num_channels, 0);
+
+    ZmqMan man(local_ip, remote_ip, local_port, remote_port, num_channels, tolerance, priority);
 
     vector<uint64_t> putshape;
-    putshape.push_back(0);
-    putshape.push_back(0);
-    putshape.push_back(0);
+    putshape.assign(3,0);
 
     vector<uint64_t> varshape;
     varshape.push_back(0);
@@ -59,18 +63,12 @@ int main(){
                 offset[0] = i;
                 offset[1] = j*2;
                 offset[2] = k*5;
-                dataman_write(data, "aaa", "data", "float", putshape, varshape, offset, 0, 0, 100);
+                man.put(data, "aaa", "data", "float", putshape, varshape, offset, 0, 0, 100);
+                cout << "writeZmq put" << endl;
             }
         }
-
-
-
     }
-
-    dataman_flush();
-    dataman_terminate();
-
-
+    man.flush();
     return 0;
 }
 

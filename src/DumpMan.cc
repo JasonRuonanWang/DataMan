@@ -1,9 +1,7 @@
 #include "DumpMan.h"
 
 DumpMan::DumpMan(){
-
 }
-
 
 DumpMan::~DumpMan(){
 }
@@ -43,14 +41,11 @@ int DumpMan::put(const void *data,
         int tolerance,
         int priority)
 {
-
     for (int i=0; i<product(varshape,1); i++)
         cout << ((float*)data)[i] << " ";
     cout << endl;
-
     return 0;
 }
-
 
 void DumpMan::flush(){
 }

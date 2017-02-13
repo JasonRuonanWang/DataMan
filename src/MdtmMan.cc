@@ -115,28 +115,14 @@ int MdtmMan::put(const void *data,
         int priority)
 {
     json msg;
-    msg["operation"] = "put";
-    msg["doid"] = doid;
-    msg["var"] = var;
-    msg["dtype"] = dtype;
-    msg["putshape"] = putshape;
-    msg["varshape"] = varshape;
-    msg["offset"] = offset;
-    msg["timestep"] = timestep;
-
     int index = closest(priority, pipe_desc["priority"], true);
     msg["pipe"] = pipe_desc["pipe_names"][index];
-
     uint64_t putsize = product(putshape, dsize(dtype));
     msg["putsize"] = putsize;
-    uint64_t varsize = std::accumulate(varshape.begin(), varshape.end(), dsize(dtype), std::multiplies<uint64_t>());
+    uint64_t varsize = product(varshape, dsize(dtype));
     msg["varsize"] = varsize;
 
-    cout << msg << endl;
-
-    char ret[10];
-    zmq_send(zmq_tcp_req, msg.dump().c_str(), msg.dump().length(), 0);
-    zmq_recv(zmq_tcp_req, ret, 10, 0);
+    StreamMan::put(data,doid,var,dtype,putshape,varshape,offset,timestep,tolerance,priority,msg);
 
     index=0;
     for(int i=0; i<pipenames.size(); i++){
@@ -145,9 +131,7 @@ int MdtmMan::put(const void *data,
         }
     }
     string pipename = rmquote(pipe_desc["pipe_prefix"].dump()) + rmquote(msg["pipe"].dump());
-
     write(pipes[index], data, putsize);
-
     return 0;
 }
 

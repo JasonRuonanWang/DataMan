@@ -1,12 +1,17 @@
 CXX=g++-6
 
-
 all:
-	$(CXX) writeDump.cc -o writeDump -ldumpman
-	$(CXX) writeMdtm.cc -o writeMdtm -lmdtmman -lstreamman
-	$(CXX) readMdtm.cc -o readMdtm -lmdtmman -lstreamman
-#	$(CXX) -g write.cc -o write -ldataman
-#	$(CXX) -g write2.cc -o write2 -ldataman
+	$(CXX) writeDump.cc -o writeDump.e -ldumpman
+
+zmq:
+	$(CXX) writeZmq.cc -o writeZmq.e -lzmqman -lstreamman
+	$(CXX) readZmq.cc -o readZmq.e -lzmqman -lstreamman
+
+mdtm:
+	$(CXX) readMdtm.cc -o readMdtm.e -lmdtmman -lstreamman
+	$(CXX) writeMdtm.cc -o writeMdtm.e -lmdtmman -lstreamman
+
+
 
 clean:
 	rm -rf write write2 read *.dSYM

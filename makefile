@@ -20,6 +20,9 @@ cacheman:
 mdtmman:dataman streamman cacheman
 	$(CXX) $(CXX_FLAGS) $(LINK_LIBS) src/MdtmMan.cc --shared -o lib/libmdtmman.so lib/libstreamman.so lib/libdataman.so lib/libcacheman.so
 
+zmqman:dataman streamman cacheman
+	$(CXX) $(CXX_FLAGS) $(LINK_LIBS) src/ZmqMan.cc --shared -o lib/libzmqman.so lib/libstreamman.so lib/libdataman.so lib/libcacheman.so
+
 install:
 	cp lib/*.so $(INSTALL_PREFIX)/DataMan/lib/
 	cp src/*.h src/*.hpp $(INSTALL_PREFIX)/DataMan/include

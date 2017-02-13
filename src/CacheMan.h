@@ -121,6 +121,7 @@ class CacheMan : public DataMan{
         void flush();
         const void *get_buffer(string var);
         void clean(string var, string mode);
+        void clean_all(string mode);
 
     private:
         map<string, CacheItem*> cache;
