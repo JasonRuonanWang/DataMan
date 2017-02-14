@@ -88,7 +88,6 @@ int ZmqMan::put(const void *data,
     return 0;
 }
 
-
 void ZmqMan::on_recv(json j){
     if (j["operation"] == "put"){
         uint64_t putsize = j["putsize"].get<uint64_t>();
@@ -108,12 +107,16 @@ void ZmqMan::on_recv(json j){
     }
     else if (j["operation"] == "flush"){
         if(get_callback){
-            get_callback(m_cache.get_buffer(j["var"]),
-                    j["doid"],
-                    j["var"],
-                    j["dtype"],
-                    j["varshape"].get<vector<uint64_t>>()
-                    );
+            vector<string> list = m_cache.get_key_list();
+            for( vector<string>::const_iterator it = list.begin(); it != list.end(); ++it){
+
+                get_callback(m_cache.get_buffer(j["var"]),
+                        j["doid"],
+                        j["var"],
+                        j["dtype"],
+                        j["varshape"].get<vector<uint64_t>>()
+                        );
+            }
         }
         m_cache.clean(j["var"], "nan");
     }

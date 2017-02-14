@@ -11,6 +11,8 @@ mdtm:
 	$(CXX) readMdtm.cc -o readMdtm.e -lmdtmman -lstreamman
 	$(CXX) writeMdtm.cc -o writeMdtm.e -lmdtmman -lstreamman
 
+cache:
+	$(CXX) writeCache.cc -o writeCache.e -lcacheman
 
 
 clean:

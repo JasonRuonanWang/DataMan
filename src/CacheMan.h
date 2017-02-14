@@ -2,14 +2,14 @@
 
 class CacheItem : public DataMan{
     public:
-        CacheItem(){
-            cout << "CacheItem::CacheItem() is called. This should never happen!" << endl;
-        }
-        CacheItem(string p_doid,
-                string p_var,
-                uint8_t p_bytes,
-                vector<uint64_t> p_shape);
+        CacheItem();
         ~CacheItem();
+
+        void init(string doid,
+                string var,
+                string dtype,
+                vector<uint64_t> varshape
+                );
 
         int put(const void *data,
                 string doid,
@@ -42,16 +42,18 @@ class CacheItem : public DataMan{
 
         void flush();
         const void *get_buffer();
-        void clean(string mode);
+        void clean(const string mode);
 
     private:
         void *m_buffer=NULL;
         string m_doid;
         string m_var;
+        string m_dtype;
         uint8_t m_bytes;
         uint64_t m_varsize;
-        vector<uint64_t> m_shape;
+        vector<uint64_t> m_varshape;
         bool m_completed;
+        bool m_inited=false;
 
         inline vector<uint64_t> offset(const vector<uint64_t> &p, const vector<uint64_t> &o){
             vector<uint64_t> g;
@@ -119,12 +121,16 @@ class CacheMan : public DataMan{
                 );
 
         void flush();
-        const void *get_buffer(string var);
-        void clean(string var, string mode);
+        const void *get_buffer(string doid, string var);
+        void clean(string doid, string var, string mode);
         void clean_all(string mode);
+        vector<string> get_do_list();
+        vector<string> get_var_list(string doid);
 
     private:
-        map<string, CacheItem*> cache;
+        typedef map<string, map<string, CacheItem> > CacheDMap;
+        typedef map<string, CacheItem> CacheVMap;
+        CacheDMap m_cache;
 
 };
 
