@@ -10,8 +10,8 @@ void CacheItem::init(string p_doid,
     m_dtype = p_dtype;
     m_varshape = p_varshape;
     m_bytes = dsize(m_dtype);
-    m_varsize = product(m_varshape, m_bytes);
-    m_buffer = malloc(m_varsize);
+    m_varsize = product(m_varshape);
+    m_buffer = malloc(m_varsize * m_bytes);
 }
 
 CacheItem::CacheItem()
@@ -57,7 +57,6 @@ int CacheItem::put(const void *p_data,
         uint64_t p_timestep,
         int p_tolerance,
         int p_priority){
-
     if(!m_buffer) init(p_doid, p_var, p_dtype, p_varshape);
     uint64_t putsize = product(p_putshape);
     uint64_t chunksize = p_putshape.back();
@@ -84,15 +83,11 @@ void CacheItem::flush(){
 
 void CacheItem::clean(const string mode){
     if(mode == "zero"){
-        for(int i=0; i<m_varsize; i++){
-            ((float*)m_buffer)[i]=0;
-        }
+        memset(m_buffer, 0, m_varsize * m_bytes);
         return;
     }
     if(mode == "nan"){
-        for(int i=0; i<m_varsize; i++){
-            ((float*)m_buffer)[i]=numeric_limits<float>::quiet_NaN();
-        }
+        memset(m_buffer, numeric_limits<float>::quiet_NaN(), m_varsize * m_bytes);
         return;
     }
 }
@@ -158,9 +153,11 @@ void CacheMan::clean(string doid, string var, string mode){
 }
 
 void CacheMan::clean_all(string mode){
-    for(CacheDMap::iterator i = m_cache.begin(); i != m_cache.end(); ++i)
-        for(CacheVMap::iterator j = m_cache[i->first].begin(); j != m_cache[i->first].end(); ++j)
+    for(CacheDMap::iterator i = m_cache.begin(); i != m_cache.end(); ++i){
+        for(CacheVMap::iterator j = m_cache[i->first].begin(); j != m_cache[i->first].end(); ++j){
             j->second.clean(mode);
+        }
+    }
 }
 
 vector<string> CacheMan::get_do_list(){

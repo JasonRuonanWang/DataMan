@@ -3,7 +3,9 @@ CXX=g++-6
 
 CXXFLAGS=-std=c++11
 
-all:
+all:zmq
+
+dump:
 	$(CXX) writeDump.cc -o writeDump.e -ldumpman
 
 zmq:

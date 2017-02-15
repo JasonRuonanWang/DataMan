@@ -55,8 +55,8 @@ void StreamMan::zmq_meta_rep_thread_func(){
     while (zmq_meta_rep_thread_active){
         char msg[1024]="";
         int err = zmq_recv (zmq_meta_rep, msg, 1024, ZMQ_NOBLOCK);
-        zmq_send (zmq_meta_rep, "OK", 10, 0);
         if (err>=0){
+            zmq_send (zmq_meta_rep, "OK", 10, 0);
             cout << "StreamMan::zmq_meta_rep_thread_func: " << msg << endl;
             json j = json::parse(msg);
             if(getmode == "callback"){

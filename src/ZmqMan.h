@@ -9,6 +9,7 @@ class ZmqMan : public StreamMan{
                 int local_port,
                 int remote_port,
                 int num_channels,
+                string mode,
                 vector<int> tolerance,
                 vector<int> priority);
 
@@ -18,6 +19,7 @@ class ZmqMan : public StreamMan{
                 int local_port,
                 int remote_port,
                 int num_channels,
+                string mode,
                 vector<int> tolerance,
                 vector<int> priority);
 
@@ -61,8 +63,7 @@ class ZmqMan : public StreamMan{
         }
 
     private:
-        void *zmq_data_req = NULL;
-        void *zmq_data_rep = NULL;
+        void *zmq_data = NULL;
 
         string getmode = "callback";
         string m_local_ip;

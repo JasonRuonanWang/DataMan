@@ -5,7 +5,9 @@ LINK_LIBS=-lzmq
 LDFLAGS=-L./lib
 INSTALL_PREFIX=$(libpath)
 
-all:mdtmman dumpman zmqman
+all:zmqman install
+
+#all:mdtmman dumpman zmqman
 
 dumpman:
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(LINK_LIBS) src/DumpMan.cc --shared -o lib/libdumpman.so

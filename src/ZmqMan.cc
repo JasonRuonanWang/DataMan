@@ -15,6 +15,7 @@ ZmqMan::ZmqMan(
         int local_port,
         int remote_port,
         int num_channels,
+        string mode,
         vector<int> tolerance,
         vector<int> priority)
 {
@@ -24,13 +25,13 @@ ZmqMan::ZmqMan(
         local_port,
         remote_port,
         num_channels,
+        mode,
         tolerance,
         priority);
 }
 
 ZmqMan::~ZmqMan(){
-    if(zmq_data_req) zmq_close(zmq_data_req);
-    if(zmq_data_rep) zmq_close(zmq_data_rep);
+    if(zmq_data) zmq_close(zmq_data);
 }
 
 void ZmqMan::init(
@@ -39,6 +40,7 @@ void ZmqMan::init(
         int local_port,
         int remote_port,
         int num_channels,
+        string mode,
         vector<int> tolerance,
         vector<int> priority){
     StreamMan::init(make_address(local_ip, local_port, "tcp"), make_address(remote_ip, remote_port, "tcp"));
@@ -49,16 +51,19 @@ void ZmqMan::init(
     m_remote_port = remote_port;
     m_num_channels = num_channels;
 
-    zmq_data_req = zmq_socket (zmq_context, ZMQ_REQ);
-    zmq_data_rep = zmq_socket (zmq_context, ZMQ_REP);
+    zmq_data = zmq_socket (zmq_context, ZMQ_PAIR);
 
     string local_address = make_address(local_ip, local_port+1, "tcp");
     string remote_address = make_address(remote_ip, remote_port+1, "tcp");
 
-    zmq_connect (zmq_data_req, remote_address.c_str());
-    cout << "ZmqMan::init " << remote_address << " connected" << endl;
-    zmq_bind (zmq_data_rep, local_address.c_str());
-    cout << "ZmqMan::init " << local_address << " bound" << endl;
+    if(mode=="sender"){
+        zmq_connect (zmq_data, remote_address.c_str());
+        cout << "ZmqMan::init " << remote_address << " connected" << endl;
+    }
+    else if(mode=="receiver"){
+        zmq_bind (zmq_data, local_address.c_str());
+        cout << "ZmqMan::init " << local_address << " bound" << endl;
+    }
 }
 
 int ZmqMan::put(const void *data,
@@ -80,18 +85,20 @@ int ZmqMan::put(const void *data,
     StreamMan::put(data,doid,var,dtype,putshape,varshape,offset,timestep,tolerance,priority,msg);
 
     char ret[10];
-    zmq_send(zmq_data_req, data, putsize, 0);
-    zmq_recv(zmq_data_req, ret, 10, 0);
+    zmq_send(zmq_data, data, putsize, 0);
+    zmq_recv(zmq_data, ret, 10, 0);
+    cout << "[ZmqMan::put] received " << ret << endl;
 
     return 0;
 }
 
 void ZmqMan::on_recv(json msg){
+    cout << "ZmqMan::on_recv: " << msg << endl;
     if (msg["operation"] == "put"){
         uint64_t putsize = msg["putsize"].get<uint64_t>();
         void *data = malloc(putsize);
-        int err = zmq_recv (zmq_data_rep, data, putsize, 0);
-        zmq_send (zmq_data_rep, "OK", 10, 0);
+        int err = zmq_recv (zmq_data, data, putsize, 0);
+        zmq_send (zmq_data, "OK", 10, 0);
         m_cache.put(data,
                 msg["doid"],
                 msg["var"],
@@ -110,12 +117,12 @@ void ZmqMan::on_recv(json msg){
             for(string i : do_list){
                 vector<string> var_list = m_cache.get_var_list(i);
                 for(string j : var_list){
-                get_callback(m_cache.get_buffer(i,j),
-                        i,
-                        j,
-                        m_cache.get_dtype(i, j),
-                        m_cache.get_shape(i, j)
-                        );
+                    get_callback(m_cache.get_buffer(i,j),
+                            i,
+                            j,
+                            m_cache.get_dtype(i, j),
+                            m_cache.get_shape(i, j)
+                            );
                 }
             }
         }
