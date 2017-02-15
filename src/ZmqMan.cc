@@ -72,8 +72,6 @@ int ZmqMan::put(const void *data,
         int tolerance,
         int priority)
 {
-    cout << "ZmqMan::put" << endl;
-
     json msg;
     uint64_t putsize = product(putshape, dsize(dtype));
     msg["putsize"] = putsize;
@@ -88,37 +86,40 @@ int ZmqMan::put(const void *data,
     return 0;
 }
 
-void ZmqMan::on_recv(json j){
-    if (j["operation"] == "put"){
-        uint64_t putsize = j["putsize"].get<uint64_t>();
+void ZmqMan::on_recv(json msg){
+    if (msg["operation"] == "put"){
+        uint64_t putsize = msg["putsize"].get<uint64_t>();
         void *data = malloc(putsize);
         int err = zmq_recv (zmq_data_rep, data, putsize, 0);
         zmq_send (zmq_data_rep, "OK", 10, 0);
         m_cache.put(data,
-                j["doid"],
-                j["var"],
-                j["dtype"],
-                j["putshape"],
-                j["varshape"],
-                j["offset"],
-                j["timestep"],
+                msg["doid"],
+                msg["var"],
+                msg["dtype"],
+                msg["putshape"],
+                msg["varshape"],
+                msg["offset"],
+                msg["timestep"],
                 0,
                 100);
+        free(data);
     }
-    else if (j["operation"] == "flush"){
+    else if (msg["operation"] == "flush"){
         if(get_callback){
-            vector<string> list = m_cache.get_key_list();
-            for( vector<string>::const_iterator it = list.begin(); it != list.end(); ++it){
-
-                get_callback(m_cache.get_buffer(j["var"]),
-                        j["doid"],
-                        j["var"],
-                        j["dtype"],
-                        j["varshape"].get<vector<uint64_t>>()
+            vector<string> do_list = m_cache.get_do_list();
+            for(string i : do_list){
+                vector<string> var_list = m_cache.get_var_list(i);
+                for(string j : var_list){
+                get_callback(m_cache.get_buffer(i,j),
+                        i,
+                        j,
+                        m_cache.get_dtype(i, j),
+                        m_cache.get_shape(i, j)
                         );
+                }
             }
         }
-        m_cache.clean(j["var"], "nan");
+        m_cache.clean_all("nan");
     }
 }
 

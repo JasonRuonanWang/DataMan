@@ -26,7 +26,6 @@ void get(const void *data,
 
 }
 
-
 int main(){
 
     string local_ip, remote_ip;
@@ -51,7 +50,7 @@ int main(){
     ZmqMan man(local_ip, remote_ip, local_port, remote_port, num_channels, tolerance, priority);
     man.get_callback = get;
 
-    for (int i=0; i<5; i++){
+    for (int i=0; i<10; i++){
         cout << "1 second" << endl;
         usleep(1000000);
     }

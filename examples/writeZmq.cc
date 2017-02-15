@@ -58,13 +58,16 @@ int main(){
         for (int j=0; j<3; j++){
             for (int k=0; k<2; k++){
                 for (int m=0; m<datasize; m++){
-                    data[m] = i*60 + j*10 + m;
+                    data[m] = i*10000 + j*100 + k*10 + m;
                 }
                 offset[0] = i;
                 offset[1] = j*2;
                 offset[2] = k*5;
                 man.put(data, "aaa", "data", "float", putshape, varshape, offset, 0, 0, 100);
-                cout << "writeZmq put" << endl;
+
+                for (int i=0; i<10; i++)
+                    cout << ((float*)data)[i] << " ";
+                cout << endl;
             }
         }
     }

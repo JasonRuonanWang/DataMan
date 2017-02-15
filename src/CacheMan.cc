@@ -12,7 +12,6 @@ void CacheItem::init(string p_doid,
     m_bytes = dsize(m_dtype);
     m_varsize = product(m_varshape, m_bytes);
     m_buffer = malloc(m_varsize);
-    m_inited = true;
 }
 
 CacheItem::CacheItem()
@@ -59,7 +58,7 @@ int CacheItem::put(const void *p_data,
         int p_tolerance,
         int p_priority){
 
-    if(!m_inited) init(p_doid, p_var, p_dtype, p_varshape);
+    if(!m_buffer) init(p_doid, p_var, p_dtype, p_varshape);
     uint64_t putsize = product(p_putshape);
     uint64_t chunksize = p_putshape.back();
     for(uint64_t i=0; i<putsize; i+=chunksize){
@@ -76,6 +75,9 @@ vector<uint64_t> CacheItem::get_shape(){
     return m_varshape;
 }
 
+string CacheItem::get_dtype(){
+    return m_dtype;
+}
 
 void CacheItem::flush(){
 }
@@ -175,3 +177,10 @@ vector<string> CacheMan::get_var_list(string doid){
     return var_list;
 }
 
+vector<uint64_t> CacheMan::get_shape(string doid, string var){
+    return m_cache[doid][var].get_shape();
+}
+
+string CacheMan::get_dtype(string doid, string var){
+    return m_cache[doid][var].get_dtype();
+}

@@ -44,6 +44,7 @@ class CacheItem : public DataMan{
         const void *get_buffer();
         void clean(const string mode);
         vector<uint64_t> get_shape();
+        string get_dtype();
 
     private:
         void *m_buffer=NULL;
@@ -54,7 +55,6 @@ class CacheItem : public DataMan{
         uint64_t m_varsize;
         vector<uint64_t> m_varshape;
         bool m_completed;
-        bool m_inited=false;
 
         inline vector<uint64_t> apply_offset(const vector<uint64_t> &p, const vector<uint64_t> &o){
             vector<uint64_t> g;
@@ -127,6 +127,8 @@ class CacheMan : public DataMan{
         void clean_all(string mode);
         vector<string> get_do_list();
         vector<string> get_var_list(string doid);
+        vector<uint64_t> get_shape(string doid, string var);
+        string get_dtype(string doid, string var);
 
     private:
         typedef map<string, map<string, CacheItem> > CacheDMap;
