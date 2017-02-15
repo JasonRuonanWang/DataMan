@@ -41,7 +41,7 @@ class ZmqMan : public StreamMan{
                 vector<uint64_t> &offset,
                 uint64_t &timestep,
                 int &tolerance,
-                int &priority){}
+                int &priority){return 0;}
 
         virtual int get(void *data,
                 string doid,
@@ -49,7 +49,7 @@ class ZmqMan : public StreamMan{
                 string &dtype,
                 vector<uint64_t> &varshape,
                 uint64_t &timestep
-                ){}
+                ){return 0;}
 
         virtual void on_recv(json j);
 

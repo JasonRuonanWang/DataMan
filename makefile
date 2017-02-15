@@ -1,3 +1,4 @@
+CXX=clang++
 CXX=g++-6
 CXX_FLAGS=-std=c++11
 LINK_LIBS=-lzmq

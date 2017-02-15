@@ -92,6 +92,7 @@ int StreamMan::put(const void *data,
     char ret[10];
     zmq_send(zmq_meta_req, msg.dump().c_str(), msg.dump().length(), 0);
     zmq_recv(zmq_meta_req, ret, 10, 0);
+    return 0;
 }
 
 
