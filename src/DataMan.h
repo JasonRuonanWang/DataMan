@@ -10,8 +10,8 @@ using namespace std;
 
 class DataMan{
     public:
-        DataMan();
-        virtual ~DataMan();
+        DataMan(){}
+        virtual ~DataMan(){}
         virtual int put(const void *data,
                 string doid,
                 string var,
@@ -49,6 +49,24 @@ class DataMan{
                 string var,
                 string dtype,
                 vector<uint64_t> varshape) = NULL;
+
+        void dump(const void *p_data,
+                string p_doid,
+                string p_var,
+                string p_dtype,
+                vector<uint64_t> p_varshape,
+                int p_length
+                ){
+            int s=0;
+            for (int i=0; i<product(p_varshape,1); i++){
+                s++;
+                cout << ((float*)p_data)[i] << " ";
+                if(s == p_length){
+                    cout << endl;
+                    s=0;
+                }
+            }
+        }
 
     protected:
         inline uint64_t product(unsigned int *shape){

@@ -43,6 +43,7 @@ class CacheItem : public DataMan{
         void flush();
         const void *get_buffer();
         void clean(const string mode);
+        vector<uint64_t> get_shape();
 
     private:
         void *m_buffer=NULL;
@@ -55,7 +56,7 @@ class CacheItem : public DataMan{
         bool m_completed;
         bool m_inited=false;
 
-        inline vector<uint64_t> offset(const vector<uint64_t> &p, const vector<uint64_t> &o){
+        inline vector<uint64_t> apply_offset(const vector<uint64_t> &p, const vector<uint64_t> &o){
             vector<uint64_t> g;
             for(int i=0; i<p.size(); i++){
                 g.push_back(p[i]+o[i]);

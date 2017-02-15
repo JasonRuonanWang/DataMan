@@ -55,7 +55,7 @@ int CacheItem::put(const void *p_data,
         vector<uint64_t> p_putshape,
         vector<uint64_t> p_varshape,
         vector<uint64_t> p_offset,
-        uint64_t timestep,
+        uint64_t p_timestep,
         int p_tolerance,
         int p_priority){
 
@@ -64,13 +64,18 @@ int CacheItem::put(const void *p_data,
     uint64_t chunksize = p_putshape.back();
     for(uint64_t i=0; i<putsize; i+=chunksize){
         vector<uint64_t> p = one2multi(p_putshape, i);
-        p = offset(p, p_offset);
+        p = apply_offset(p, p_offset);
         uint64_t ig = multi2one(p_varshape, p);
-        memcpy(m_buffer, p_data, chunksize * m_bytes);
+        memcpy((char*)m_buffer + ig * m_bytes, (char*)p_data + i * m_bytes, chunksize * m_bytes);
     }
 
     return 0;
 }
+
+vector<uint64_t> CacheItem::get_shape(){
+    return m_varshape;
+}
+
 
 void CacheItem::flush(){
 }
@@ -139,6 +144,7 @@ int CacheMan::get(void *data,
 }
 
 void CacheMan::flush(){
+    dump(m_cache["aaa"]["data"].get_buffer(), "aaa", "data", "float",  m_cache["aaa"]["data"].get_shape(), 10);
 }
 
 const void *CacheMan::get_buffer(string doid, string var){
