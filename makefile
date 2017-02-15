@@ -1,25 +1,26 @@
 CXX=clang++
 CXX=g++-6
-CXX_FLAGS=-std=c++11
+CXXFLAGS=-std=c++11 -fPIC
 LINK_LIBS=-lzmq
+LDFLAGS=-L./lib
 INSTALL_PREFIX=$(libpath)
 
-all:mdtmman
+all:mdtmman dumpman zmqman
 
 dumpman:
-	$(CXX) $(CXX_FLAGS) $(LINK_LIBS) src/DumpMan.cc --shared -o lib/libdumpman.so
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(LINK_LIBS) src/DumpMan.cc --shared -o lib/libdumpman.so
 
 streamman:cacheman
-	$(CXX) $(CXX_FLAGS) $(LINK_LIBS) src/StreamMan.cc --shared -o lib/libstreamman.so lib/libcacheman.so
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(LINK_LIBS) src/StreamMan.cc --shared -o lib/libstreamman.so -lcacheman
 
 cacheman:
-	$(CXX) $(CXX_FLAGS) src/CacheMan.cc --shared -o lib/libcacheman.so
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(LINK_LIBS) src/CacheMan.cc --shared -o lib/libcacheman.so
 
 mdtmman:streamman cacheman
-	$(CXX) $(CXX_FLAGS) $(LINK_LIBS) src/MdtmMan.cc --shared -o lib/libmdtmman.so lib/libstreamman.so lib/libcacheman.so
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(LINK_LIBS) src/MdtmMan.cc --shared -o lib/libmdtmman.so -lstreamman -lcacheman
 
 zmqman:streamman cacheman
-	$(CXX) $(CXX_FLAGS) $(LINK_LIBS) src/ZmqMan.cc --shared -o lib/libzmqman.so lib/libstreamman.so lib/libcacheman.so
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(LINK_LIBS) src/ZmqMan.cc --shared -o lib/libzmqman.so -lstreamman -lcacheman
 
 install:
 	cp lib/*.so $(INSTALL_PREFIX)/DataMan/lib/
