@@ -11,15 +11,14 @@ StreamMan::StreamMan()
 {
 }
 
-StreamMan::StreamMan(string local_address, string remote_address)
+StreamMan::StreamMan(string local_address, string remote_address, string mode)
     :DataMan()
 {
-    init(local_address, remote_address);
+    init(local_address, remote_address, mode);
 }
 
 StreamMan::~StreamMan(){
-    if(zmq_meta_req) zmq_close(zmq_meta_req);
-    if(zmq_meta_rep) zmq_close(zmq_meta_rep);
+    if(zmq_meta) zmq_close(zmq_meta);
     if(zmq_context) zmq_ctx_destroy(zmq_context);
     zmq_meta_rep_thread_active = false;
     if(zmq_meta_rep_thread){
@@ -29,15 +28,18 @@ StreamMan::~StreamMan(){
     }
 }
 
-void StreamMan::init(string local_address, string remote_address){
+void StreamMan::init(string local_address, string remote_address, string mode){
     if(!zmq_context){
         zmq_context = zmq_ctx_new ();
-        zmq_meta_req = zmq_socket (zmq_context, ZMQ_REQ);
-        zmq_meta_rep = zmq_socket (zmq_context, ZMQ_REP);
-        zmq_connect (zmq_meta_req, remote_address.c_str());
-        cout << "StreamMan::init " << remote_address << " connected" << endl;
-        zmq_bind (zmq_meta_rep, local_address.c_str());
-        cout << "StreamMan::init " << local_address << " bound" << endl;
+        zmq_meta = zmq_socket (zmq_context, ZMQ_PAIR);
+        if(mode == "sender"){
+            zmq_connect (zmq_meta, remote_address.c_str());
+            cout << "StreamMan::init " << remote_address << " connected" << endl;
+        }
+        else if(mode == "receiver"){
+            zmq_bind (zmq_meta, local_address.c_str());
+            cout << "StreamMan::init " << local_address << " bound" << endl;
+        }
         zmq_meta_rep_thread_active = true;
         zmq_meta_rep_thread = new thread(&StreamMan::zmq_meta_rep_thread_func, this);
     }
@@ -47,16 +49,15 @@ void StreamMan::flush(){
     json msg;
     msg["operation"] = "flush";
     char ret[10];
-    zmq_send(zmq_meta_req, msg.dump().c_str(), msg.dump().length(), 0);
-    zmq_recv(zmq_meta_req, ret, 10, 0);
+    zmq_send(zmq_meta, msg.dump().c_str(), msg.dump().length(), 0);
+    zmq_recv(zmq_meta, ret, 10, 0);
 }
 
 void StreamMan::zmq_meta_rep_thread_func(){
     while (zmq_meta_rep_thread_active){
         char msg[1024]="";
-        int err = zmq_recv (zmq_meta_rep, msg, 1024, ZMQ_NOBLOCK);
+        int err = zmq_recv (zmq_meta, msg, 1024, ZMQ_NOBLOCK);
         if (err>=0){
-            zmq_send (zmq_meta_rep, "OK", 10, 0);
             cout << "StreamMan::zmq_meta_rep_thread_func: " << msg << endl;
             json j = json::parse(msg);
             if(getmode == "callback"){
@@ -90,8 +91,7 @@ int StreamMan::put(const void *data,
     msg["timestep"] = timestep;
 
     char ret[10];
-    zmq_send(zmq_meta_req, msg.dump().c_str(), msg.dump().length(), 0);
-    zmq_recv(zmq_meta_req, ret, 10, 0);
+    zmq_send(zmq_meta, msg.dump().c_str(), msg.dump().length(), 0);
     return 0;
 }
 

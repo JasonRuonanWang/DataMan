@@ -73,7 +73,7 @@ int main(){
                 }
             }
         }
-        man.flush();
+//        man.flush();
 
     }
 

@@ -43,7 +43,7 @@ void ZmqMan::init(
         string mode,
         vector<int> tolerance,
         vector<int> priority){
-    StreamMan::init(make_address(local_ip, local_port, "tcp"), make_address(remote_ip, remote_port, "tcp"));
+    StreamMan::init(make_address(local_ip, local_port, "tcp"), make_address(remote_ip, remote_port, "tcp"), mode);
 
     m_local_ip = local_ip;
     m_remote_ip = remote_ip;
@@ -86,7 +86,6 @@ int ZmqMan::put(const void *data,
 
     char ret[10];
     zmq_send(zmq_data, data, putsize, 0);
-    zmq_recv(zmq_data, ret, 10, 0);
     cout << "[ZmqMan::put] received " << ret << endl;
 
     return 0;
@@ -97,8 +96,9 @@ void ZmqMan::on_recv(json msg){
     if (msg["operation"] == "put"){
         uint64_t putsize = msg["putsize"].get<uint64_t>();
         void *data = malloc(putsize);
+        cout << "ZmqMan::on_recv: " << msg << endl;
         int err = zmq_recv (zmq_data, data, putsize, 0);
-        zmq_send (zmq_data, "OK", 10, 0);
+        cout << "ZmqMan::on_recv: " << msg << endl;
         m_cache.put(data,
                 msg["doid"],
                 msg["var"],

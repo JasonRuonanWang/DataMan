@@ -8,11 +8,11 @@ class StreamMan : public DataMan{
     public:
         StreamMan();
 
-        StreamMan(string local_address, string remote_address);
+        StreamMan(string local_address, string remote_address, string mode);
 
         ~StreamMan();
 
-        void init(string local_address, string remote_address);
+        void init(string local_address, string remote_address, string mode);
 
         virtual int put(const void *data,
                 string doid,
@@ -45,8 +45,7 @@ class StreamMan : public DataMan{
         void *zmq_context = NULL;
         CacheMan m_cache;
     private:
-        void *zmq_meta_req = NULL;
-        void *zmq_meta_rep = NULL;
+        void *zmq_meta = NULL;
         void zmq_meta_rep_thread_func();
         bool zmq_meta_rep_thread_active;
         thread *zmq_meta_rep_thread=NULL;
