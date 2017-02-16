@@ -48,9 +48,7 @@ void StreamMan::init(string local_address, string remote_address, string mode){
 void StreamMan::flush(){
     json msg;
     msg["operation"] = "flush";
-    char ret[10];
     zmq_send(zmq_meta, msg.dump().c_str(), msg.dump().length(), 0);
-    zmq_recv(zmq_meta, ret, 10, 0);
 }
 
 void StreamMan::zmq_meta_rep_thread_func(){
@@ -90,7 +88,6 @@ int StreamMan::put(const void *data,
     msg["offset"] = offset;
     msg["timestep"] = timestep;
 
-    char ret[10];
     zmq_send(zmq_meta, msg.dump().c_str(), msg.dump().length(), 0);
     return 0;
 }

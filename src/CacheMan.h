@@ -57,7 +57,6 @@ class CacheItem : public DataMan{
         bool m_completed;
 
         inline vector<uint64_t> apply_offset(const vector<uint64_t> &p, const vector<uint64_t> &o){
-            cout << p.size() << "  " << o.size() << endl;
             vector<uint64_t> g;
             for(int i=0; i<p.size(); i++){
                 g.push_back(p[i]+o[i]);

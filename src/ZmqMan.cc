@@ -6,7 +6,6 @@
 ZmqMan::ZmqMan()
 :StreamMan()
 {
-
 }
 
 ZmqMan::ZmqMan(
@@ -83,22 +82,15 @@ int ZmqMan::put(const void *data,
     uint64_t varsize = product(varshape, dsize(dtype));
     msg["varsize"] = varsize;
     StreamMan::put(data,doid,var,dtype,putshape,varshape,offset,timestep,tolerance,priority,msg);
-
-    char ret[10];
     zmq_send(zmq_data, data, putsize, 0);
-    cout << "[ZmqMan::put] received " << ret << endl;
-
     return 0;
 }
 
 void ZmqMan::on_recv(json msg){
-    cout << "ZmqMan::on_recv: " << msg << endl;
     if (msg["operation"] == "put"){
         uint64_t putsize = msg["putsize"].get<uint64_t>();
         void *data = malloc(putsize);
-        cout << "ZmqMan::on_recv: " << msg << endl;
         int err = zmq_recv (zmq_data, data, putsize, 0);
-        cout << "ZmqMan::on_recv: " << msg << endl;
         m_cache.put(data,
                 msg["doid"],
                 msg["var"],
