@@ -80,6 +80,9 @@ MdtmMan::MdtmMan(string local_address,
 		pipes.push_back(fp);
 		cout << "init pipe " << fullpipename << endl;
 */
+            cout << "sender pipe open" << endl;
+            int fp = open(fullpipename.c_str(), O_WRONLY);
+            pipes.push_back(fp);
 	}
 	if (mode == "receiver"){
 		cout << "receiver pipe open" << endl;
