@@ -63,113 +63,123 @@ MdtmMan::MdtmMan(string local_address,
         stringstream pipename;
         pipename << pipename_prefix << i;
         string fullpipename = prefix + pipename.str();
-        cout << fullpipename << endl;
-        if (mode == "sender"){
-    //FILE *fp = fopen("/tmp/MdtmManPipe0", "wb");
-    FILE *fp = fopen(fullpipename.c_str(),"wb");
-    int flags;
-    int fd;
+	cout << fullpipename << endl;
+	if (mode == "sender"){
+		//FILE *fp = fopen("/tmp/MdtmManPipe0", "wb");
+		/*
+		FILE *fp = fopen(fullpipename.c_str(),"wb");
+		int flags;
+		int fd;
 
-    fd = fileno(fp);
-    flags = fcntl(fd, F_GETFL);
-    fcntl(fd, F_SETFL, flags|O_NONBLOCK);	
+		fd = fileno(fp);
+		flags = fcntl(fd, F_GETFL);
+		fcntl(fd, F_SETFL, flags|O_NONBLOCK);	
 
-            cout << "sender pipe open" << endl;
-//            int fp = open(fullpipename.c_str(), O_WRONLY);
-            pipes.push_back(fp);
-            cout << "init pipe " << fullpipename << endl;
-        }
-        if (mode == "receiver"){
-            cout << "receiver pipe open" << endl;
-            int fp = open(fullpipename.c_str(), O_RDONLY | O_NONBLOCK);
-            pipes.push_back(fp);
-            cout << "init pipe " << fullpipename << endl;
-        }
-        printf("pipe pointer %d ------------------- \n", pipes[i]);
-        pipenames.push_back(pipename.str());
+		cout << "sender pipe open" << endl;
+		//            int fp = open(fullpipename.c_str(), O_WRONLY);
+		pipes.push_back(fp);
+		cout << "init pipe " << fullpipename << endl;
+*/
+	}
+	if (mode == "receiver"){
+		cout << "receiver pipe open" << endl;
+		int fp = open(fullpipename.c_str(), O_RDONLY | O_NONBLOCK);
+		pipes.push_back(fp);
+		cout << "init pipe " << fullpipename << endl;
+	}
+	printf("pipe pointer %d ------------------- \n", pipes[i]);
+	pipenames.push_back(pipename.str());
     }
 
 
     // ZMQ_DataMan_MDTM
-/*
-    zmq_ipc_req = zmq_socket (zmq_context, ZMQ_REQ);
-    zmq_ipc_rep = zmq_socket (zmq_context, ZMQ_REP);
-    zmq_connect (zmq_ipc_req, "ipc:///tmp/ADIOS_MDTM_pipe");
-    zmq_bind (zmq_ipc_rep, "ipc:///tmp/MDTM_ADIOS_pipe");
-*/
-    char buffer_return[10];
-    zmq_send (zmq_ipc_req, pipe_desc.dump().c_str(), pipe_desc.dump().length(), 0);
-    zmq_recv (zmq_ipc_req, buffer_return, 10, 0);
-
-    zmq_ipc_rep_thread_active = true;
-    zmq_ipc_rep_thread = new thread(&MdtmMan::zmq_ipc_rep_thread_func, this);
-*/
+    /*
+       zmq_ipc_req = zmq_socket (zmq_context, ZMQ_REQ);
+       zmq_ipc_rep = zmq_socket (zmq_context, ZMQ_REP);
+       zmq_connect (zmq_ipc_req, "ipc:///tmp/ADIOS_MDTM_pipe");
+       zmq_bind (zmq_ipc_rep, "ipc:///tmp/MDTM_ADIOS_pipe");
+       */
 }
 
 MdtmMan::~MdtmMan(){
-    zmq_close (zmq_ipc_rep);
-    zmq_close (zmq_ipc_req);
-    zmq_ipc_rep_thread_active = false;
-    zmq_ipc_rep_thread->join();
-    delete zmq_ipc_rep_thread;
+	zmq_close (zmq_ipc_rep);
+	zmq_close (zmq_ipc_req);
+	zmq_ipc_rep_thread_active = false;
+	zmq_ipc_rep_thread->join();
+	delete zmq_ipc_rep_thread;
 }
 
 int MdtmMan::put(const void *data,
-        string doid,
-        string var,
-        string dtype,
-        vector<uint64_t> putshape,
-        vector<uint64_t> varshape,
-        vector<uint64_t> offset,
-        int tolerance,
-        int priority)
+		string doid,
+		string var,
+		string dtype,
+		vector<uint64_t> putshape,
+		vector<uint64_t> varshape,
+		vector<uint64_t> offset,
+		int tolerance,
+		int priority)
 {
-    json msg;
-    msg["operation"] = "put";
-    msg["doid"] = doid;
-    msg["var"] = var;
-    msg["dtype"] = dtype;
-    msg["putshape"] = putshape;
-    msg["varshape"] = varshape;
-    msg["offset"] = offset;
+	json msg;
+	msg["operation"] = "put";
+	msg["doid"] = doid;
+	msg["var"] = var;
+	msg["dtype"] = dtype;
+	msg["putshape"] = putshape;
+	msg["varshape"] = varshape;
+	msg["offset"] = offset;
 
-    int index = closest(priority, pipe_desc["priority"], true);
-    msg["pipe"] = pipe_desc["pipe_names"][index];
+	int index = closest(priority, pipe_desc["priority"], true);
+	msg["pipe"] = pipe_desc["pipe_names"][index];
 
-    uint64_t putsize = std::accumulate(putshape.begin(), putshape.end(), dsize(dtype), std::multiplies<uint64_t>());
-    msg["putsize"] = putsize;
-    uint64_t varsize = std::accumulate(varshape.begin(), varshape.end(), dsize(dtype), std::multiplies<uint64_t>());
-    msg["varsize"] = varsize;
+	uint64_t putsize = std::accumulate(putshape.begin(), putshape.end(), dsize(dtype), std::multiplies<uint64_t>());
+	msg["putsize"] = putsize;
+	uint64_t varsize = std::accumulate(varshape.begin(), varshape.end(), dsize(dtype), std::multiplies<uint64_t>());
+	msg["varsize"] = varsize;
 
-    cout << msg << endl;
+	cout << msg << endl;
 
-    char ret[10];
-    zmq_send(zmq_tcp_req, msg.dump().c_str(), msg.dump().length(), 0);
-    zmq_recv(zmq_tcp_req, ret, 10, 0);
+	char ret[10];
+	zmq_send(zmq_tcp_req, msg.dump().c_str(), msg.dump().length(), 0);
+	zmq_recv(zmq_tcp_req, ret, 10, 0);
 
-    index=0;
-    for(int i=0; i<pipenames.size(); i++){
-        if(rmquote(msg["pipe"].dump()) == pipenames[i]){
-            index=i;
-        }
-    }
-    string pipename = rmquote(pipe_desc["pipe_prefix"].dump()) + rmquote(msg["pipe"].dump());
-    fwrite(data, 1, putsize, pipes[index]);
-    return 0;
+	index=0;
+	for(int i=0; i<pipenames.size(); i++){
+		if(rmquote(msg["pipe"].dump()) == pipenames[i]){
+			index=i;
+		}
+	}
+	string pipename = rmquote(pipe_desc["pipe_prefix"].dump()) + rmquote(msg["pipe"].dump());
+	write(pipes[index],data, putsize);
+	return 0;
 }
 
 int MdtmMan::get(void *data, json j){
-    int putsize = j["putsize"].get<int>();
-    int index=0;
-    for(int i=0; i<pipenames.size(); i++){
-        cout << j["pipe"].dump() << "    " << pipenames[i] << endl;
-        if(rmquote(j["pipe"].dump()) == pipenames[i]){
-            index=i;
-            cout << "found pipe " << j["pipe"].dump() << "    " << i << endl;
-        }
-    }
-    fread(data, 1, putsize, pipes[index]);
-    return 0;
+	int putsize = j["putsize"].get<int>();
+	int index=0;
+	for(int i=0; i<pipenames.size(); i++){
+		cout << j["pipe"].dump() << "    " << pipenames[i] << endl;
+		if(rmquote(j["pipe"].dump()) == pipenames[i]){
+			index=i;
+			cout << "found pipe " << j["pipe"].dump() << "    " << i << endl;
+		}
+	}
+
+	int s = 0;
+
+	while (s<putsize){
+		cout << "trying to read " << putsize - s << endl;
+		int ret = read(pipes[index], ((char*)data) + s, putsize - s);
+
+		if(ret > 0){
+			cout << "actually read " << ret << endl;
+			s += ret;
+			cout << "already read  " << s << " for this operation" << endl;
+			cout << "lacking " << putsize -s << endl;
+		}
+		else
+			usleep(10000);
+	}
+	return 0;
 }
 
 void MdtmMan::zmq_ipc_rep_thread_func(){
