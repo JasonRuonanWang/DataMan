@@ -48,17 +48,16 @@ int main(){
     putshape[2] = 5;
 
     int datasize = 10;
+    float data[100];
 
-    float data[datasize];
-
-	cout << "writing data ... " << endl;
+    cout << "writing data ... " << endl;
 
     for (int i=0; i<4; i++){
-        for (int j=0; j<3; j++){
-            for (int k=0; k<2; k++){
+        for (int j=0; j<30; j++){
+            for (int k=0; k<200; k++){
                 for (int m=0; m<datasize; m++){
                     data[m] = 'A' + 1;
-cout << data[m] << "  ";
+		    //cout << data[m] << "  ";
                 }
                 offset[0] = i;
                 offset[1] = j*2;
@@ -66,14 +65,11 @@ cout << data[m] << "  ";
                 dataman_write(data, "aaa", "data", "float", putshape, varshape, offset, 0, 100);
             }
         }
-
-cout << endl;
-
-
     }
 
     dataman_flush();
 
+    cout << "Program is done successfully." << endl;
 
     return 0;
 }

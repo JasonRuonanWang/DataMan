@@ -37,7 +37,6 @@ void dataman_write(const void *data,
         int tolerance,
         int priority)
 {
-    printf("DataManager::dataman_write()\n");
     if(!dman)
         dataman_init();
     dman->put(data, doid, var, dtype, putshape, varshape, offset, tolerance, priority);
@@ -46,6 +45,7 @@ void dataman_write(const void *data,
 
 void dataman_flush(){
     dman->flush();
+    delete dman;
 }
 
 void dataman_write_c_to_cpp(const void *data,

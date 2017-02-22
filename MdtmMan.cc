@@ -21,6 +21,8 @@ MdtmMan::MdtmMan(string local_address,
     pipe_desc["mode"] = mode;
     pipe_desc["pipe_prefix"] = prefix;
 
+    nbytes_sent = 0;
+
     string pipename_prefix = "MdtmManPipe";
     for(int i=0; i<num_pipes; i++){
         stringstream pipename;
@@ -80,6 +82,9 @@ MdtmMan::MdtmMan(string local_address,
 		pipes.push_back(fp);
 		cout << "init pipe " << fullpipename << endl;
 */
+            cout << "sender pipe open" << endl;
+            int fp = open(fullpipename.c_str(), O_WRONLY);
+            pipes.push_back(fp);
 	}
 	if (mode == "receiver"){
 		cout << "receiver pipe open" << endl;
@@ -102,6 +107,10 @@ MdtmMan::MdtmMan(string local_address,
 }
 
 MdtmMan::~MdtmMan(){
+	while(!pipes.empty()) {
+		close(pipes.back());
+		pipes.pop_back();
+	}
 	zmq_close (zmq_ipc_rep);
 	zmq_close (zmq_ipc_req);
 	zmq_ipc_rep_thread_active = false;
@@ -136,11 +145,41 @@ int MdtmMan::put(const void *data,
 	uint64_t varsize = std::accumulate(varshape.begin(), varshape.end(), dsize(dtype), std::multiplies<uint64_t>());
 	msg["varsize"] = varsize;
 
-	cout << msg << endl;
+	if(1) {
+		char ret[10];
+		int rc;
 
-	char ret[10];
-	zmq_send(zmq_tcp_req, msg.dump().c_str(), msg.dump().length(), 0);
-	zmq_recv(zmq_tcp_req, ret, 10, 0);
+		//cout << msg << endl;
+		rc = zmq_send(zmq_tcp_req, msg.dump().c_str(), msg.dump().length(), 0);
+		if (rc < 0) {
+			cout << "zmq_send failed: " <<  strerror(errno) << endl;
+			switch(errno) {
+				case EAGAIN:
+					cout << "EAGAIN" << endl;
+					break;
+				case ENOTSUP:
+					cout << "ENOTSUP" << endl;
+					break;
+				case EFSM:
+					cout << "EFSM" << endl;
+					break;
+				case ETERM:
+					cout << "ETERM" << endl;
+					break;
+				case ENOTSOCK:
+					cout << "ENOTSOCK" << endl;
+					break;
+				case EINTR:
+					cout << "EINTR" << endl;
+					break;
+			}
+		}
+		assert(rc >= 0);
+	    if(nbytes_sent++%1000 == 0)
+	      cout << "sent " << nbytes_sent << " messages: " << msg << endl;
+	}
+
+	//zmq_recv(zmq_tcp_req, ret, 10, 0);
 
 	index=0;
 	for(int i=0; i<pipenames.size(); i++){
