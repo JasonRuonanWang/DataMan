@@ -14,18 +14,8 @@ class StreamMan : public DataMan{
 
         void init(string local_address, string remote_address, string mode);
 
-        virtual int put(const void *data,
-                string doid,
-                string var,
-                string dtype,
-                vector<uint64_t> putshape,
-                vector<uint64_t> varshape,
-                vector<uint64_t> offset,
-                uint64_t timestep,
-                int tolerance,
-                int priority) = 0;
 
-        int put(const void *data,
+        int put(void *data,
                 string doid,
                 string var,
                 string dtype,

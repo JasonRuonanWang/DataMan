@@ -48,7 +48,7 @@ int main(){
     priority.assign(num_channels, 0);
 
     ZmqMan man(local_ip, remote_ip, local_port, remote_port, num_channels, "receiver", tolerance, priority);
-    man.get_callback = get;
+    man.reg_callback(get);
 
     for (int i=0; i<100000; i++){
         cout << "1 second" << endl;

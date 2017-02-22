@@ -13,7 +13,7 @@ class MdtmMan : public StreamMan{
                 vector<int> tolerance,
                 vector<int> priority);
 
-        int put(const void *data,
+        int put(void *data,
                 string doid,
                 string var,
                 string dtype,
@@ -27,13 +27,12 @@ class MdtmMan : public StreamMan{
         int get(void *data,
                 string doid,
                 string var,
-                string &dtype,
-                vector<uint64_t> &getshape,
-                vector<uint64_t> &varshape,
-                vector<uint64_t> &offset,
-                uint64_t &timestep,
-                int &tolerance,
-                int &priority);
+                string dtype,
+                vector<uint64_t> getshape,
+                vector<uint64_t> varshape,
+                vector<uint64_t> offset,
+                uint64_t timestep
+               );
 
         int get(void *data,
                 string doid,

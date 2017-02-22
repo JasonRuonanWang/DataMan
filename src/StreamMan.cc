@@ -66,7 +66,7 @@ void StreamMan::zmq_meta_rep_thread_func(){
     }
 }
 
-int StreamMan::put(const void *data,
+int StreamMan::put(void *data,
         string doid,
         string var,
         string dtype,

@@ -1,40 +1,66 @@
+#include"DataMan.h"
 #include<string>
 #include<vector>
 using namespace std;
 
 
-void dataman_terminate();
-void dataman_flush();
+class DataManager: public DataMan{
+    public:
+        DataManager(
+                string p_local_ip,
+                string p_remote_ip,
+                int p_local_port,
+                int p_remote_port,
+                int p_num_channels,
+                vector<int> p_tolerance,
+                vector<int> p_priority
+                );
+        ~DataManager();
 
-void dataman_write(const void *data,
-        string doid,
-        string var,
-        string dtype,
-        vector<uint64_t> putshape,
-        vector<uint64_t> varshape,
-        vector<uint64_t> offset,
-        uint64_t timestep,
-        int tolerance=0,
-        int priority=100);
+        int put(void *p_data,
+                string p_doid,
+                string p_var,
+                string p_dtype,
+                vector<uint64_t> p_putshape,
+                vector<uint64_t> p_varshape,
+                vector<uint64_t> p_offset,
+                uint64_t p_timestep,
+                int p_tolerance,
+                int p_priority
+                );
 
-void dataman_init(string local_address ="tcp://127.0.0.1:12306",
-        string remote_address="tcp://127.0.0.1:12307",
-//void dataman_init(string local_address ="tcp://131.225.2.31:12306",
-//        string remote_address="tcp://131.225.2.29:12307",
-        string mode="sender",
-        string prefix="/tmp/MdtmManPipes/",
-        int num_pipes=1,
-        vector<int> tolerance=vector<int>(),
-        vector<int> priority=vector<int>());
+        int get(void *p_data,
+                string p_doid,
+                string p_var,
+                string p_dtype,
+                vector<uint64_t> p_getshape,
+                vector<uint64_t> p_varshape,
+                vector<uint64_t> p_offset,
+                uint64_t p_timestep
+                );
 
-void dataman_reg_cb(void (*cb)
-        (const void *data,
-         string doid,
-         string var,
-         string dtype,
-         vector<uint64_t> varshape),
-        string var,
-        string doid
-        );
+        int get(void *p_data,
+                string p_doid,
+                string p_var,
+                string &p_dtype,
+                vector<uint64_t> &p_varshape,
+                uint64_t &p_timestep
+                );
+        void flush();
+
+    private:
+        void init();
+
+        string m_local_ip="";
+        string m_remote_ip="";
+        int m_local_port=0;
+        int m_remote_port=0;
+        int m_num_channels=0;
+        vector<int> m_tolerance;
+        vector<int> m_priority;
+        string m_filename="";
+
+
+};
 
 

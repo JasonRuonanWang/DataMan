@@ -65,7 +65,7 @@ void ZmqMan::init(
     }
 }
 
-int ZmqMan::put(const void *data,
+int ZmqMan::put(void *data,
         string doid,
         string var,
         string dtype,

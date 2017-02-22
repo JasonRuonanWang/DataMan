@@ -48,10 +48,10 @@ int main(){
     priority.assign(num_pipes, 0);
 
     MdtmMan mdtmman(receiver_address, sender_address, mode, prefix, num_pipes, tolerance, priority);
-    mdtmman.get_callback = get;
+    mdtmman.reg_callback(get);
 
 
-    for (int i=0; i<3; i++){
+    for (int i=0; i<100; i++){
         cout << "1 second" << endl;
         usleep(1000000);
     }

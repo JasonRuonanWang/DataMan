@@ -12,43 +12,47 @@ class DataMan{
     public:
         DataMan(){}
         virtual ~DataMan(){}
-        virtual int put(const void *data,
-                string doid,
-                string var,
-                string dtype,
-                vector<uint64_t> putshape,
-                vector<uint64_t> varshape,
-                vector<uint64_t> offset,
-                uint64_t timestep,
-                int tolerance,
-                int priority) = 0;
+        virtual int put(void *p_data,
+                string p_doid,
+                string p_var,
+                string p_dtype,
+                vector<uint64_t> p_putshape,
+                vector<uint64_t> p_varshape,
+                vector<uint64_t> p_offset,
+                uint64_t p_timestep,
+                int p_tolerance,
+                int p_priority
+                ) = 0;
 
-        virtual int get(void *data,
-                string doid,
-                string var,
-                string &dtype,
-                vector<uint64_t> &getshape,
-                vector<uint64_t> &varshape,
-                vector<uint64_t> &offset,
-                uint64_t &timestep,
-                int &tolerance,
-                int &priority) = 0;
+        virtual int get(void *p_data,
+                string p_doid,
+                string p_var,
+                string p_dtype,
+                vector<uint64_t> p_getshape,
+                vector<uint64_t> p_varshape,
+                vector<uint64_t> p_offset,
+                uint64_t p_timestep
+                ) = 0;
 
-        virtual int get(void *data,
-                string doid,
-                string var,
-                string &dtype,
-                vector<uint64_t> &varshape,
-                uint64_t &timestep
+        virtual int get(void *p_data,
+                string p_doid,
+                string p_var,
+                string &p_dtype,
+                vector<uint64_t> &p_varshape,
+                uint64_t &p_timestep
                 ) = 0;
 
         virtual void flush() = 0;
 
-        void (*get_callback)(const void *data,
-                string doid,
-                string var,
-                string dtype,
-                vector<uint64_t> varshape) = NULL;
+        void reg_callback(void (*cb)
+            (const void *data,
+             string doid,
+             string var,
+             string dtype,
+             vector<uint64_t> varshape)
+            ){
+            get_callback = cb;
+        }
 
         void dump(const void *p_data,
                 string p_doid,
@@ -68,7 +72,17 @@ class DataMan{
             }
         }
 
+        void add_next(unique_ptr<DataMan> p_next){
+            next.push_back(move(p_next));
+        }
+
     protected:
+        void (*get_callback)(const void *data,
+                string doid,
+                string var,
+                string dtype,
+                vector<uint64_t> varshape) = NULL;
+
         inline uint64_t product(unsigned int *shape){
             unsigned int s = 1;
             if(shape){
@@ -172,7 +186,7 @@ class DataMan{
 
 
         string getmode = "callback"; // graph, callback
-        DataMan *next = NULL;
+        vector<unique_ptr<DataMan>> next;
 };
 
 

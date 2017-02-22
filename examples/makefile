@@ -3,10 +3,15 @@ CXX=g++-6
 
 CXXFLAGS=-std=c++11
 
-all:zmq
+default:zmq
+
+all:zmq mdtm zfp cache dump
 
 dump:
 	$(CXX) writeDump.cc -o writeDump.e -ldumpman
+
+zfp:
+	$(CXX) writeZfp.cc -o writeZfp.e
 
 zmq:
 	$(CXX) $(CXXFLAGS) writeZmq.cc -o writeZmq.e -lzmqman -lstreamman

@@ -18,7 +18,7 @@ MdtmMan::MdtmMan(string local_address,
         int num_pipes,
         vector<int> tolerance,
         vector<int> priority)
-    :StreamMan(local_address, remote_address)
+    :StreamMan(local_address, remote_address, mode)
 {
     pipe_desc["operation"] = "init";
     pipe_desc["mode"] = mode;
@@ -82,13 +82,12 @@ MdtmMan::~MdtmMan(){
 int MdtmMan::get(void *data,
         string doid,
         string var,
-        string &dtype,
-        vector<uint64_t> &getshape,
-        vector<uint64_t> &varshape,
-        vector<uint64_t> &offset,
-        uint64_t &timestep,
-        int &tolerance,
-        int &priority){
+        string dtype,
+        vector<uint64_t> getshape,
+        vector<uint64_t> varshape,
+        vector<uint64_t> offset,
+        uint64_t timestep
+        ){
 
     return 0;
 }
@@ -98,12 +97,13 @@ int MdtmMan::get(void *data,
         string var,
         string &dtype,
         vector<uint64_t> &varshape,
-        uint64_t &timestep){
+        uint64_t &timestep
+        ){
 
     return 0;
 }
 
-int MdtmMan::put(const void *data,
+int MdtmMan::put(void *data,
         string doid,
         string var,
         string dtype,
@@ -145,22 +145,20 @@ void MdtmMan::on_recv(json j){
     iqueue.push(0);
 
     // for flush
-    /*
     if(jqueue.front()["operation"] == "flush"){
         if(get_callback){
-            get_callback(m_cache.get_buffer(jqueue.front()["var"]),
+            get_callback(m_cache.get_buffer(jqueue.front()["doid"], jqueue.front()["var"]),
                     jqueue.front()["doid"],
                     jqueue.front()["var"],
                     jqueue.front()["dtype"],
                     jqueue.front()["varshape"].get<vector<uint64_t>>()
                     );
         }
-        m_cache.clean(jqueue.front()["var"], "nan");
+        m_cache.clean_all("nan");
         bqueue.pop();
         iqueue.pop();
         jqueue.pop();
     }
-    */
 
 
     // for put

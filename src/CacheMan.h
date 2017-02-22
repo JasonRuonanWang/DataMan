@@ -11,7 +11,7 @@ class CacheItem : public DataMan{
                 vector<uint64_t> varshape
                 );
 
-        int put(const void *data,
+        int put(void *data,
                 string doid,
                 string var,
                 string dtype,
@@ -22,23 +22,23 @@ class CacheItem : public DataMan{
                 int tolerance,
                 int priority);
 
-        int get(void *data,
-                string doid,
-                string var,
-                string &dtype,
-                vector<uint64_t> &getshape,
-                vector<uint64_t> &varshape,
-                vector<uint64_t> &offset,
-                uint64_t &timestep,
-                int &tolerance,
-                int &priority);
+        virtual int get(void *p_data,
+                string p_doid,
+                string p_var,
+                string p_dtype,
+                vector<uint64_t> p_getshape,
+                vector<uint64_t> p_varshape,
+                vector<uint64_t> p_offset,
+                uint64_t p_timestep
+                );
 
-        int get(void *data,
-                string doid,
-                string var,
-                string &dtype,
-                vector<uint64_t> &varshape,
-                uint64_t &timestep);
+        virtual int get(void *p_data,
+                string p_doid,
+                string p_var,
+                string &p_dtype,
+                vector<uint64_t> &p_varshape,
+                uint64_t &p_timestep
+                );
 
         void flush();
         const void *get_buffer();
@@ -91,7 +91,7 @@ class CacheMan : public DataMan{
         CacheMan();
         ~CacheMan();
 
-        int put(const void *data,
+        int put(void *data,
                 string doid,
                 string var,
                 string dtype,
@@ -102,23 +102,22 @@ class CacheMan : public DataMan{
                 int tolerance,
                 int priority);
 
-        int get(void *data,
-                string doid,
-                string var,
-                string &dtype,
-                vector<uint64_t> &getshape,
-                vector<uint64_t> &varshape,
-                vector<uint64_t> &offset,
-                uint64_t &timestep,
-                int &tolerance,
-                int &priority);
+        virtual int get(void *p_data,
+                string p_doid,
+                string p_var,
+                string p_dtype,
+                vector<uint64_t> p_getshape,
+                vector<uint64_t> p_varshape,
+                vector<uint64_t> p_offset,
+                uint64_t p_timestep
+                );
 
-        int get(void *data,
-                string doid,
-                string var,
-                string &dtype,
-                vector<uint64_t> &varshape,
-                uint64_t &timestep
+        virtual int get(void *p_data,
+                string p_doid,
+                string p_var,
+                string &p_dtype,
+                vector<uint64_t> &p_varshape,
+                uint64_t &p_timestep
                 );
 
         void flush();

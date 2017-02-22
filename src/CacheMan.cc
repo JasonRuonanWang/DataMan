@@ -23,31 +23,29 @@ CacheItem::~CacheItem(){
     if(m_buffer) free(m_buffer);
 }
 
-int CacheItem::get(void *data,
-        string doid,
-        string var,
-        string &dtype,
-        vector<uint64_t> &varshape,
-        uint64_t &timestep
+int CacheItem::get(void *p_data,
+        string p_doid,
+        string p_var,
+        string p_dtype,
+        vector<uint64_t> p_getshape,
+        vector<uint64_t> p_varshape,
+        vector<uint64_t> p_offset,
+        uint64_t p_timestep
         ){
-
     return 0;
 }
 
-int CacheItem::get(void *data,
-        string doid,
-        string var,
-        string &dtype,
-        vector<uint64_t> &getshape,
-        vector<uint64_t> &varshape,
-        vector<uint64_t> &offset,
-        uint64_t &timestep,
-        int &tolerance,
-        int &priority){
+int CacheItem::get(void *p_data,
+        string p_doid,
+        string p_var,
+        string &p_dtype,
+        vector<uint64_t> &p_varshape,
+        uint64_t &p_timestep
+        ){
     return 0;
 }
 
-int CacheItem::put(const void *p_data,
+int CacheItem::put(void *p_data,
         string p_doid,
         string p_var,
         string p_dtype,
@@ -102,7 +100,7 @@ CacheMan::CacheMan(){
 CacheMan::~CacheMan(){
 }
 
-int CacheMan::put(const void *p_data,
+int CacheMan::put(void *p_data,
         string p_doid,
         string p_var,
         string p_dtype,
@@ -116,27 +114,25 @@ int CacheMan::put(const void *p_data,
     return 0;
 }
 
-int CacheMan::get(void *data,
-        string doid,
-        string var,
-        string &dtype,
-        vector<uint64_t> &varshape,
-        uint64_t &timestep){
-
+int CacheMan::get(void *p_data,
+        string p_doid,
+        string p_var,
+        string p_dtype,
+        vector<uint64_t> p_getshape,
+        vector<uint64_t> p_varshape,
+        vector<uint64_t> p_offset,
+        uint64_t p_timestep
+        ){
     return 0;
 }
 
-int CacheMan::get(void *data,
-        string doid,
-        string var,
-        string &dtype,
-        vector<uint64_t> &getshape,
-        vector<uint64_t> &varshape,
-        vector<uint64_t> &offset,
-        uint64_t &timestep,
-        int &tolerance,
-        int &priority){
-
+int CacheMan::get(void *p_data,
+        string p_doid,
+        string p_var,
+        string &p_dtype,
+        vector<uint64_t> &p_varshape,
+        uint64_t &p_timestep
+        ){
     return 0;
 }
 
