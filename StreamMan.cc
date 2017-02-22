@@ -17,6 +17,7 @@ StreamMan::StreamMan(string local_address, string remote_address)
     zmq_bind (zmq_tcp_rep, local_address.c_str());
     zmq_tcp_rep_thread_active = true;
     zmq_tcp_rep_thread = new thread(&StreamMan::zmq_tcp_rep_thread_func, this);
+    cout << "StreamMan Create!" << endl;
 }
 
 StreamMan::~StreamMan(){
@@ -86,17 +87,18 @@ void StreamMan::zmq_tcp_rep_thread_func(){
                 if(j["operation"] == "put"){
                     uint64_t putsize = j["putsize"].get<uint64_t>();
                     void *data = malloc(putsize);
-                    get(data, j);
-                    if(j["var"] == "data"){
-                        uint64_t varsize = j["varsize"].get<uint64_t>();
-                        if(!cache){
-                            cache = malloc(varsize);
-                            for(int i=0; i<varsize/4; i++){
-                                ((float*)cache)[i]=numeric_limits<float>::quiet_NaN();
-                            }
-                        }
-                        cache_it(data, j["varshape"].get<vector<uint64_t>>(), j["putshape"].get<vector<uint64_t>>(), j["offset"].get<vector<uint64_t>>());
-                    }
+                    if(get(data, j)>= 0){
+                    	if(j["var"] == "data"){
+                        	uint64_t varsize = j["varsize"].get<uint64_t>();
+                        	if(!cache){
+                            		cache = malloc(varsize);
+                            		for(int i=0; i<varsize/4; i++){
+                                		((float*)cache)[i]=numeric_limits<float>::quiet_NaN();
+                            		}
+                        	}
+                        	cache_it(data, j["varshape"].get<vector<uint64_t>>(), j["putshape"].get<vector<uint64_t>>(), j["offset"].get<vector<uint64_t>>());
+                    	}
+		    }
                     free(data);
                 }
                 if(j["operation"] == "flush"){
