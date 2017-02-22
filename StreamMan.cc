@@ -111,10 +111,12 @@ void StreamMan::zmq_tcp_rep_thread_func(){
                                 cache_shape,
                                 vector<uint64_t>());
                     }
-                    uint64_t varsize = accumulate(cache_shape.begin(), cache_shape.end(), 1, multiplies<uint64_t>());
-                    for(int i=0; i<varsize; i++){
-                        ((float*)cache)[i]=numeric_limits<float>::quiet_NaN();
-                    }
+		    if(cache) {
+                    	uint64_t varsize = accumulate(cache_shape.begin(), cache_shape.end(), 1, multiplies<uint64_t>());
+                    	for(int i=0; i<varsize; i++){
+                        	((float*)cache)[i]=numeric_limits<float>::quiet_NaN();
+                    	}
+		    }
                 }
             }
         }
