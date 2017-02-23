@@ -4,9 +4,6 @@
 
 
 #include"DataMan.h"
-#include<string>
-#include<vector>
-using namespace std;
 
 
 class DataManager: public DataMan{

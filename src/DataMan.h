@@ -3,6 +3,9 @@
 
 #include<string>
 #include<iostream>
+#include<cstdint> //uintX_t
+#include<vector>
+#include<memory> //shared_ptr
 #include"json.hpp"
 
 using json = nlohmann::json;
