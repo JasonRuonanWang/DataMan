@@ -5,9 +5,9 @@ LDFLAGS=-L./lib
 INSTALL_PREFIX=$(libpath)
 
 
-default:manager zmqman install
+default:libdir manager zmqman install
 
-all:manager zmqman mdtmman zfpman dumpman install
+all: libdir manager zmqman mdtmman zfpman dumpman install
 
 
 dumpman:
@@ -36,6 +36,8 @@ zfpman:compressman
 manager:
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) src/DataManager.cc --shared -o lib/libdataman.so
 
+libdir:
+	@( mkdir -p ./lib )
 
 install:
 	@( mkdir -p $(INSTALL_PREFIX)/DataMan/lib/);
