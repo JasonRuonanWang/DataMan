@@ -1,5 +1,5 @@
 CXX=clang++
-CXX=g++-6
+CXX=g++
 
 CXXFLAGS=-std=c++11
 

@@ -1,3 +1,6 @@
+#ifndef DATAMANAGER_H
+#define DATAMANAGER_H
+
 #include"DataMan.h"
 #include<string>
 #include<vector>
@@ -54,4 +57,4 @@ class DataManager: public DataMan{
 
 };
 
-
+#endif
