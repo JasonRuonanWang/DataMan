@@ -23,6 +23,8 @@ void dataman_init(string local_address ="tcp://127.0.0.1:12306",
         vector<int> tolerance=vector<int>(),
         vector<int> priority=vector<int>());
 
+void dataman_fini();
+
 void dataman_reg_cb(void (*cb)
         (void *data,
          string doid,

@@ -27,6 +27,11 @@ void dataman_init(string local_address,
     dman = new MdtmMan(local_address, remote_address, mode, prefix, num_pipes, tolerance, priority);
 }
 
+void dataman_fini()
+{
+  delete dman;
+}
+
 void dataman_write(const void *data,
         string doid,
         string var,
@@ -45,7 +50,6 @@ void dataman_write(const void *data,
 
 void dataman_flush(){
     dman->flush();
-    delete dman;
 }
 
 void dataman_write_c_to_cpp(const void *data,
