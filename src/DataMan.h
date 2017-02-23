@@ -1,8 +1,11 @@
-#ifndef DATAMAN_H_INCLUDED
-#define DATAMAN_H_INCLUDED
+#ifndef DATAMAN_H_
+#define DATAMAN_H_
 
 #include<string>
 #include<iostream>
+#include<cstdint> //uintX_t
+#include<vector>
+#include<memory> //shared_ptr
 #include"json.hpp"
 
 using json = nlohmann::json;

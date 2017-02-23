@@ -1,3 +1,7 @@
+#ifndef DUMPMAN_H_
+#define DUMPMAN_H_
+
+
 #include "DataMan.h"
 
 class DumpMan : public DataMan{
@@ -42,3 +46,5 @@ extern "C" shared_ptr<DataMan> getMan(){
 }
 
 
+
+#endif

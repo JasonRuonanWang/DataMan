@@ -1,3 +1,8 @@
+#ifndef STREAMMAN_H_
+#define STREAMMAN_H_
+
+
+
 #include "DataMan.h"
 #include "CacheMan.h"
 #include <thread>
@@ -41,3 +46,6 @@ class StreamMan : public DataMan{
         thread *zmq_meta_rep_thread=NULL;
 };
 
+
+
+#endif
