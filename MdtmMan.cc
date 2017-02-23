@@ -111,6 +111,9 @@ MdtmMan::~MdtmMan(){
 		close(pipes.back());
 		pipes.pop_back();
 	}
+	while(!pipenames.empty()) {
+	    pipenames.pop_back();
+	}
 	
 	if(zmq_ipc_rep || zmq_ipc_req) {
 		zmq_close (zmq_ipc_rep);
