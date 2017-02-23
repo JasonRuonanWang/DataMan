@@ -1,3 +1,4 @@
+#include <atomic>
 #include"DataMan.h"
 #include<thread>
 
@@ -25,7 +26,7 @@ class StreamMan : public DataMan{
         void *zmq_tcp_rep = NULL;
     private:
         void zmq_tcp_rep_thread_func();
-        bool zmq_tcp_rep_thread_active;
+        std::atomic<bool> zmq_tcp_rep_thread_active;
         thread *zmq_tcp_rep_thread;
 
         void cache_it(
