@@ -6,6 +6,8 @@ using namespace std;
 
 class DataManager: public DataMan{
     public:
+        DataManager();
+        ~DataManager();
 
         int get(void *p_data,
                 string p_doid,
@@ -37,7 +39,7 @@ class DataManager: public DataMan{
                 vector<int> p_priority = vector<int>()
                 );
 
-        void add_file(string p_filename);
+        void add_file(string p_method);
 
     private:
 
@@ -48,7 +50,6 @@ class DataManager: public DataMan{
         int m_num_channels=0;
         vector<int> m_tolerance;
         vector<int> m_priority;
-        string m_filename="";
 
 
 };

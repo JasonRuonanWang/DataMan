@@ -3,20 +3,15 @@
 #include<dlfcn.h>
 #include"DataManager.h"
 
-string exec(string cmd){
-    array<char, 128> buffer;
-    string result;
-    shared_ptr<FILE> pipe(popen(cmd.c_str(), "r"), pclose);
-    if (!pipe) throw std::runtime_error("popen() failed!");
-    while (!feof(pipe.get())) {
-        if (fgets(buffer.data(), 128, pipe.get()) != NULL)
-            result += buffer.data();
-    }
-    return result;
+DataManager::DataManager()
+    :DataMan()
+{
+}
+DataManager::~DataManager()
+{
 }
 
-void DataManager::add_file(string p_filename){
-    m_filename = p_filename;
+void DataManager::add_file(string p_method){
 }
 
 void DataManager::add_stream(

@@ -23,7 +23,7 @@ class DataMan{
                 int p_tolerance,
                 int p_priority
                 ){
-            for(int i=0; i<m_next.size(); i++){
+            for(unsigned int i=0; i<m_next.size(); i++){
                 m_next[i]->put(
                         p_data,
                         p_doid,
@@ -36,8 +36,8 @@ class DataMan{
                         p_tolerance,
                         p_priority
                         );
-                return 0;
             }
+            return 0;
         }
 
         virtual int get(void *p_data,
@@ -78,7 +78,7 @@ class DataMan{
                 int p_length
                 ){
             int s=0;
-            for (int i=0; i<product(p_varshape,1); i++){
+            for (uint64_t i=0; i<product(p_varshape,1); i++){
                 s++;
                 cout << ((float*)p_data)[i] << " ";
                 if(s == p_length){
@@ -165,7 +165,7 @@ class DataMan{
             if(array){
                 if(array[0] > 0){
                     j = {array[1]};
-                    for (int i=2; i<=array[0]; i++){
+                    for (unsigned int i=2; i<=array[0]; i++){
                         j.insert(j.end(), array[i]);
                     }
                 }
@@ -178,7 +178,7 @@ class DataMan{
         }
 
         inline bool isin(string a, json j){
-            for (int i=0; i<j.size(); i++){
+            for (unsigned int i=0; i<j.size(); i++){
                 if (j[i] == a)
                     return true;
             }
@@ -187,7 +187,7 @@ class DataMan{
 
         inline int closest(int v, json j, bool up){
             int s=100, k=0, t;
-            for (int i=0; i<j.size(); i++){
+            for (unsigned int i=0; i<j.size(); i++){
                 if(up)
                     t = j[i].get<int>() - v;
                 else
