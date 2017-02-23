@@ -83,7 +83,7 @@ void CacheItem::clean(const string mode){
         return;
     }
     if(mode == "nan"){
-        memset(m_buffer, numeric_limits<float>::quiet_NaN(), m_varsize * m_bytes);
+        memset(m_buffer, numeric_limits<int>::quiet_NaN(), m_varsize * m_bytes);
         return;
     }
 }
