@@ -1,5 +1,5 @@
-#ifndef DATAMAN_H_INCLUDED
-#define DATAMAN_H_INCLUDED
+#ifndef DATAMAN_H_
+#define DATAMAN_H_
 
 #include<string>
 #include<iostream>

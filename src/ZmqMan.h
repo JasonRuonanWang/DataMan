@@ -1,3 +1,6 @@
+#ifndef ZMQMAN_H_
+#define ZMQMAN_H_
+
 #include"StreamMan.h"
 
 class ZmqMan : public StreamMan{
@@ -80,3 +83,4 @@ extern "C" shared_ptr<DataMan> getMan(){
 
 
 
+#endif

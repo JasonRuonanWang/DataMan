@@ -1,3 +1,7 @@
+#ifndef ZFPMAN_H_
+#define ZFPMAN_H_
+
+
 #include "CompressMan.h"
 
 class ZfpMan : public CompressMan{
@@ -44,5 +48,4 @@ extern "C" shared_ptr<DataMan> getMan(){
 
 
 
-
-
+#endif

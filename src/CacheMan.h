@@ -1,3 +1,7 @@
+#ifndef CACHEMAN_H_
+#define CACHEMAN_H_
+
+
 #include "DataMan.h"
 
 class CacheItem : public DataMan{
@@ -137,3 +141,4 @@ class CacheMan : public DataMan{
 };
 
 
+#endif
