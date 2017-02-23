@@ -1,3 +1,6 @@
+#ifndef MDTMMAN_H_
+#define MDTMMAN_H_
+
 #include"StreamMan.h"
 #include <queue>
 
@@ -61,3 +64,4 @@ extern "C" shared_ptr<DataMan> getMan(){
 }
 
 
+#endif
