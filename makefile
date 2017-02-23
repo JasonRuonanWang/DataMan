@@ -38,6 +38,8 @@ manager:
 
 
 install:
+	@( mkdir -p $(INSTALL_PREFIX)/DataMan/lib/);
+	@( mkdir -p $(INSTALL_PREFIX)/DataMan/include/);
 	cp lib/*.so $(INSTALL_PREFIX)/DataMan/lib/
 	cp src/*.h src/*.hpp $(INSTALL_PREFIX)/DataMan/include
 
