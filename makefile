@@ -5,7 +5,7 @@ LDFLAGS=-L./lib
 INSTALL_PREFIX=$(libpath)
 
 
-default:manager
+default:manager zmqman install
 
 all:manager zmqman mdtmman zfpman dumpman install
 

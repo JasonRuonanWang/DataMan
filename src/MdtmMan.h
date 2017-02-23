@@ -56,9 +56,8 @@ class MdtmMan : public StreamMan{
 
 };
 
-std::unique_ptr<MdtmMan> getMdtmMan(){
-    std::unique_ptr<MdtmMan> p(new MdtmMan);
-    return std::move(p);
+extern "C" shared_ptr<DataMan> getMan(){
+    return shared_ptr<DataMan>(new MdtmMan);
 }
 
 

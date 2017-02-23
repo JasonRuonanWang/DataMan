@@ -6,28 +6,6 @@ using namespace std;
 
 class DataManager: public DataMan{
     public:
-        DataManager(
-                string p_local_ip,
-                string p_remote_ip,
-                int p_local_port,
-                int p_remote_port,
-                int p_num_channels,
-                vector<int> p_tolerance,
-                vector<int> p_priority
-                );
-        ~DataManager();
-
-        int put(void *p_data,
-                string p_doid,
-                string p_var,
-                string p_dtype,
-                vector<uint64_t> p_putshape,
-                vector<uint64_t> p_varshape,
-                vector<uint64_t> p_offset,
-                uint64_t p_timestep,
-                int p_tolerance,
-                int p_priority
-                );
 
         int get(void *p_data,
                 string p_doid,
@@ -48,8 +26,20 @@ class DataManager: public DataMan{
                 );
         void flush();
 
+        void add_stream(
+                string p_local_ip,
+                string p_remote_ip,
+                int p_local_port,
+                int p_remote_port,
+                int p_num_channels = 1,
+                string p_method = "zmq",
+                vector<int> p_tolerance = vector<int>(),
+                vector<int> p_priority = vector<int>()
+                );
+
+        void add_file(string p_filename);
+
     private:
-        void init();
 
         string m_local_ip="";
         string m_remote_ip="";

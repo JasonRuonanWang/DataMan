@@ -37,9 +37,8 @@ class DumpMan : public DataMan{
         void flush();
 };
 
-std::unique_ptr<DumpMan> getDumpMan(){
-    std::unique_ptr<DumpMan> p(new DumpMan);
-    return std::move(p);
+extern "C" shared_ptr<DataMan> getMan(){
+    return shared_ptr<DumpMan>(new DumpMan);
 }
 
 

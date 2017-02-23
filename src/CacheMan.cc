@@ -15,9 +15,7 @@ void CacheItem::init(string p_doid,
 }
 
 CacheItem::CacheItem()
-:DataMan()
-{
-}
+:DataMan(){}
 
 CacheItem::~CacheItem(){
     if(m_buffer) free(m_buffer);

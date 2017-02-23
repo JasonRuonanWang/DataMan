@@ -1,33 +1,43 @@
 #include<stdio.h>
 #include<stdlib.h>
+#include<dlfcn.h>
 #include"DataManager.h"
 
-DataManager::DataManager(
+string exec(string cmd){
+    array<char, 128> buffer;
+    string result;
+    shared_ptr<FILE> pipe(popen(cmd.c_str(), "r"), pclose);
+    if (!pipe) throw std::runtime_error("popen() failed!");
+    while (!feof(pipe.get())) {
+        if (fgets(buffer.data(), 128, pipe.get()) != NULL)
+            result += buffer.data();
+    }
+    return result;
+}
+
+void DataManager::add_file(string p_filename){
+    m_filename = p_filename;
+}
+
+void DataManager::add_stream(
         string p_local_ip,
         string p_remote_ip,
         int p_local_port,
         int p_remote_port,
         int p_num_channels,
+        string p_method,
         vector<int> p_tolerance,
         vector<int> p_priority
-        )
-    :DataMan(),
-    m_local_ip(p_local_ip),
-    m_remote_ip(p_remote_ip),
-    m_local_port(p_local_port),
-    m_remote_port(p_remote_port),
-    m_num_channels(p_num_channels),
-    m_tolerance(p_tolerance),
-    m_priority(p_priority)
-{
-    init();
-}
+        ){
 
-DataManager::~DataManager(){
+    m_local_ip = p_local_ip;
+    m_remote_ip = p_remote_ip;
+    m_local_port = p_local_port;
+    m_remote_port = p_remote_port;
+    m_num_channels = p_num_channels;
+    m_tolerance = p_tolerance;
+    m_priority = p_priority;
 
-}
-
-void DataManager::init(){
     if (m_tolerance.size() < m_num_channels){
         for (int i=0; i<m_num_channels; i++){
             m_tolerance.push_back(0);
@@ -38,25 +48,28 @@ void DataManager::init(){
             m_priority.push_back(100/(i+1));
         }
     }
-}
 
+    string soname = "lib" + p_method + "man.so";
+    void *so = NULL;
+    so = dlopen(soname.c_str(),RTLD_NOW);
+    if(so){
+        shared_ptr<DataMan> (*get_man)() = NULL;
+        get_man = (shared_ptr<DataMan>(*)()) dlsym(so,"getMan");
+        if(get_man){
+            add_next(get_man());
+        }
+        else{
+            cout << "getMan() not found in " << soname << endl;
+        }
+    }
+    else{
+        cout << soname << " not found!" << endl;
+    }
+}
 
 void DataManager::flush(){
 }
 
-int DataManager::put(void *data,
-        string doid,
-        string var,
-        string dtype,
-        vector<uint64_t> putshape,
-        vector<uint64_t> varshape,
-        vector<uint64_t> offset,
-        uint64_t timestep,
-        int tolerance,
-        int priority)
-{
-    return 0;
-}
 
 int DataManager::get(void *p_data,
         string p_doid,

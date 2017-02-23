@@ -38,9 +38,8 @@ class ZfpMan : public CompressMan{
 };
 
 
-std::unique_ptr<ZfpMan> getZfpMan(){
-    std::unique_ptr<ZfpMan> p(new ZfpMan);
-    return std::move(p);
+extern "C" shared_ptr<DataMan> getMan(){
+    return shared_ptr<DataMan>(new ZfpMan);
 }
 
 

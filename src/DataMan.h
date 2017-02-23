@@ -22,7 +22,23 @@ class DataMan{
                 uint64_t p_timestep,
                 int p_tolerance,
                 int p_priority
-                ) = 0;
+                ){
+            for(int i=0; i<m_next.size(); i++){
+                m_next[i]->put(
+                        p_data,
+                        p_doid,
+                        p_var,
+                        p_dtype,
+                        p_putshape,
+                        p_varshape,
+                        p_offset,
+                        p_timestep,
+                        p_tolerance,
+                        p_priority
+                        );
+                return 0;
+            }
+        }
 
         virtual int get(void *p_data,
                 string p_doid,
@@ -72,8 +88,8 @@ class DataMan{
             }
         }
 
-        void add_next(unique_ptr<DataMan> p_next){
-            next.push_back(move(p_next));
+        void add_next(shared_ptr<DataMan> p_next){
+            m_next.push_back(p_next);
         }
 
     protected:
@@ -185,8 +201,8 @@ class DataMan{
         }
 
 
-        string getmode = "callback"; // graph, callback
-        vector<unique_ptr<DataMan>> next;
+        string m_getmode = "callback"; // graph, callback
+        vector<shared_ptr<DataMan>> m_next;
 };
 
 

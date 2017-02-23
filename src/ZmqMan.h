@@ -74,9 +74,8 @@ class ZmqMan : public StreamMan{
 };
 
 
-std::unique_ptr<ZmqMan> getZmqMan(){
-    std::unique_ptr<ZmqMan> p(new ZmqMan);
-    return std::move(p);
+extern "C" shared_ptr<DataMan> getMan(){
+    return shared_ptr<DataMan>(new ZmqMan);
 }
 
 

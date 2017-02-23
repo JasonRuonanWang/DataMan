@@ -58,7 +58,7 @@ void StreamMan::zmq_meta_rep_thread_func(){
         if (err>=0){
             cout << "StreamMan::zmq_meta_rep_thread_func: " << msg << endl;
             json j = json::parse(msg);
-            if(getmode == "callback"){
+            if(m_getmode == "callback"){
                 on_recv(j);
             }
         }
