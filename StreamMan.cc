@@ -11,8 +11,8 @@ StreamMan::StreamMan(string local_address, string remote_address)
     zmq_context = zmq_ctx_new ();
     //zmq_tcp_req = zmq_socket (zmq_context, ZMQ_REQ);
     //zmq_tcp_rep = zmq_socket (zmq_context, ZMQ_REP);
-    zmq_tcp_req = zmq_socket (zmq_context, ZMQ_DEALER);
-    zmq_tcp_rep = zmq_socket (zmq_context, ZMQ_DEALER);
+    zmq_tcp_req = zmq_socket (zmq_context, ZMQ_PAIR);
+    zmq_tcp_rep = zmq_socket (zmq_context, ZMQ_PAIR);
     zmq_connect (zmq_tcp_req, remote_address.c_str());
     zmq_bind (zmq_tcp_rep, local_address.c_str());
     zmq_tcp_rep_thread_active = true;
@@ -21,13 +21,13 @@ StreamMan::StreamMan(string local_address, string remote_address)
 }
 
 StreamMan::~StreamMan(){
-    zmq_close (zmq_tcp_req);
-    zmq_close (zmq_tcp_rep);
-    zmq_ctx_destroy (zmq_context);
     zmq_tcp_rep_thread_active = false;
     zmq_tcp_rep_thread->join();
     if(zmq_tcp_rep_thread) delete zmq_tcp_rep_thread;
-    if(cache) free(cache);
+    //if(cache) free(cache);
+    zmq_close (zmq_tcp_req);
+    zmq_close (zmq_tcp_rep);
+    zmq_ctx_destroy (zmq_context);
 }
 
 void StreamMan::flush(){
@@ -67,6 +67,10 @@ void StreamMan::cache_it(
                 uint64_t ok=k+offset[2];
                 uint64_t oindex = oi*SI + oj*SJ + ok*SK;
                 uint64_t index = i*SI + j*SJ + k*SK;
+		if(oindex > varsize - 1) { 
+			//cout << "oindex too big: " << oindex << " varsize=" << varsize << endl; 
+			oindex = varsize - 1; 
+		}
                 cachef[oindex] =dataf[s];
                 s++;
             }
@@ -120,8 +124,35 @@ void StreamMan::zmq_tcp_rep_thread_func(){
                 }
             }
         }
+	else {
+	  if( errno != EAGAIN ) {
+          	cout << "zmq_recv failed: " << strerror(errno) << endl;
+		switch(errno) {
+			case EAGAIN:
+				cout << "EAGAIN" << endl;
+				break;
+			case ENOTSUP:
+				cout << "ENOTSUP" << endl;
+				break;
+			case EFSM:
+				cout << "EFSM" << endl;
+				break;
+			case ETERM:
+				cout << "ETERM" << endl;
+				break;
+			case ENOTSOCK:
+				cout << "ENOTSOCK" << endl;
+				break;
+			case EINTR:
+				cout << "EINTR" << endl;
+				break;
+		}
+	  }
+	}
+
         usleep(10000);
     }
+    if(cache) free(cache);
 }
 
 
