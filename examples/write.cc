@@ -68,6 +68,7 @@ int main(){
     }
 
     dataman_flush();
+    dataman_fini();
 
     cout << "Program is done successfully." << endl;
 
