@@ -4,7 +4,10 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <numeric>
+#include <atomic>
 using namespace std;
+
+static std::atomic<bool> terminated;
 
 void get(void *data,
          string doid,
@@ -22,10 +25,13 @@ void get(void *data,
 
     uint64_t varsize = std::accumulate(varshape.begin(), varshape.end(), 1, std::multiplies<uint64_t>());
 
-    for (int i=0; i<varsize; i++)
-        cout << ((float*)data)[i] << " ";
+    if(data) {
+    	for (int i=0; i<varsize; i++)
+        	cout << ((float*)data)[i] << " ";
+    }
     cout << endl;
 
+    terminated = true;
 }
 
 
@@ -43,14 +49,19 @@ int main(){
     string mode = "receiver";
     string prefix = "/tmp/MdtmManPipes/";
     int num_pipes = 1;
+    terminated = false;
 
     dataman_init(receiver_address, sender_address, mode, prefix, num_pipes);
     dataman_reg_cb(get);
 
-    while (1){
+    while (!terminated) {
         //cout << "1 second" << endl;
         usleep(1000000);
     }
+
+    dataman_fini();
+
+    cout << "Program is done successfully." << endl;
 
     return 0;
 }
