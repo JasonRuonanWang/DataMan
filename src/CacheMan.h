@@ -12,17 +12,17 @@ class CacheItem : public DataMan{
         void init(string doid,
                 string var,
                 string dtype,
-                vector<uint64_t> varshape
+                vector<size_t> varshape
                 );
 
-        int put(void *data,
+        int put(const void *data,
                 string doid,
                 string var,
                 string dtype,
-                vector<uint64_t> putshape,
-                vector<uint64_t> varshape,
-                vector<uint64_t> offset,
-                uint64_t timestep,
+                vector<size_t> putshape,
+                vector<size_t> varshape,
+                vector<size_t> offset,
+                size_t timestep,
                 int tolerance,
                 int priority);
 
@@ -30,24 +30,25 @@ class CacheItem : public DataMan{
                 string p_doid,
                 string p_var,
                 string p_dtype,
-                vector<uint64_t> p_getshape,
-                vector<uint64_t> p_varshape,
-                vector<uint64_t> p_offset,
-                uint64_t p_timestep
+                vector<size_t> p_getshape,
+                vector<size_t> p_varshape,
+                vector<size_t> p_offset,
+                size_t p_timestep
                 );
 
         virtual int get(void *p_data,
                 string p_doid,
                 string p_var,
                 string &p_dtype,
-                vector<uint64_t> &p_varshape,
-                uint64_t &p_timestep
+                vector<size_t> &p_varshape,
+                size_t &p_timestep
                 );
 
         void flush();
+        string name(){return "CacheItem";}
         const void *get_buffer();
         void clean(const string mode);
-        vector<uint64_t> get_shape();
+        vector<size_t> get_shape();
         string get_dtype();
 
     private:
@@ -56,31 +57,31 @@ class CacheItem : public DataMan{
         string m_var;
         string m_dtype;
         uint8_t m_bytes;
-        uint64_t m_varsize;
-        vector<uint64_t> m_varshape;
+        size_t m_varsize;
+        vector<size_t> m_varshape;
         bool m_completed;
 
-        inline vector<uint64_t> apply_offset(const vector<uint64_t> &p, const vector<uint64_t> &o){
-            vector<uint64_t> g;
+        inline vector<size_t> apply_offset(const vector<size_t> &p, const vector<size_t> &o){
+            vector<size_t> g;
             for(int i=0; i<p.size(); i++){
                 g.push_back(p[i]+o[i]);
             }
             return g;
         }
 
-        inline uint64_t multi2one(const vector<uint64_t> &v, const vector<uint64_t> &p){
-            uint64_t index=0;
+        inline size_t multi2one(const vector<size_t> &v, const vector<size_t> &p){
+            size_t index=0;
             for (int i=1; i<v.size(); i++){
-                index += accumulate(v.begin() + i, v.end(), p[i-1], multiplies<uint64_t>());
+                index += accumulate(v.begin() + i, v.end(), p[i-1], multiplies<size_t>());
             }
             index += p.back();
             return index;
         }
 
-        inline vector<uint64_t> one2multi(const vector<uint64_t> &v, uint64_t p){
-            vector<uint64_t> index(v.size());
+        inline vector<size_t> one2multi(const vector<size_t> &v, size_t p){
+            vector<size_t> index(v.size());
             for (int i=1; i<v.size(); i++){
-                uint64_t s = accumulate(v.begin() + i, v.end(), 1, multiplies<uint64_t>());
+                size_t s = accumulate(v.begin() + i, v.end(), 1, multiplies<size_t>());
                 index[i-1] = p / s;
                 p -= index[i-1] * s;
             }
@@ -95,14 +96,14 @@ class CacheMan : public DataMan{
         CacheMan();
         ~CacheMan();
 
-        int put(void *data,
+        int put(const void *data,
                 string doid,
                 string var,
                 string dtype,
-                vector<uint64_t> putshape,
-                vector<uint64_t> varshape,
-                vector<uint64_t> offset,
-                uint64_t timestep,
+                vector<size_t> putshape,
+                vector<size_t> varshape,
+                vector<size_t> offset,
+                size_t timestep,
                 int tolerance,
                 int priority);
 
@@ -110,27 +111,28 @@ class CacheMan : public DataMan{
                 string p_doid,
                 string p_var,
                 string p_dtype,
-                vector<uint64_t> p_getshape,
-                vector<uint64_t> p_varshape,
-                vector<uint64_t> p_offset,
-                uint64_t p_timestep
+                vector<size_t> p_getshape,
+                vector<size_t> p_varshape,
+                vector<size_t> p_offset,
+                size_t p_timestep
                 );
 
         virtual int get(void *p_data,
                 string p_doid,
                 string p_var,
                 string &p_dtype,
-                vector<uint64_t> &p_varshape,
-                uint64_t &p_timestep
+                vector<size_t> &p_varshape,
+                size_t &p_timestep
                 );
 
         void flush();
+        string name(){return "CacheMan";}
         const void *get_buffer(string doid, string var);
         void clean(string doid, string var, string mode);
         void clean_all(string mode);
         vector<string> get_do_list();
         vector<string> get_var_list(string doid);
-        vector<uint64_t> get_shape(string doid, string var);
+        vector<size_t> get_shape(string doid, string var);
         string get_dtype(string doid, string var);
 
     private:

@@ -11,7 +11,7 @@ int main(){
         std::cout << "so=NULL\n";
     }
     std::unique_ptr<DataMan> (*func)() = NULL;
-    func = (std::unique_ptr<DataMan>(*)()) dlsym(so,"_Z10getDumpManv");
+    func = (std::unique_ptr<DataMan>(*)()) dlsym(so,"getMan");
     if (func == NULL){
         std::cout << "func=NULL\n";
     }
@@ -19,15 +19,15 @@ int main(){
     std::unique_ptr<DataMan> man = func();
 
 
-    vector<uint64_t> putshape;
+    vector<size_t> putshape;
     putshape.assign(3,0);
 
-    vector<uint64_t> varshape;
+    vector<size_t> varshape;
     varshape.push_back(0);
     varshape.push_back(0);
     varshape.push_back(0);
 
-    vector<uint64_t> offset;
+    vector<size_t> offset;
     offset.push_back(0);
     offset.push_back(0);
     offset.push_back(0);

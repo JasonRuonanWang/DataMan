@@ -16,14 +16,14 @@ class MdtmMan : public StreamMan{
                 vector<int> tolerance,
                 vector<int> priority);
 
-        int put(void *data,
+        int put(const void *data,
                 string doid,
                 string var,
                 string dtype,
-                vector<uint64_t> putshape,
-                vector<uint64_t> varshape,
-                vector<uint64_t> offset,
-                uint64_t timestep,
+                vector<size_t> putshape,
+                vector<size_t> varshape,
+                vector<size_t> offset,
+                size_t timestep,
                 int tolerance,
                 int priority);
 
@@ -31,20 +31,21 @@ class MdtmMan : public StreamMan{
                 string doid,
                 string var,
                 string dtype,
-                vector<uint64_t> getshape,
-                vector<uint64_t> varshape,
-                vector<uint64_t> offset,
-                uint64_t timestep
+                vector<size_t> getshape,
+                vector<size_t> varshape,
+                vector<size_t> offset,
+                size_t timestep
                );
 
         int get(void *data,
                 string doid,
                 string var,
                 string &dtype,
-                vector<uint64_t> &varshape,
-                uint64_t &timestep);
+                vector<size_t> &varshape,
+                size_t &timestep);
 
         void on_recv(json j);
+        string name(){return "MdtmMan";}
 
     private:
         void *zmq_ipc_req = NULL;

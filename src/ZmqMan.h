@@ -26,14 +26,14 @@ class ZmqMan : public StreamMan{
                 vector<int> tolerance,
                 vector<int> priority);
 
-        virtual int put(void *data,
+        virtual int put(const void *data,
                 string doid,
                 string var,
                 string dtype,
-                vector<uint64_t> putshape,
-                vector<uint64_t> varshape,
-                vector<uint64_t> offset,
-                uint64_t timestep,
+                vector<size_t> putshape,
+                vector<size_t> varshape,
+                vector<size_t> offset,
+                size_t timestep,
                 int tolerance,
                 int priority);
 
@@ -41,21 +41,22 @@ class ZmqMan : public StreamMan{
                 string p_doid,
                 string p_var,
                 string p_dtype,
-                vector<uint64_t> p_getshape,
-                vector<uint64_t> p_varshape,
-                vector<uint64_t> p_offset,
-                uint64_t p_timestep
+                vector<size_t> p_getshape,
+                vector<size_t> p_varshape,
+                vector<size_t> p_offset,
+                size_t p_timestep
                 ){return 0;}
 
         virtual int get(void *p_data,
                 string p_doid,
                 string p_var,
                 string &p_dtype,
-                vector<uint64_t> &p_varshape,
-                uint64_t &p_timestep
+                vector<size_t> &p_varshape,
+                size_t &p_timestep
                 ){return 0;}
 
         virtual void on_recv(json j);
+        string name(){return "ZmqMan";}
 
     protected:
         inline string make_address(string ip, int port, string protocol){

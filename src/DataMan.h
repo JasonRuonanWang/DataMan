@@ -15,60 +15,46 @@ class DataMan{
     public:
         DataMan(){}
         virtual ~DataMan(){}
-        virtual int put(void *p_data,
+        virtual int put(const void *p_data,
                 string p_doid,
                 string p_var,
                 string p_dtype,
-                vector<uint64_t> p_putshape,
-                vector<uint64_t> p_varshape,
-                vector<uint64_t> p_offset,
-                uint64_t p_timestep,
-                int p_tolerance,
-                int p_priority
-                ){
-            for(unsigned int i=0; i<m_next.size(); i++){
-                m_next[i]->put(
-                        p_data,
-                        p_doid,
-                        p_var,
-                        p_dtype,
-                        p_putshape,
-                        p_varshape,
-                        p_offset,
-                        p_timestep,
-                        p_tolerance,
-                        p_priority
-                        );
-            }
-            return 0;
-        }
+                vector<size_t> p_putshape,
+                vector<size_t> p_varshape,
+                vector<size_t> p_offset,
+                size_t p_timestep,
+                int p_tolerance=0,
+                int p_priority=100
+                ) = 0;
 
         virtual int get(void *p_data,
                 string p_doid,
                 string p_var,
                 string p_dtype,
-                vector<uint64_t> p_getshape,
-                vector<uint64_t> p_varshape,
-                vector<uint64_t> p_offset,
-                uint64_t p_timestep
+                vector<size_t> p_getshape,
+                vector<size_t> p_varshape,
+                vector<size_t> p_offset,
+                size_t p_timestep
                 ) = 0;
 
         virtual int get(void *p_data,
                 string p_doid,
                 string p_var,
                 string &p_dtype,
-                vector<uint64_t> &p_varshape,
-                uint64_t &p_timestep
+                vector<size_t> &p_varshape,
+                size_t &p_timestep
                 ) = 0;
 
         virtual void flush() = 0;
+
+        virtual string name() = 0;
 
         void reg_callback(void (*cb)
             (const void *data,
              string doid,
              string var,
              string dtype,
-             vector<uint64_t> varshape)
+             vector<size_t> varshape)
             ){
             get_callback = cb;
         }
@@ -77,11 +63,11 @@ class DataMan{
                 string p_doid,
                 string p_var,
                 string p_dtype,
-                vector<uint64_t> p_varshape,
+                vector<size_t> p_varshape,
                 int p_length
                 ){
             int s=0;
-            for (uint64_t i=0; i<product(p_varshape,1); i++){
+            for (size_t i=0; i<product(p_varshape,1); i++){
                 s++;
                 cout << ((float*)p_data)[i] << " ";
                 if(s == p_length){
@@ -96,24 +82,53 @@ class DataMan{
         }
 
     protected:
+        virtual int put_next(const void *p_data,
+                string p_doid,
+                string p_var,
+                string p_dtype,
+                vector<size_t> p_putshape,
+                vector<size_t> p_varshape,
+                vector<size_t> p_offset,
+                size_t p_timestep,
+                int p_tolerance=0,
+                int p_priority=100
+                ){
+            for(size_t i=0; i<m_next.size(); i++){
+                m_next[i]->put(
+                        p_data,
+                        p_doid,
+                        p_var,
+                        p_dtype,
+                        p_putshape,
+                        p_varshape,
+                        p_offset,
+                        p_timestep,
+                        p_tolerance,
+                        p_priority
+                        );
+                cout << "DataMan::put() " << m_next[i]->name() << endl;
+            }
+            return 0;
+        }
+
         void (*get_callback)(const void *data,
                 string doid,
                 string var,
                 string dtype,
-                vector<uint64_t> varshape) = NULL;
+                vector<size_t> varshape) = NULL;
 
-        inline uint64_t product(unsigned int *shape){
-            unsigned int s = 1;
+        inline size_t product(size_t *shape){
+            size_t s = 1;
             if(shape){
-                for (unsigned int i=1; i<=shape[0]; i++){
+                for (size_t i=1; i<=shape[0]; i++){
                     s *= shape[i];
                 }
             }
             return s;
         }
 
-        inline uint64_t product(vector<uint64_t> shape, uint64_t size=1){
-            return accumulate(shape.begin(), shape.end(), size, multiplies<uint64_t>());
+        inline size_t product(vector<size_t> shape, size_t size=1){
+            return accumulate(shape.begin(), shape.end(), size, multiplies<size_t>());
         }
 
         inline uint8_t dsize(string dtype){

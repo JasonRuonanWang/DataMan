@@ -4,7 +4,7 @@
 void CacheItem::init(string p_doid,
         string p_var,
         string p_dtype,
-        vector<uint64_t> p_varshape){
+        vector<size_t> p_varshape){
     m_doid = p_doid;
     m_var = p_var;
     m_dtype = p_dtype;
@@ -25,10 +25,10 @@ int CacheItem::get(void *p_data,
         string p_doid,
         string p_var,
         string p_dtype,
-        vector<uint64_t> p_getshape,
-        vector<uint64_t> p_varshape,
-        vector<uint64_t> p_offset,
-        uint64_t p_timestep
+        vector<size_t> p_getshape,
+        vector<size_t> p_varshape,
+        vector<size_t> p_offset,
+        size_t p_timestep
         ){
     return 0;
 }
@@ -37,36 +37,36 @@ int CacheItem::get(void *p_data,
         string p_doid,
         string p_var,
         string &p_dtype,
-        vector<uint64_t> &p_varshape,
-        uint64_t &p_timestep
+        vector<size_t> &p_varshape,
+        size_t &p_timestep
         ){
     return 0;
 }
 
-int CacheItem::put(void *p_data,
+int CacheItem::put(const void *p_data,
         string p_doid,
         string p_var,
         string p_dtype,
-        vector<uint64_t> p_putshape,
-        vector<uint64_t> p_varshape,
-        vector<uint64_t> p_offset,
-        uint64_t p_timestep,
+        vector<size_t> p_putshape,
+        vector<size_t> p_varshape,
+        vector<size_t> p_offset,
+        size_t p_timestep,
         int p_tolerance,
         int p_priority){
     if(!m_buffer) init(p_doid, p_var, p_dtype, p_varshape);
-    uint64_t putsize = product(p_putshape);
-    uint64_t chunksize = p_putshape.back();
-    for(uint64_t i=0; i<putsize; i+=chunksize){
-        vector<uint64_t> p = one2multi(p_putshape, i);
+    size_t putsize = product(p_putshape);
+    size_t chunksize = p_putshape.back();
+    for(size_t i=0; i<putsize; i+=chunksize){
+        vector<size_t> p = one2multi(p_putshape, i);
         p = apply_offset(p, p_offset);
-        uint64_t ig = multi2one(p_varshape, p);
+        size_t ig = multi2one(p_varshape, p);
         memcpy((char*)m_buffer + ig * m_bytes, (char*)p_data + i * m_bytes, chunksize * m_bytes);
     }
 
     return 0;
 }
 
-vector<uint64_t> CacheItem::get_shape(){
+vector<size_t> CacheItem::get_shape(){
     return m_varshape;
 }
 
@@ -98,14 +98,14 @@ CacheMan::CacheMan(){
 CacheMan::~CacheMan(){
 }
 
-int CacheMan::put(void *p_data,
+int CacheMan::put(const void *p_data,
         string p_doid,
         string p_var,
         string p_dtype,
-        vector<uint64_t> p_putshape,
-        vector<uint64_t> p_varshape,
-        vector<uint64_t> p_offset,
-        uint64_t p_timestep,
+        vector<size_t> p_putshape,
+        vector<size_t> p_varshape,
+        vector<size_t> p_offset,
+        size_t p_timestep,
         int p_tolerance,
         int p_priority){
     m_cache[p_doid][p_var].put(p_data, p_doid, p_var, p_dtype, p_putshape, p_varshape, p_offset, p_timestep, p_tolerance, p_priority);
@@ -116,10 +116,10 @@ int CacheMan::get(void *p_data,
         string p_doid,
         string p_var,
         string p_dtype,
-        vector<uint64_t> p_getshape,
-        vector<uint64_t> p_varshape,
-        vector<uint64_t> p_offset,
-        uint64_t p_timestep
+        vector<size_t> p_getshape,
+        vector<size_t> p_varshape,
+        vector<size_t> p_offset,
+        size_t p_timestep
         ){
     return 0;
 }
@@ -128,8 +128,8 @@ int CacheMan::get(void *p_data,
         string p_doid,
         string p_var,
         string &p_dtype,
-        vector<uint64_t> &p_varshape,
-        uint64_t &p_timestep
+        vector<size_t> &p_varshape,
+        size_t &p_timestep
         ){
     return 0;
 }
@@ -168,7 +168,7 @@ vector<string> CacheMan::get_var_list(string doid){
     return var_list;
 }
 
-vector<uint64_t> CacheMan::get_shape(string doid, string var){
+vector<size_t> CacheMan::get_shape(string doid, string var){
     return m_cache[doid][var].get_shape();
 }
 

@@ -20,14 +20,14 @@ class StreamMan : public DataMan{
         void init(string local_address, string remote_address, string mode);
 
 
-        int put(void *data,
+        int put(const void *data,
                 string doid,
                 string var,
                 string dtype,
-                vector<uint64_t> putshape,
-                vector<uint64_t> varshape,
-                vector<uint64_t> offset,
-                uint64_t timestep,
+                vector<size_t> putshape,
+                vector<size_t> varshape,
+                vector<size_t> offset,
+                size_t timestep,
                 int tolerance,
                 int priority,
                 json msg);

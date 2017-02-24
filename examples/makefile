@@ -3,29 +3,29 @@ CXX=g++
 
 CXXFLAGS=-std=c++11
 
-default:manager
+default:zfp
 
 all:zmq mdtm zfp cache dump manager
 
 dump:
-	$(CXX) writeDump.cc -o writeDump.exe -ldumpman
+	$(CXX) $(CXXFLAGS) writeDump.cc -o writeDump.exe -ldumpman
 
 zfp:
-	$(CXX) writeZfp.cc -o writeZfp.exe
+	$(CXX) $(CXXFLAGS) writeZfp.cc -o writeZfp.exe
 
 zmq:
 	$(CXX) $(CXXFLAGS) writeZmq.cc -o writeZmq.exe -lzmqman -lstreamman
 	$(CXX) $(CXXFLAGS) readZmq.cc -o readZmq.exe -lzmqman -lstreamman
 
 mdtm:
-	$(CXX) readMdtm.cc -o readMdtm.exe -lmdtmman -lstreamman
-	$(CXX) writeMdtm.cc -o writeMdtm.exe -lmdtmman -lstreamman
+	$(CXX) $(CXXFLAGS) readMdtm.cc -o readMdtm.exe -lmdtmman -lstreamman
+	$(CXX) $(CXXFLAGS) writeMdtm.cc -o writeMdtm.exe -lmdtmman -lstreamman
 
 cache:
-	$(CXX) writeCache.cc -o writeCache.exe -lcacheman
+	$(CXX) $(CXXFLAGS) writeCache.cc -o writeCache.exe -lcacheman
 
 manager:
-	$(CXX) writeManager.cc -o writeManager.exe -ldataman
+	$(CXX) $(CXXFLAGS) writeManager.cc -o writeManager.exe -ldataman
 
 clean:
 	rm -rf *.exe *.dSYM

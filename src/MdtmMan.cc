@@ -83,10 +83,10 @@ int MdtmMan::get(void *data,
         string doid,
         string var,
         string dtype,
-        vector<uint64_t> getshape,
-        vector<uint64_t> varshape,
-        vector<uint64_t> offset,
-        uint64_t timestep
+        vector<size_t> getshape,
+        vector<size_t> varshape,
+        vector<size_t> offset,
+        size_t timestep
         ){
 
     return 0;
@@ -96,30 +96,30 @@ int MdtmMan::get(void *data,
         string doid,
         string var,
         string &dtype,
-        vector<uint64_t> &varshape,
-        uint64_t &timestep
+        vector<size_t> &varshape,
+        size_t &timestep
         ){
 
     return 0;
 }
 
-int MdtmMan::put(void *data,
+int MdtmMan::put(const void *data,
         string doid,
         string var,
         string dtype,
-        vector<uint64_t> putshape,
-        vector<uint64_t> varshape,
-        vector<uint64_t> offset,
-        uint64_t timestep,
+        vector<size_t> putshape,
+        vector<size_t> varshape,
+        vector<size_t> offset,
+        size_t timestep,
         int tolerance,
         int priority)
 {
     json msg;
     int index = closest(priority, pipe_desc["priority"], true);
     msg["pipe"] = pipe_desc["pipe_names"][index];
-    uint64_t putsize = product(putshape, dsize(dtype));
+    size_t putsize = product(putshape, dsize(dtype));
     msg["putsize"] = putsize;
-    uint64_t varsize = product(varshape, dsize(dtype));
+    size_t varsize = product(varshape, dsize(dtype));
     msg["varsize"] = varsize;
 
     StreamMan::put(data,doid,var,dtype,putshape,varshape,offset,timestep,tolerance,priority,msg);
@@ -151,7 +151,7 @@ void MdtmMan::on_recv(json j){
                     jqueue.front()["doid"],
                     jqueue.front()["var"],
                     jqueue.front()["dtype"],
-                    jqueue.front()["varshape"].get<vector<uint64_t>>()
+                    jqueue.front()["varshape"].get<vector<size_t>>()
                     );
         }
         m_cache.clean_all("nan");
@@ -167,7 +167,7 @@ void MdtmMan::on_recv(json j){
         // allocate buffer
         if(jqueue.front()["operation"] == "put"){
 
-            uint64_t putsize = jqueue.front()["putsize"].get<uint64_t>();
+            size_t putsize = jqueue.front()["putsize"].get<size_t>();
             if(bqueue.front() == NULL) bqueue.front() = malloc(putsize);
 
             // determine the pipe for the head request

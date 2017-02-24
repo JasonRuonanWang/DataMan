@@ -66,14 +66,14 @@ void StreamMan::zmq_meta_rep_thread_func(){
     }
 }
 
-int StreamMan::put(void *data,
+int StreamMan::put(const void *data,
         string doid,
         string var,
         string dtype,
-        vector<uint64_t> putshape,
-        vector<uint64_t> varshape,
-        vector<uint64_t> offset,
-        uint64_t timestep,
+        vector<size_t> putshape,
+        vector<size_t> varshape,
+        vector<size_t> offset,
+        size_t timestep,
         int tolerance,
         int priority,
         json msg)

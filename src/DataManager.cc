@@ -11,6 +11,37 @@ DataManager::~DataManager()
 {
 }
 
+int DataManager::put(
+        const void *p_data,
+        string p_doid,
+        string p_var,
+        string p_dtype,
+        vector<size_t> p_putshape,
+        vector<size_t> p_varshape,
+        vector<size_t> p_offset,
+        size_t p_timestep,
+        int p_tolerance,
+        int p_priority
+        ){
+    cout << "DataManager::put() varshape : ";
+    for (size_t i=0; i<p_putshape.size(); i++)
+        cout << p_putshape[i] << " " ;
+    cout << endl;
+    put_next(
+            p_data,
+            p_doid,
+            p_var,
+            p_dtype,
+            p_putshape,
+            p_varshape,
+            p_offset,
+            p_timestep,
+            p_tolerance,
+            p_priority
+            );
+    return 0;
+}
+
 void DataManager::add_file(string p_method){
 }
 
@@ -70,10 +101,10 @@ int DataManager::get(void *p_data,
         string p_doid,
         string p_var,
         string p_dtype,
-        vector<uint64_t> p_getshape,
-        vector<uint64_t> p_varshape,
-        vector<uint64_t> p_offset,
-        uint64_t p_timestep
+        vector<size_t> p_getshape,
+        vector<size_t> p_varshape,
+        vector<size_t> p_offset,
+        size_t p_timestep
         ){
     return 0;
 }
@@ -82,8 +113,8 @@ int DataManager::get(void *p_data,
         string p_doid,
         string p_var,
         string &p_dtype,
-        vector<uint64_t> &p_varshape,
-        uint64_t &p_timestep
+        vector<size_t> &p_varshape,
+        size_t &p_timestep
         ){
     return 0;
 }

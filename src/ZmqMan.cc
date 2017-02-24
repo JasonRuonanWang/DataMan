@@ -65,21 +65,21 @@ void ZmqMan::init(
     }
 }
 
-int ZmqMan::put(void *data,
+int ZmqMan::put(const void *data,
         string doid,
         string var,
         string dtype,
-        vector<uint64_t> putshape,
-        vector<uint64_t> varshape,
-        vector<uint64_t> offset,
-        uint64_t timestep,
+        vector<size_t> putshape,
+        vector<size_t> varshape,
+        vector<size_t> offset,
+        size_t timestep,
         int tolerance,
         int priority)
 {
     json msg;
-    uint64_t putsize = product(putshape, dsize(dtype));
+    size_t putsize = product(putshape, dsize(dtype));
     msg["putsize"] = putsize;
-    uint64_t varsize = product(varshape, dsize(dtype));
+    size_t varsize = product(varshape, dsize(dtype));
     msg["varsize"] = varsize;
     StreamMan::put(data,doid,var,dtype,putshape,varshape,offset,timestep,tolerance,priority,msg);
     zmq_send(zmq_data, data, putsize, 0);
@@ -88,7 +88,7 @@ int ZmqMan::put(void *data,
 
 void ZmqMan::on_recv(json msg){
     if (msg["operation"] == "put"){
-        uint64_t putsize = msg["putsize"].get<uint64_t>();
+        size_t putsize = msg["putsize"].get<size_t>();
         void *data = malloc(putsize);
         int err = zmq_recv (zmq_data, data, putsize, 0);
         m_cache.put(data,

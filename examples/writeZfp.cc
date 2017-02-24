@@ -11,7 +11,7 @@ int main(){
         std::cout << "so=NULL\n";
     }
     std::unique_ptr<DataMan> (*func)() = NULL;
-    func = (std::unique_ptr<DataMan>(*)()) dlsym(so,"_Z9getZfpManv");
+    func = (std::unique_ptr<DataMan>(*)()) dlsym(so,"getMan");
     if (func == NULL){
         std::cout << "func=NULL\n";
     }
