@@ -42,9 +42,18 @@ int DumpMan::put(const void *data,
         int priority
         ){
 
+    cout << "DumpMan::put() doid: " << doid << endl;
     cout << "DumpMan::put() putshape : ";
     for (size_t i=0; i<putshape.size(); i++)
         cout << putshape[i] << " " ;
+    cout << endl;
+    cout << "DumpMan::put() varshape : ";
+    for (size_t i=0; i<varshape.size(); i++)
+        cout << varshape[i] << " " ;
+    cout << endl;
+    cout << "DumpMan::put() offset : ";
+    for (size_t i=0; i<offset.size(); i++)
+        cout << offset[i] << " " ;
     cout << endl;
 
     if(dtype == "float")

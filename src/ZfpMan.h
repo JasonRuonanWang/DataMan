@@ -39,7 +39,30 @@ class ZfpMan : public CompressMan{
                 );
 
         virtual void flush();
+
+        shared_ptr<char> compress(
+                void* p_data,
+                vector<size_t> p_shape,
+                string p_dtype,
+                size_t &p_compressed_size
+                );
+        shared_ptr<char> decompress(
+                void* p_data,
+                vector<size_t> p_shape,
+                string p_dtype,
+                size_t p_compressed_size
+                );
+
         string name(){return "ZfpMan";}
+
+        void set_rate(int p_rate){m_rate = p_rate;}
+        void set_precision(int p_precision){m_precision = p_precision;}
+        void set_accuracy(int p_accuracy){m_accuracy = p_accuracy;}
+
+    private:
+        int m_rate;
+        int m_precision;
+        int m_accuracy;
 };
 
 

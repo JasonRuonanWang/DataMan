@@ -23,22 +23,32 @@ int DataManager::put(
         int p_tolerance,
         int p_priority
         ){
-    cout << "DataManager::put() varshape : ";
-    for (size_t i=0; i<p_putshape.size(); i++)
-        cout << p_putshape[i] << " " ;
-    cout << endl;
-    put_next(
-            p_data,
-            p_doid,
-            p_var,
-            p_dtype,
-            p_putshape,
-            p_varshape,
-            p_offset,
-            p_timestep,
-            p_tolerance,
-            p_priority
-            );
+    if(p_putshape.size()>0){
+        if(p_putshape.size()>p_varshape.size()){
+            p_varshape.resize(p_putshape.size());
+            for (size_t i=0; i<p_putshape.size(); i++){
+                p_varshape[i] = p_putshape[i];
+            }
+        }
+        if(p_putshape.size()>p_offset.size()){
+            p_offset.resize(p_putshape.size());
+            for (size_t i=0; i<p_putshape.size(); i++){
+                p_offset[i] = 0;
+            }
+        }
+        put_next(
+                p_data,
+                p_doid,
+                p_var,
+                p_dtype,
+                p_putshape,
+                p_varshape,
+                p_offset,
+                p_timestep,
+                p_tolerance,
+                p_priority
+                );
+    }
     return 0;
 }
 
@@ -96,7 +106,6 @@ void DataManager::add_stream(
 void DataManager::flush(){
 }
 
-
 int DataManager::get(void *p_data,
         string p_doid,
         string p_var,
@@ -118,6 +127,4 @@ int DataManager::get(void *p_data,
         ){
     return 0;
 }
-
-
 
