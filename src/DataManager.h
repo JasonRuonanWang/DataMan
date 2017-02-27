@@ -41,6 +41,18 @@ class DataManager: public DataMan{
                 vector<int> p_priority = vector<int>()
                 );
 
+        int put(const void *p_data,
+                string p_doid,
+                string p_var,
+                string p_dtype,
+                vector<size_t> p_putshape,
+                vector<size_t> p_varshape,
+                vector<size_t> p_offset,
+                size_t p_timestep,
+                int p_tolerance=0,
+                int p_priority=100
+                );
+
         void add_file(string p_method);
 
         string name(){return "DataManager";}

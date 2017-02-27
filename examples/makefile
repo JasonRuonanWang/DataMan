@@ -4,7 +4,7 @@ CXX=g++
 CXXFLAGS=-std=c++11 -Wno-return-type-c-linkage
 
 
-default:zmq
+default:stream
 
 all:zmq mdtm zfp cache dump manager
 
@@ -27,6 +27,10 @@ cache:
 
 manager:
 	$(CXX) $(CXXFLAGS) writeManager.cc -o writeManager.exe -ldataman
+
+stream:
+	$(CXX) $(CXXFLAGS) writeStreamWorkflow.cc -o writeStreamWorkflow.exe -ldataman
+
 
 clean:
 	rm -rf *.exe *.dSYM
