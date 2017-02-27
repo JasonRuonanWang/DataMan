@@ -66,29 +66,8 @@ void StreamMan::zmq_meta_rep_thread_func(){
     }
 }
 
-int StreamMan::put(const void *data,
-        string doid,
-        string var,
-        string dtype,
-        vector<size_t> putshape,
-        vector<size_t> varshape,
-        vector<size_t> offset,
-        size_t timestep,
-        int tolerance,
-        int priority,
-        json msg)
-{
-
-    msg["operation"] = "put";
-    msg["doid"] = doid;
-    msg["var"] = var;
-    msg["dtype"] = dtype;
-    msg["putshape"] = putshape;
-    msg["varshape"] = varshape;
-    msg["offset"] = offset;
-    msg["timestep"] = timestep;
-
-    zmq_send(zmq_meta, msg.dump().c_str(), msg.dump().length(), 0);
+int StreamMan::put(const void *p_data, json p_jmsg){
+    zmq_send(zmq_meta, p_jmsg.dump().c_str(), p_jmsg.dump().length(), 0);
     return 0;
 }
 

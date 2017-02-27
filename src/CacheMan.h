@@ -15,16 +15,7 @@ class CacheItem : public DataMan{
                 vector<size_t> varshape
                 );
 
-        int put(const void *data,
-                string doid,
-                string var,
-                string dtype,
-                vector<size_t> putshape,
-                vector<size_t> varshape,
-                vector<size_t> offset,
-                size_t timestep,
-                int tolerance,
-                int priority);
+        virtual int put(const void *p_data, json p_jmsg);
 
         virtual int get(void *p_data,
                 string p_doid,
@@ -96,16 +87,7 @@ class CacheMan : public DataMan{
         CacheMan();
         ~CacheMan();
 
-        int put(const void *data,
-                string doid,
-                string var,
-                string dtype,
-                vector<size_t> putshape,
-                vector<size_t> varshape,
-                vector<size_t> offset,
-                size_t timestep,
-                int tolerance,
-                int priority);
+        virtual int put(const void *p_data, json p_jmsg);
 
         virtual int get(void *p_data,
                 string p_doid,

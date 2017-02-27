@@ -25,7 +25,23 @@ class DataMan{
                 size_t p_timestep,
                 int p_tolerance=0,
                 int p_priority=100
-                ) = 0;
+                ){
+            json msg;
+            msg["doid"] = p_doid;
+            msg["var"] = p_var;
+            msg["dtype"] = p_dtype;
+            msg["putshape"] = p_putshape;
+            msg["putbytes"] = product(p_putshape, dsize(p_dtype));
+            msg["varshape"] = p_varshape;
+            msg["varbytes"] = product(p_varshape, dsize(p_dtype));
+            msg["offset"] = p_offset;
+            msg["timestep"] = p_timestep;
+            msg["tolerance"] = p_tolerance;
+            msg["priority"] = p_priority;
+            return put(p_data, msg);
+        }
+
+        virtual int put(const void *p_data, json p_jmsg) = 0;
 
         virtual int get(void *p_data,
                 string p_doid,
@@ -75,6 +91,7 @@ class DataMan{
                     s=0;
                 }
             }
+            cout << endl;
         }
 
         void add_next(shared_ptr<DataMan> p_next){
@@ -82,31 +99,11 @@ class DataMan{
         }
 
     protected:
-        virtual int put_next(const void *p_data,
-                string p_doid,
-                string p_var,
-                string p_dtype,
-                vector<size_t> p_putshape,
-                vector<size_t> p_varshape,
-                vector<size_t> p_offset,
-                size_t p_timestep,
-                int p_tolerance=0,
-                int p_priority=100
-                ){
+
+
+        virtual int put_next(const void *p_data, json p_jmsg){
             for(size_t i=0; i<m_next.size(); i++){
-                m_next[i]->put(
-                        p_data,
-                        p_doid,
-                        p_var,
-                        p_dtype,
-                        p_putshape,
-                        p_varshape,
-                        p_offset,
-                        p_timestep,
-                        p_tolerance,
-                        p_priority
-                        );
-                cout << "DataMan::put() " << m_next[i]->name() << endl;
+                m_next[i]->put(p_data, p_jmsg);
             }
             return 0;
         }

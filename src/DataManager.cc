@@ -11,18 +11,12 @@ DataManager::~DataManager()
 {
 }
 
-int DataManager::put(
-        const void *p_data,
-        string p_doid,
-        string p_var,
-        string p_dtype,
-        vector<size_t> p_putshape,
-        vector<size_t> p_varshape,
-        vector<size_t> p_offset,
-        size_t p_timestep,
-        int p_tolerance,
-        int p_priority
-        ){
+int DataManager::put(const void *p_data, json p_jmsg){
+
+    vector<size_t> p_putshape = p_jmsg["putshape"].get<vector<size_t>>();
+    vector<size_t> p_varshape = p_jmsg["varshape"].get<vector<size_t>>();
+    vector<size_t> p_offset = p_jmsg["offset"].get<vector<size_t>>();
+
     if(p_putshape.size()>0){
         if(p_putshape.size()>p_varshape.size()){
             p_varshape.resize(p_putshape.size());
@@ -36,18 +30,7 @@ int DataManager::put(
                 p_offset[i] = 0;
             }
         }
-        put_next(
-                p_data,
-                p_doid,
-                p_var,
-                p_dtype,
-                p_putshape,
-                p_varshape,
-                p_offset,
-                p_timestep,
-                p_tolerance,
-                p_priority
-                );
+        put_next(p_data, p_jmsg);
     }
     return 0;
 }

@@ -31,31 +31,20 @@ int main(){
     offset.push_back(0);
     offset.push_back(0);
 
-    varshape[0] = 4;
-    varshape[1] = 6;
-    varshape[2] = 10;
+    varshape[0] = 20;
+    varshape[1] = 40;
+    varshape[2] = 60;
 
-    putshape[0] = 1;
-    putshape[1] = 2;
-    putshape[2] = 5;
+    putshape=varshape;
 
-    int datasize = 4*6*10;
+    int datasize = varshape[0] * varshape[1] * varshape[2];
 
     float data[datasize];
 
-    for (int i=0; i<4; i++){
-        for (int j=0; j<3; j++){
-            for (int k=0; k<2; k++){
-                for (int m=0; m<datasize; m++){
-                    data[m] = i*60 + j*10 + m;
-                }
-                offset[0] = i;
-                offset[1] = j*2;
-                offset[2] = k*5;
-                man->put(data, "aaa", "data", "float", putshape, varshape, offset, 0, 0, 100);
-            }
-        }
+    for (int k=0; k<datasize; k++){
+        data[k] = k+ k*0.01 + k*0.000001;
     }
+    man->put(data, "aaa", "data", "float", putshape, varshape, offset, 0, 0, 100);
     man->flush();
     return 0;
 }

@@ -19,22 +19,11 @@ class StreamMan : public DataMan{
 
         void init(string local_address, string remote_address, string mode);
 
-
-        int put(const void *data,
-                string doid,
-                string var,
-                string dtype,
-                vector<size_t> putshape,
-                vector<size_t> varshape,
-                vector<size_t> offset,
-                size_t timestep,
-                int tolerance,
-                int priority,
-                json msg);
-
         virtual void on_recv(json j) = 0;
 
         void flush();
+
+        virtual int put(const void *p_data, json p_jmsg);
 
     protected:
         void *zmq_context = NULL;

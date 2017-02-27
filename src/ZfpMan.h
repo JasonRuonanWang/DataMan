@@ -9,16 +9,8 @@ class ZfpMan : public CompressMan{
         ZfpMan();
         ~ZfpMan();
 
-        virtual int put(const void *p_data,
-                string p_doid,
-                string p_var,
-                string p_dtype,
-                vector<size_t> p_putshape,
-                vector<size_t> p_varshape,
-                vector<size_t> p_offset,
-                size_t p_timestep,
-                int p_tolerance,
-                int p_priority);
+
+        virtual int put(const void *p_data, json p_jmsg);
 
         virtual int get(void *p_data,
                 string p_doid,
@@ -40,13 +32,13 @@ class ZfpMan : public CompressMan{
 
         virtual void flush();
 
-        shared_ptr<char> compress(
+        void* compress(
                 void* p_data,
                 vector<size_t> p_shape,
                 string p_dtype,
                 size_t &p_compressed_size
                 );
-        shared_ptr<char> decompress(
+        void* decompress(
                 void* p_data,
                 vector<size_t> p_shape,
                 string p_dtype,

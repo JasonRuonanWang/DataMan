@@ -30,17 +30,14 @@ int DumpMan::get(void *data,
     return 0;
 }
 
-int DumpMan::put(const void *data,
-        string doid,
-        string var,
-        string dtype,
-        vector<size_t> putshape,
-        vector<size_t> varshape,
-        vector<size_t> offset,
-        size_t timestep,
-        int tolerance,
-        int priority
-        ){
+int DumpMan::put(const void *p_data, json p_jmsg){
+
+    string doid = p_jmsg["doid"];
+    string var = p_jmsg["var"];
+    string dtype = p_jmsg["dtype"];
+    vector<size_t> putshape = p_jmsg["putshape"].get<vector<size_t>>();
+    vector<size_t> varshape = p_jmsg["varshape"].get<vector<size_t>>();
+    vector<size_t> offset = p_jmsg["offset"].get<vector<size_t>>();
 
     cout << "DumpMan::put() doid: " << doid << endl;
     cout << "DumpMan::put() putshape : ";
@@ -57,9 +54,9 @@ int DumpMan::put(const void *data,
     cout << endl;
 
     if(dtype == "float")
-        for (size_t i=0; i<product(putshape,1); i++) cout << ((float*)data)[i] << " ";
+        for (size_t i=0; i<product(putshape,1); i++) cout << ((float*)p_data)[i] << " ";
     if(dtype == "double")
-        for (size_t i=0; i<product(putshape,1); i++) cout << ((double*)data)[i] << " ";
+        for (size_t i=0; i<product(putshape,1); i++) cout << ((double*)p_data)[i] << " ";
 
 
     cout << endl;

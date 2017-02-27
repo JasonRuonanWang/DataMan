@@ -43,16 +43,17 @@ int CacheItem::get(void *p_data,
     return 0;
 }
 
-int CacheItem::put(const void *p_data,
-        string p_doid,
-        string p_var,
-        string p_dtype,
-        vector<size_t> p_putshape,
-        vector<size_t> p_varshape,
-        vector<size_t> p_offset,
-        size_t p_timestep,
-        int p_tolerance,
-        int p_priority){
+int CacheItem::put(const void *p_data, json p_jmsg){
+
+
+    string p_doid = p_jmsg["doid"];
+    string p_var = p_jmsg["var"];
+    string p_dtype = p_jmsg["dtype"];
+    vector<size_t> p_putshape = p_jmsg["putshape"].get<vector<size_t>>();
+    vector<size_t> p_varshape = p_jmsg["varshape"].get<vector<size_t>>();
+    vector<size_t> p_offset = p_jmsg["offset"].get<vector<size_t>>();
+
+
     if(!m_buffer) init(p_doid, p_var, p_dtype, p_varshape);
     size_t putsize = product(p_putshape);
     size_t chunksize = p_putshape.back();
@@ -64,6 +65,7 @@ int CacheItem::put(const void *p_data,
     }
 
     return 0;
+
 }
 
 vector<size_t> CacheItem::get_shape(){
@@ -98,18 +100,10 @@ CacheMan::CacheMan(){
 CacheMan::~CacheMan(){
 }
 
-int CacheMan::put(const void *p_data,
-        string p_doid,
-        string p_var,
-        string p_dtype,
-        vector<size_t> p_putshape,
-        vector<size_t> p_varshape,
-        vector<size_t> p_offset,
-        size_t p_timestep,
-        int p_tolerance,
-        int p_priority){
-    m_cache[p_doid][p_var].put(p_data, p_doid, p_var, p_dtype, p_putshape, p_varshape, p_offset, p_timestep, p_tolerance, p_priority);
-    return 0;
+int CacheMan::put(const void *p_data, json p_jmsg){
+    string p_doid = p_jmsg["doid"];
+    string p_var = p_jmsg["var"];
+    return m_cache[p_doid][p_var].put(p_data, p_jmsg);
 }
 
 int CacheMan::get(void *p_data,

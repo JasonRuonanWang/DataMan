@@ -103,35 +103,30 @@ int MdtmMan::get(void *data,
     return 0;
 }
 
-int MdtmMan::put(const void *data,
-        string doid,
-        string var,
-        string dtype,
-        vector<size_t> putshape,
-        vector<size_t> varshape,
-        vector<size_t> offset,
-        size_t timestep,
-        int tolerance,
-        int priority)
-{
-    json msg;
-    int index = closest(priority, pipe_desc["priority"], true);
-    msg["pipe"] = pipe_desc["pipe_names"][index];
-    size_t putsize = product(putshape, dsize(dtype));
-    msg["putsize"] = putsize;
-    size_t varsize = product(varshape, dsize(dtype));
-    msg["varsize"] = varsize;
+int MdtmMan::put(const void *p_data, json p_jmsg){
 
-    StreamMan::put(data,doid,var,dtype,putshape,varshape,offset,timestep,tolerance,priority,msg);
+    int priority = p_jmsg["priority"].get<int>();
+    vector<size_t> putshape = p_jmsg["putshape"].get<vector<size_t>>();
+    vector<size_t> varshape = p_jmsg["varshape"].get<vector<size_t>>();
+    string dtype = p_jmsg["dtype"];
+
+    int index = closest(priority, pipe_desc["priority"], true);
+    p_jmsg["pipe"] = pipe_desc["pipe_names"][index];
+    size_t putbytes = product(putshape, dsize(dtype));
+    p_jmsg["putbytes"] = putbytes;
+    size_t varbytes = product(varshape, dsize(dtype));
+    p_jmsg["varbytes"] = varbytes;
+
+    StreamMan::put(p_data, p_jmsg);
 
     index=0;
     for(int i=0; i<pipenames.size(); i++){
-        if(rmquote(msg["pipe"].dump()) == pipenames[i]){
+        if(rmquote(p_jmsg["pipe"].dump()) == pipenames[i]){
             index=i;
         }
     }
-    string pipename = rmquote(pipe_desc["pipe_prefix"].dump()) + rmquote(msg["pipe"].dump());
-    write(pipes[index], data, putsize);
+    string pipename = rmquote(pipe_desc["pipe_prefix"].dump()) + rmquote(p_jmsg["pipe"].dump());
+    write(pipes[index], p_data, putbytes);
     return 0;
 }
 
@@ -167,8 +162,8 @@ void MdtmMan::on_recv(json j){
         // allocate buffer
         if(jqueue.front()["operation"] == "put"){
 
-            size_t putsize = jqueue.front()["putsize"].get<size_t>();
-            if(bqueue.front() == NULL) bqueue.front() = malloc(putsize);
+            size_t putbytes = jqueue.front()["putbytes"].get<size_t>();
+            if(bqueue.front() == NULL) bqueue.front() = malloc(putbytes);
 
             // determine the pipe for the head request
             json msg = jqueue.front();
@@ -182,9 +177,9 @@ void MdtmMan::on_recv(json j){
 
             // read the head request
             int s = iqueue.front();
-            putsize = msg["putsize"].get<int>();
-            while(s<putsize){
-                int ret = read(pipes[pipeindex], ((char*)bqueue.front()) + s, putsize - s);
+            putbytes = msg["putbytes"].get<int>();
+            while(s<putbytes){
+                int ret = read(pipes[pipeindex], ((char*)bqueue.front()) + s, putbytes - s);
                 if(ret > 0){
                     s += ret;
                 }
@@ -196,17 +191,8 @@ void MdtmMan::on_recv(json j){
             cout << "--------------------------" << endl;
             cout << msg << endl;
 
-            if(s == putsize){
-                m_cache.put(bqueue.front(),
-                        msg["doid"],
-                        msg["var"],
-                        msg["dtype"],
-                        msg["putshape"],
-                        msg["varshape"],
-                        msg["offset"],
-                        msg["timestep"],
-                        0,
-                        100);
+            if(s == putbytes){
+                m_cache.put(bqueue.front(),msg);
                 if(bqueue.front()) free(bqueue.front());
                 bqueue.pop();
                 iqueue.pop();

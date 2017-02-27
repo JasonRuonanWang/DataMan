@@ -65,42 +65,24 @@ void ZmqMan::init(
     }
 }
 
-int ZmqMan::put(const void *data,
-        string doid,
-        string var,
-        string dtype,
-        vector<size_t> putshape,
-        vector<size_t> varshape,
-        vector<size_t> offset,
-        size_t timestep,
-        int tolerance,
-        int priority)
-{
-    json msg;
-    size_t putsize = product(putshape, dsize(dtype));
-    msg["putsize"] = putsize;
-    size_t varsize = product(varshape, dsize(dtype));
-    msg["varsize"] = varsize;
-    StreamMan::put(data,doid,var,dtype,putshape,varshape,offset,timestep,tolerance,priority,msg);
-    zmq_send(zmq_data, data, putsize, 0);
+int ZmqMan::put(const void *p_data, json p_jmsg){
+    string dtype = p_jmsg["dtype"];
+    vector<size_t> putshape = p_jmsg["putshape"].get<vector<size_t>>();
+    vector<size_t> varshape = p_jmsg["varshape"].get<vector<size_t>>();
+    size_t putbytes = product(putshape, dsize(dtype));
+    p_jmsg["putbytes"] = putbytes;
+    p_jmsg["varbytes"] = product(varshape, dsize(dtype));
+    StreamMan::put(p_data, p_jmsg);
+    zmq_send(zmq_data, p_data, putbytes, 0);
     return 0;
 }
 
 void ZmqMan::on_recv(json msg){
     if (msg["operation"] == "put"){
-        size_t putsize = msg["putsize"].get<size_t>();
-        void *data = malloc(putsize);
-        int err = zmq_recv (zmq_data, data, putsize, 0);
-        m_cache.put(data,
-                msg["doid"],
-                msg["var"],
-                msg["dtype"],
-                msg["putshape"],
-                msg["varshape"],
-                msg["offset"],
-                msg["timestep"],
-                0,
-                100);
+        size_t putbytes = msg["putbytes"].get<size_t>();
+        void *data = malloc(putbytes);
+        int err = zmq_recv (zmq_data, data, putbytes, 0);
+        m_cache.put(data, msg);
         free(data);
     }
     else if (msg["operation"] == "flush"){
