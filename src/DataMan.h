@@ -99,6 +99,26 @@ class DataMan{
 
     protected:
 
+        inline void logging(string p_man, string p_msg){
+            cout << "[";
+            cout << p_man;
+            cout << "]";
+            cout << " ";
+            cout << p_msg;
+            cout << endl;
+        }
+
+        inline bool check_json(json p_jmsg, vector<string> p_strings, string p_man){
+            for (auto i : p_strings){
+                if (p_jmsg[i] == nullptr){
+                    if(p_man != ""){
+                        logging("DataMan", "JSON key " + i + " not found! Used in " + p_man);
+                    }
+                    return false;
+                }
+            }
+            return true;
+        }
 
         virtual int put_next(const void *p_data, json p_jmsg){
             for(size_t i=0; i<m_next.size(); i++){

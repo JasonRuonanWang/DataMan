@@ -5,7 +5,7 @@ LDFLAGS=-L. -Wno-return-type-c-linkage
 INSTALL_PREFIX=$(libpath)
 
 
-default:zmqman install
+default:zfpman install
 
 all:manager zmqman mdtmman zfpman dumpman install
 
