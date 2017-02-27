@@ -86,7 +86,7 @@ void ZmqMan::on_recv(json msg){
         free(data);
     }
     else if (msg["operation"] == "flush"){
-        if(get_callback){
+        if(get_callback == true){
             vector<string> do_list = m_cache.get_do_list();
             for(string i : do_list){
                 vector<string> var_list = m_cache.get_var_list(i);

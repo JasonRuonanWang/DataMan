@@ -6,6 +6,7 @@
 #include<cstdint> //uintX_t
 #include<vector>
 #include<memory> //shared_ptr
+#include<functional> //std::function
 #include"json.hpp"
 
 using json = nlohmann::json;
@@ -65,13 +66,12 @@ class DataMan{
 
         virtual string name() = 0;
 
-        void reg_callback(void (*cb)
-            (const void *data,
-             string doid,
-             string var,
-             string dtype,
-             vector<size_t> varshape)
-            ){
+        /**
+         * C++ applications will use this
+         * @param cb std::function object
+         */
+        void reg_callback( std::function<void( const void*, string, string, string, vector<size_t> )> cb )
+        {
             get_callback = cb;
         }
 
@@ -108,11 +108,8 @@ class DataMan{
             return 0;
         }
 
-        void (*get_callback)(const void *data,
-                string doid,
-                string var,
-                string dtype,
-                vector<size_t> varshape) = NULL;
+        std::function<void*( const void*, string, string, string, vector<size_t> )> get_callback;
+
 
         inline size_t product(size_t *shape){
             size_t s = 1;
