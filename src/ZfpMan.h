@@ -32,18 +32,8 @@ class ZfpMan : public CompressMan{
 
         virtual void flush();
 
-        void* compress(
-                void* p_data,
-                vector<size_t> p_shape,
-                string p_dtype,
-                size_t &p_compressed_size
-                );
-        void* decompress(
-                void* p_data,
-                vector<size_t> p_shape,
-                string p_dtype,
-                size_t p_compressed_size
-                );
+        void* compress(void* p_data, json &p_jmsg);
+        void* decompress(void* p_data, json p_jmsg);
 
         string name(){return "ZfpMan";}
 

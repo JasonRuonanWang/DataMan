@@ -27,17 +27,17 @@ int main(){
     tolerance.assign(num_channels, 0);
     priority.assign(num_channels, 0);
 
-    ZmqMan man(local_ip, remote_ip, local_port, remote_port, num_channels, "sender", tolerance, priority);
+    unique_ptr<DataMan> man (new ZmqMan(local_ip, remote_ip, local_port, remote_port, num_channels, "sender", tolerance, priority));
 
-    vector<uint64_t> putshape;
+    vector<size_t> putshape;
     putshape.assign(3,0);
 
-    vector<uint64_t> varshape;
+    vector<size_t> varshape;
     varshape.push_back(0);
     varshape.push_back(0);
     varshape.push_back(0);
 
-    vector<uint64_t> offset;
+    vector<size_t> offset;
     offset.push_back(0);
     offset.push_back(0);
     offset.push_back(0);
@@ -65,7 +65,7 @@ int main(){
                     offset[0] = i;
                     offset[1] = j*2;
                     offset[2] = k*5;
-                    man.put(data, "aaa", "data", "float", putshape, varshape, offset, 0, 0, 100);
+                    man->put(data, "aaa", "data", "float", putshape, varshape, offset, 0, 0, 100);
 
                     for (int i=0; i<10; i++)
                         cout << ((float*)data)[i] << " ";
@@ -73,7 +73,7 @@ int main(){
                 }
             }
         }
-        man.flush();
+        man->flush();
 
     }
 

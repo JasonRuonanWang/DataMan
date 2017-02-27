@@ -10,15 +10,15 @@ void get(const void *data,
          string doid,
          string var,
          string dtype,
-         vector<uint64_t> varshape
+         vector<size_t> varshape
          ){
 
-    cout << doid << endl;
-    cout << var << endl;
-    cout << dtype << endl;
+    cout << "data object ID = " << doid << endl;
+    cout << "variable name = " << var << endl;
+    cout << "data type = " << dtype << endl;
     float *dataf = (float*)data;
 
-    uint64_t varsize = std::accumulate(varshape.begin(), varshape.end(), 1, std::multiplies<uint64_t>());
+    size_t varsize = std::accumulate(varshape.begin(), varshape.end(), 1, std::multiplies<size_t>());
 
     for (int i=0; i<varsize; i++)
         cout << ((float*)data)[i] << " ";

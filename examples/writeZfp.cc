@@ -31,8 +31,8 @@ int main(){
     offset.push_back(0);
     offset.push_back(0);
 
-    varshape[0] = 20;
-    varshape[1] = 40;
+    varshape[0] = 2;
+    varshape[1] = 4;
     varshape[2] = 60;
 
     putshape=varshape;
@@ -42,7 +42,7 @@ int main(){
     float data[datasize];
 
     for (int k=0; k<datasize; k++){
-        data[k] = k+ k*0.01 + k*0.000001;
+        data[k] = exp(-(0.01*k));
     }
     man->put(data, "aaa", "data", "float", putshape, varshape, offset, 0, 0, 100);
     man->flush();

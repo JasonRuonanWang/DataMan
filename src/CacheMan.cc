@@ -44,15 +44,12 @@ int CacheItem::get(void *p_data,
 }
 
 int CacheItem::put(const void *p_data, json p_jmsg){
-
-
     string p_doid = p_jmsg["doid"];
     string p_var = p_jmsg["var"];
     string p_dtype = p_jmsg["dtype"];
     vector<size_t> p_putshape = p_jmsg["putshape"].get<vector<size_t>>();
     vector<size_t> p_varshape = p_jmsg["varshape"].get<vector<size_t>>();
     vector<size_t> p_offset = p_jmsg["offset"].get<vector<size_t>>();
-
 
     if(!m_buffer) init(p_doid, p_var, p_dtype, p_varshape);
     size_t putsize = product(p_putshape);
@@ -65,7 +62,6 @@ int CacheItem::put(const void *p_data, json p_jmsg){
     }
 
     return 0;
-
 }
 
 vector<size_t> CacheItem::get_shape(){
@@ -129,7 +125,6 @@ int CacheMan::get(void *p_data,
 }
 
 void CacheMan::flush(){
-    dump(m_cache["aaa"]["data"].get_buffer(), "aaa", "data", "float",  m_cache["aaa"]["data"].get_shape(), 10);
 }
 
 const void *CacheMan::get_buffer(string doid, string var){

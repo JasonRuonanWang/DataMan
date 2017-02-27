@@ -67,6 +67,7 @@ void StreamMan::zmq_meta_rep_thread_func(){
 }
 
 int StreamMan::put(const void *p_data, json p_jmsg){
+    p_jmsg["operation"] = "put";
     zmq_send(zmq_meta, p_jmsg.dump().c_str(), p_jmsg.dump().length(), 0);
     return 0;
 }

@@ -1,9 +1,10 @@
 CXX=clang++
 CXX=g++
 
-CXXFLAGS=-std=c++11
+CXXFLAGS=-std=c++11 -Wno-return-type-c-linkage
 
-default:zfp
+
+default:zmq
 
 all:zmq mdtm zfp cache dump manager
 

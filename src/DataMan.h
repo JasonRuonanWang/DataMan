@@ -15,7 +15,7 @@ class DataMan{
     public:
         DataMan(){}
         virtual ~DataMan(){}
-        virtual int put(const void *p_data,
+        int put(const void *p_data,
                 string p_doid,
                 string p_var,
                 string p_dtype,
@@ -75,18 +75,17 @@ class DataMan{
             get_callback = cb;
         }
 
-        void dump(const void *p_data,
-                string p_doid,
-                string p_var,
-                string p_dtype,
-                vector<size_t> p_varshape,
-                int p_length
-                ){
-            int s=0;
+        void dump(const void *p_data, json p_jmsg){
+
+            vector<size_t> p_varshape = p_jmsg["varshape"].get<vector<size_t>>();
+            string dtype = p_jmsg["dtype"];
+            size_t length = p_jmsg["dumplength"].get<size_t>();
+
+            size_t s=0;
             for (size_t i=0; i<product(p_varshape,1); i++){
                 s++;
                 cout << ((float*)p_data)[i] << " ";
-                if(s == p_length){
+                if(s == length){
                     cout << endl;
                     s=0;
                 }
