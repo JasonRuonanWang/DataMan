@@ -21,27 +21,6 @@ CacheItem::~CacheItem(){
     if(m_buffer) free(m_buffer);
 }
 
-int CacheItem::get(void *p_data,
-        string p_doid,
-        string p_var,
-        string p_dtype,
-        vector<size_t> p_getshape,
-        vector<size_t> p_varshape,
-        vector<size_t> p_offset,
-        size_t p_timestep
-        ){
-    return 0;
-}
-
-int CacheItem::get(void *p_data,
-        string p_doid,
-        string p_var,
-        string &p_dtype,
-        vector<size_t> &p_varshape,
-        size_t &p_timestep
-        ){
-    return 0;
-}
 
 int CacheItem::put(const void *p_data, json p_jmsg){
     string p_doid = p_jmsg["doid"];
@@ -61,6 +40,10 @@ int CacheItem::put(const void *p_data, json p_jmsg){
         memcpy((char*)m_buffer + ig * m_bytes, (char*)p_data + i * m_bytes, chunksize * m_bytes);
     }
 
+    return 0;
+}
+
+int CacheItem::get(void *p_data, json &p_jmsg){
     return 0;
 }
 
@@ -97,30 +80,15 @@ CacheMan::~CacheMan(){
 }
 
 int CacheMan::put(const void *p_data, json p_jmsg){
-    string p_doid = p_jmsg["doid"];
-    string p_var = p_jmsg["var"];
-    return m_cache[p_doid][p_var].put(p_data, p_jmsg);
+    if(check_json(p_jmsg, {"doid", "var"}, "CacheMan")){
+        string doid = p_jmsg["doid"];
+        string var = p_jmsg["var"];
+        return m_cache[doid][var].put(p_data, p_jmsg);
+    }
+    return -1;
 }
 
-int CacheMan::get(void *p_data,
-        string p_doid,
-        string p_var,
-        string p_dtype,
-        vector<size_t> p_getshape,
-        vector<size_t> p_varshape,
-        vector<size_t> p_offset,
-        size_t p_timestep
-        ){
-    return 0;
-}
-
-int CacheMan::get(void *p_data,
-        string p_doid,
-        string p_var,
-        string &p_dtype,
-        vector<size_t> &p_varshape,
-        size_t &p_timestep
-        ){
+int CacheMan::get(void *p_data, json &p_jmsg){
     return 0;
 }
 

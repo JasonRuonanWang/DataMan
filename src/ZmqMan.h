@@ -27,24 +27,8 @@ class ZmqMan : public StreamMan{
                 vector<int> priority);
 
         virtual int put(const void *p_data, json p_jmsg);
+        virtual int get(void *p_data, json &p_jmsg);
 
-        virtual int get(void *p_data,
-                string p_doid,
-                string p_var,
-                string p_dtype,
-                vector<size_t> p_getshape,
-                vector<size_t> p_varshape,
-                vector<size_t> p_offset,
-                size_t p_timestep
-                ){return 0;}
-
-        virtual int get(void *p_data,
-                string p_doid,
-                string p_var,
-                string &p_dtype,
-                vector<size_t> &p_varshape,
-                size_t &p_timestep
-                ){return 0;}
 
         virtual void on_recv(json j);
         string name(){return "ZmqMan";}

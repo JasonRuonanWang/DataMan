@@ -7,26 +7,7 @@ DumpMan::DumpMan()
 DumpMan::~DumpMan(){
 }
 
-int DumpMan::get(void *data,
-        string doid,
-        string var,
-        string dtype,
-        vector<size_t> getshape,
-        vector<size_t> varshape,
-        vector<size_t> offset,
-        size_t timestep
-        ){
-
-    return 0;
-}
-
-int DumpMan::get(void *data,
-        string doid,
-        string var,
-        string &dtype,
-        vector<size_t> &varshape,
-        size_t &timestep){
-
+int DumpMan::get(void *p_data, json &p_jmsg){
     return 0;
 }
 

@@ -77,6 +77,10 @@ int ZmqMan::put(const void *p_data, json p_jmsg){
     return 0;
 }
 
+int ZmqMan::get(void *p_data, json &p_jmsg){
+    return 0;
+}
+
 void ZmqMan::on_recv(json msg){
     if (msg["operation"] == "put"){
         size_t putbytes = msg["putbytes"].get<size_t>();

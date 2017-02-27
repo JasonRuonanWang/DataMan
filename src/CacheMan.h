@@ -16,24 +16,7 @@ class CacheItem : public DataMan{
                 );
 
         virtual int put(const void *p_data, json p_jmsg);
-
-        virtual int get(void *p_data,
-                string p_doid,
-                string p_var,
-                string p_dtype,
-                vector<size_t> p_getshape,
-                vector<size_t> p_varshape,
-                vector<size_t> p_offset,
-                size_t p_timestep
-                );
-
-        virtual int get(void *p_data,
-                string p_doid,
-                string p_var,
-                string &p_dtype,
-                vector<size_t> &p_varshape,
-                size_t &p_timestep
-                );
+        virtual int get(void *p_data, json &p_jmsg);
 
         void flush();
         string name(){return "CacheItem";}
@@ -88,24 +71,7 @@ class CacheMan : public DataMan{
         ~CacheMan();
 
         virtual int put(const void *p_data, json p_jmsg);
-
-        virtual int get(void *p_data,
-                string p_doid,
-                string p_var,
-                string p_dtype,
-                vector<size_t> p_getshape,
-                vector<size_t> p_varshape,
-                vector<size_t> p_offset,
-                size_t p_timestep
-                );
-
-        virtual int get(void *p_data,
-                string p_doid,
-                string p_var,
-                string &p_dtype,
-                vector<size_t> &p_varshape,
-                size_t &p_timestep
-                );
+        virtual int get(void *p_data, json &p_jmsg);
 
         void flush();
         string name(){return "CacheMan";}

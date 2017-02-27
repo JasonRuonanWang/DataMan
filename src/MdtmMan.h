@@ -17,23 +17,7 @@ class MdtmMan : public StreamMan{
                 vector<int> priority);
 
         virtual int put(const void *p_data, json p_jmsg);
-
-        int get(void *data,
-                string doid,
-                string var,
-                string dtype,
-                vector<size_t> getshape,
-                vector<size_t> varshape,
-                vector<size_t> offset,
-                size_t timestep
-               );
-
-        int get(void *data,
-                string doid,
-                string var,
-                string &dtype,
-                vector<size_t> &varshape,
-                size_t &timestep);
+        virtual int get(void *p_data, json &p_jmsg);
 
         void on_recv(json j);
         string name(){return "MdtmMan";}

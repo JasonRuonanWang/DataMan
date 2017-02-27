@@ -44,7 +44,7 @@ class DataMan{
 
         virtual int put(const void *p_data, json p_jmsg) = 0;
 
-        virtual int get(void *p_data,
+        int get(void *p_data,
                 string p_doid,
                 string p_var,
                 string p_dtype,
@@ -52,15 +52,31 @@ class DataMan{
                 vector<size_t> p_varshape,
                 vector<size_t> p_offset,
                 size_t p_timestep
-                ) = 0;
+                ){
+            json msg;
+            msg["doid"] = p_doid;
+            msg["var"] = p_var;
+            msg["dtype"] = p_dtype;
+            msg["getshape"] = p_getshape;
+            msg["varshape"] = p_varshape;
+            msg["offset"] = p_offset;
+            msg["timestep"] = p_timestep;
+            return get(p_data, msg);
+        }
 
-        virtual int get(void *p_data,
+        int get(void *p_data,
                 string p_doid,
                 string p_var,
                 string &p_dtype,
                 vector<size_t> &p_varshape,
                 size_t &p_timestep
-                ) = 0;
+                ){
+            json msg;
+            msg["doid"] = p_doid;
+            msg["var"] = p_var;
+            return get(p_data, msg);
+        }
+        virtual int get(void *p_data, json &p_jmsg) = 0;
 
         virtual void flush() = 0;
 

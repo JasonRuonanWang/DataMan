@@ -79,29 +79,6 @@ MdtmMan::~MdtmMan(){
     if(zmq_ipc_req) zmq_close(zmq_ipc_req);
 }
 
-int MdtmMan::get(void *data,
-        string doid,
-        string var,
-        string dtype,
-        vector<size_t> getshape,
-        vector<size_t> varshape,
-        vector<size_t> offset,
-        size_t timestep
-        ){
-
-    return 0;
-}
-
-int MdtmMan::get(void *data,
-        string doid,
-        string var,
-        string &dtype,
-        vector<size_t> &varshape,
-        size_t &timestep
-        ){
-
-    return 0;
-}
 
 int MdtmMan::put(const void *p_data, json p_jmsg){
 
@@ -130,6 +107,9 @@ int MdtmMan::put(const void *p_data, json p_jmsg){
     return 0;
 }
 
+int MdtmMan::get(void *p_data, json &p_jmsg){
+    return 0;
+}
 
 void MdtmMan::on_recv(json j){
 
