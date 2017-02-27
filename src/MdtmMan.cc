@@ -141,7 +141,7 @@ void MdtmMan::on_recv(json j){
 
     // for flush
     if(jqueue.front()["operation"] == "flush"){
-        if(get_callback == true){
+        if(get_callback){
             get_callback(m_cache.get_buffer(jqueue.front()["doid"], jqueue.front()["var"]),
                     jqueue.front()["doid"],
                     jqueue.front()["var"],

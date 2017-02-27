@@ -1,5 +1,5 @@
-CXX=g++
 CXX=clang++
+CXX=g++
 CXXFLAGS=-std=c++11 -fPIC
 LDFLAGS=-L. -Wno-return-type-c-linkage
 INSTALL_PREFIX=$(libpath)

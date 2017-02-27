@@ -66,10 +66,6 @@ class DataMan{
 
         virtual string name() = 0;
 
-        /**
-         * C++ applications will use this
-         * @param cb std::function object
-         */
         void reg_callback( std::function<void( const void*, string, string, string, vector<size_t> )> cb )
         {
             get_callback = cb;
@@ -127,7 +123,7 @@ class DataMan{
             return 0;
         }
 
-        std::function<void*( const void*, string, string, string, vector<size_t> )> get_callback;
+        std::function<void(const void*, string, string, string, vector<size_t> )> get_callback;
 
 
         inline size_t product(size_t *shape){
