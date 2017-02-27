@@ -45,6 +45,23 @@ void StreamMan::init(string local_address, string remote_address, string mode){
     }
 }
 
+void StreamMan::callback(){
+    if(get_callback){
+        vector<string> do_list = m_cache.get_do_list();
+        for(string i : do_list){
+            vector<string> var_list = m_cache.get_var_list(i);
+            for(string j : var_list){
+                get_callback(m_cache.get_buffer(i,j),
+                        i,
+                        j,
+                        m_cache.get_dtype(i, j),
+                        m_cache.get_shape(i, j)
+                        );
+            }
+        }
+    }
+}
+
 void StreamMan::flush(){
     json msg;
     msg["operation"] = "flush";

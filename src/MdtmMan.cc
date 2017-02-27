@@ -121,20 +121,12 @@ void MdtmMan::on_recv(json j){
 
     // for flush
     if(jqueue.front()["operation"] == "flush"){
-        if(get_callback){
-            get_callback(m_cache.get_buffer(jqueue.front()["doid"], jqueue.front()["var"]),
-                    jqueue.front()["doid"],
-                    jqueue.front()["var"],
-                    jqueue.front()["dtype"],
-                    jqueue.front()["varshape"].get<vector<size_t>>()
-                    );
-        }
+        callback();
         m_cache.clean_all("nan");
         bqueue.pop();
         iqueue.pop();
         jqueue.pop();
     }
-
 
     // for put
     for(int outloop=0; outloop<10; outloop++){

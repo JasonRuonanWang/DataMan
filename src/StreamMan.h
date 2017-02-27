@@ -28,6 +28,7 @@ class StreamMan : public DataMan{
     protected:
         void *zmq_context = NULL;
         CacheMan m_cache;
+        void callback();
     private:
         void *zmq_meta = NULL;
         void zmq_meta_rep_thread_func();
