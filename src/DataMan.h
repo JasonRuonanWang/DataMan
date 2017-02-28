@@ -7,6 +7,7 @@
 #include<vector>
 #include<memory> //shared_ptr
 #include<functional> //std::function
+#include<dlfcn.h>
 #include"json.hpp"
 
 using json = nlohmann::json;
@@ -113,8 +114,6 @@ class DataMan{
         }
 
     protected:
-
-        std::function<void(const void*, string, string, string, vector<size_t> )> get_callback;
 
         inline void logging(string p_msg, string p_man = ""){
             if(p_man=="") p_man = name();
@@ -275,6 +274,27 @@ class DataMan{
             }
         }
 
+        inline shared_ptr<DataMan> get_man(string method){
+            string soname = "lib" + method + "man.so";
+            void *so = NULL;
+            so = dlopen(soname.c_str(), RTLD_NOW);
+            if(so){
+                shared_ptr<DataMan> (*func)() = NULL;
+                func = (shared_ptr<DataMan>(*)()) dlsym(so,"getMan");
+                if(func){
+                    return func();
+                }
+                else{
+                    logging("getMan() not found in " + soname);
+                }
+            }
+            else{
+                logging("Dynamic library " + soname + " not found in LD_LIBRARY_PATH");
+            }
+            return nullptr;
+        }
+
+        std::function<void(const void*, string, string, string, vector<size_t> )> get_callback;
         vector<shared_ptr<DataMan>> m_next;
 };
 

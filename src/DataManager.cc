@@ -1,6 +1,5 @@
 #include<stdio.h>
 #include<stdlib.h>
-#include<dlfcn.h>
 #include"DataManager.h"
 
 DataManager::DataManager()
@@ -67,24 +66,9 @@ void DataManager::add_stream(json p_jmsg){
         }
     }
 
-    string soname = "lib" + method + "man.so";
-    void *so = NULL;
-    so = dlopen(soname.c_str(),RTLD_NOW);
-    if(so){
-        shared_ptr<DataMan> (*get_man)() = NULL;
-        get_man = (shared_ptr<DataMan>(*)()) dlsym(so,"getMan");
-        if(get_man){
-            shared_ptr<DataMan> man = get_man();
-            man->init(p_jmsg);
-            add_next(man);
-        }
-        else{
-            cout << "getMan() not found in " << soname << endl;
-        }
-    }
-    else{
-        cout << soname << " not found!" << endl;
-    }
+    shared_ptr<DataMan> man = get_man(method);
+    man->init(p_jmsg);
+    add_next(man);
 }
 
 void DataManager::flush(){
