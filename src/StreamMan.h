@@ -35,12 +35,12 @@ class StreamMan : public DataMan{
         vector<int> m_tolerance;
         vector<int> m_priority;
 
-
         inline string make_address(string ip, int port, string protocol){
             stringstream address;
             address << protocol << "://" << ip << ":" << port;
             return address.str();
         }
+
     private:
         void *zmq_meta = NULL;
         void zmq_meta_rep_thread_func();

@@ -6,7 +6,16 @@ int main(){
 
     DataManager man;
     json msg;
-    msg["method"] = "dump";
+    msg["method"] = "zmq";
+    msg["stream_mode"] = "sender";
+    msg["local_ip"] = "127.0.0.1";
+    msg["remote_ip"] = "127.0.0.1";
+    msg["local_port"] = 12306;
+    msg["remote_port"] = 12307;
+    msg["num_channels"] = 1;
+    msg["stream_mode"] = "sender";
+    msg["tolerance"] = {0};
+    msg["priority"] = {100};
     man.add_stream(msg);
 
     json msg2;

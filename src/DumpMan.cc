@@ -42,7 +42,6 @@ int DumpMan::put(const void *p_data, json p_jmsg){
     if(dtype == "double")
         for (size_t i=0; i<product(putshape,1); i++) cout << ((double*)p_data)[i] << " ";
 
-
     cout << endl;
     return 0;
 }

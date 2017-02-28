@@ -41,26 +41,8 @@ int DataManager::put(const void *p_data,
 }
 
 int DataManager::put(const void *p_data, json p_jmsg){
-
-    vector<size_t> p_putshape = p_jmsg["putshape"].get<vector<size_t>>();
-    vector<size_t> p_varshape = p_jmsg["varshape"].get<vector<size_t>>();
-    vector<size_t> p_offset = p_jmsg["offset"].get<vector<size_t>>();
-
-    if(p_putshape.size()>0){
-        if(p_putshape.size()>p_varshape.size()){
-            p_varshape.resize(p_putshape.size());
-            for (size_t i=0; i<p_putshape.size(); i++){
-                p_varshape[i] = p_putshape[i];
-            }
-        }
-        if(p_putshape.size()>p_offset.size()){
-            p_offset.resize(p_putshape.size());
-            for (size_t i=0; i<p_putshape.size(); i++){
-                p_offset[i] = 0;
-            }
-        }
-        put_next(p_data, p_jmsg);
-    }
+    check_shape(p_jmsg);
+    put_next(p_data, p_jmsg);
     return 0;
 }
 
@@ -72,6 +54,7 @@ void DataManager::add_stream(json p_jmsg){
     string method = "zmq";
     if(p_jmsg["method"] != nullptr) method = p_jmsg["method"];
 
+    logging("Streaming method " + method + " added" );
 
     if (m_tolerance.size() < m_num_channels){
         for (int i=0; i<m_num_channels; i++){
@@ -91,7 +74,9 @@ void DataManager::add_stream(json p_jmsg){
         shared_ptr<DataMan> (*get_man)() = NULL;
         get_man = (shared_ptr<DataMan>(*)()) dlsym(so,"getMan");
         if(get_man){
-            add_next(get_man());
+            shared_ptr<DataMan> man = get_man();
+            man->init(p_jmsg);
+            add_next(man);
         }
         else{
             cout << "getMan() not found in " << soname << endl;
@@ -103,6 +88,7 @@ void DataManager::add_stream(json p_jmsg){
 }
 
 void DataManager::flush(){
+    flush_next();
 }
 
 int DataManager::get(void *p_data, json &p_jmsg){

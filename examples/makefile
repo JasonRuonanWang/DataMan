@@ -6,7 +6,7 @@ CXXFLAGS=-std=c++11 -Wno-return-type-c-linkage
 
 default:stream
 
-all:zmq mdtm zfp cache dump manager
+all:zmq mdtm zfp cache dump manager stream
 
 dump:
 	$(CXX) $(CXXFLAGS) writeDump.cc -o writeDump.exe -ldumpman
@@ -27,6 +27,7 @@ cache:
 
 manager:
 	$(CXX) $(CXXFLAGS) writeManager.cc -o writeManager.exe -ldataman
+	$(CXX) $(CXXFLAGS) readManager.cc -o readManager.exe -ldataman
 
 stream:
 	$(CXX) $(CXXFLAGS) writeStreamWorkflow.cc -o writeStreamWorkflow.exe -ldataman

@@ -20,6 +20,7 @@ class ZfpMan : public CompressMan{
 
         string name(){return "ZfpMan";}
 
+
 };
 
 extern "C" shared_ptr<DataMan> getMan(){

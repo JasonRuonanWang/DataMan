@@ -36,7 +36,6 @@ int StreamMan::init(json p_jmsg){
         if(p_jmsg["tolerance"] != nullptr) m_tolerance = p_jmsg["tolerance"].get<vector<int>>();
         if(p_jmsg["priority"] != nullptr) m_priority = p_jmsg["priority"].get<vector<int>>();
 
-
         if(!zmq_context){
             zmq_context = zmq_ctx_new ();
             zmq_meta = zmq_socket (zmq_context, ZMQ_PAIR);
@@ -73,6 +72,9 @@ void StreamMan::callback(){
             }
         }
     }
+    else{
+        logging("callback called but callback function not registered");
+    }
 }
 
 void StreamMan::flush(){
@@ -88,7 +90,7 @@ void StreamMan::zmq_meta_rep_thread_func(){
         if (err>=0){
             cout << "StreamMan::zmq_meta_rep_thread_func: " << msg << endl;
             json j = json::parse(msg);
-            if(m_getmode == "callback"){
+            if(m_get_mode == "callback"){
                 on_recv(j);
             }
         }

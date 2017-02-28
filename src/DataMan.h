@@ -76,24 +76,26 @@ class DataMan{
             msg["var"] = p_var;
             return get(p_data, msg);
         }
+
         virtual int get(void *p_data, json &p_jmsg) = 0;
-
         virtual int init(json p_jmsg) = 0;
-
         virtual void flush() = 0;
-
         virtual string name() = 0;
-
         void reg_callback( std::function<void( const void*, string, string, string, vector<size_t> )> cb ){
-            get_callback = cb;
+            if(m_next.size()==0){
+                get_callback = cb;
+            }
+            else{
+                for (int i=0; i<m_next.size(); i++){
+                    m_next[i]->reg_callback(cb);
+                }
+            }
         }
 
         void dump(const void *p_data, json p_jmsg){
-
             vector<size_t> p_varshape = p_jmsg["varshape"].get<vector<size_t>>();
             string dtype = p_jmsg["dtype"];
             size_t length = p_jmsg["dumplength"].get<size_t>();
-
             size_t s=0;
             for (size_t i=0; i<product(p_varshape,1); i++){
                 s++;
@@ -114,7 +116,8 @@ class DataMan{
 
         std::function<void(const void*, string, string, string, vector<size_t> )> get_callback;
 
-        inline void logging(string p_man, string p_msg){
+        inline void logging(string p_msg, string p_man = ""){
+            if(p_man=="") p_man = name();
             cout << "[";
             cout << p_man;
             cout << "]";
@@ -135,14 +138,19 @@ class DataMan{
             return true;
         }
 
+        virtual int flush_next(){
+            for(size_t i=0; i<m_next.size(); i++){
+                m_next[i]->flush();
+            }
+            return 0;
+        }
+
         virtual int put_next(const void *p_data, json p_jmsg){
             for(size_t i=0; i<m_next.size(); i++){
                 m_next[i]->put(p_data, p_jmsg);
             }
             return 0;
         }
-
-
 
         inline size_t product(size_t *shape){
             size_t s = 1;
@@ -245,10 +253,29 @@ class DataMan{
             return k;
         }
 
-        string m_getmode = "callback"; // graph, callback
+        inline void check_shape(json &p_jmsg){
+            vector<size_t> putshape = p_jmsg["putshape"].get<vector<size_t>>();
+            vector<size_t> varshape = p_jmsg["varshape"].get<vector<size_t>>();
+            vector<size_t> offset = p_jmsg["offset"].get<vector<size_t>>();
+            if(putshape.size()>0){
+                if(putshape.size()>varshape.size()){
+                    varshape.resize(putshape.size());
+                    for (size_t i=0; i<putshape.size(); i++){
+                        varshape[i] = putshape[i];
+                    }
+                    p_jmsg["varshape"] = varshape;
+                }
+                if(putshape.size()>offset.size()){
+                    offset.resize(putshape.size());
+                    for (size_t i=0; i<putshape.size(); i++){
+                        offset[i] = 0;
+                    }
+                    p_jmsg["offset"] = offset;
+                }
+            }
+        }
+
         vector<shared_ptr<DataMan>> m_next;
 };
-
-
 
 #endif

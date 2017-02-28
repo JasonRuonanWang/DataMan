@@ -13,7 +13,6 @@ ZmqMan::~ZmqMan(){
 }
 
 int ZmqMan::init(json p_jmsg){
-
     StreamMan::init(p_jmsg);
     zmq_data = zmq_socket (zmq_context, ZMQ_PAIR);
     string local_address = make_address(m_local_ip, m_local_port+1, "tcp");
