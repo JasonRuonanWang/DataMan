@@ -15,6 +15,7 @@ class CacheItem : public DataMan{
                 vector<size_t> varshape
                 );
 
+        virtual int init(json p_jmsg);
         virtual int put(const void *p_data, json p_jmsg);
         virtual int get(void *p_data, json &p_jmsg);
 
@@ -70,6 +71,7 @@ class CacheMan : public DataMan{
         CacheMan();
         ~CacheMan();
 
+        virtual int init(json p_jmsg);
         virtual int put(const void *p_data, json p_jmsg);
         virtual int get(void *p_data, json &p_jmsg);
 

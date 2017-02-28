@@ -8,14 +8,8 @@ class MdtmMan : public StreamMan{
     public:
         MdtmMan();
         ~MdtmMan();
-        MdtmMan(string local_ip,
-                string remote_ip,
-                string mode,
-                string prefix,
-                int num_pipes,
-                vector<int> tolerance,
-                vector<int> priority);
 
+        virtual int init(json p_jmsg);
         virtual int put(const void *p_data, json p_jmsg);
         virtual int get(void *p_data, json &p_jmsg);
 

@@ -78,6 +78,8 @@ class DataMan{
         }
         virtual int get(void *p_data, json &p_jmsg) = 0;
 
+        virtual int init(json p_jmsg) = 0;
+
         virtual void flush() = 0;
 
         virtual string name() = 0;
@@ -242,7 +244,6 @@ class DataMan{
             }
             return k;
         }
-
 
         string m_getmode = "callback"; // graph, callback
         vector<shared_ptr<DataMan>> m_next;

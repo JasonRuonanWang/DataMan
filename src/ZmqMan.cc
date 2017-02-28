@@ -4,65 +4,29 @@
 #include "zmq.h"
 
 ZmqMan::ZmqMan()
-:StreamMan()
+    :StreamMan()
 {
-}
-
-ZmqMan::ZmqMan(
-        string local_ip,
-        string remote_ip,
-        int local_port,
-        int remote_port,
-        int num_channels,
-        string mode,
-        vector<int> tolerance,
-        vector<int> priority)
-{
-    init(
-        local_ip,
-        remote_ip,
-        local_port,
-        remote_port,
-        num_channels,
-        mode,
-        tolerance,
-        priority);
 }
 
 ZmqMan::~ZmqMan(){
     if(zmq_data) zmq_close(zmq_data);
 }
 
-void ZmqMan::init(
-        string local_ip,
-        string remote_ip,
-        int local_port,
-        int remote_port,
-        int num_channels,
-        string mode,
-        vector<int> tolerance,
-        vector<int> priority){
-    StreamMan::init(make_address(local_ip, local_port, "tcp"), make_address(remote_ip, remote_port, "tcp"), mode);
+int ZmqMan::init(json p_jmsg){
 
-    m_local_ip = local_ip;
-    m_remote_ip = remote_ip;
-    m_local_port = local_port;
-    m_remote_port = remote_port;
-    m_num_channels = num_channels;
-
+    StreamMan::init(p_jmsg);
     zmq_data = zmq_socket (zmq_context, ZMQ_PAIR);
-
-    string local_address = make_address(local_ip, local_port+1, "tcp");
-    string remote_address = make_address(remote_ip, remote_port+1, "tcp");
-
-    if(mode=="sender"){
+    string local_address = make_address(m_local_ip, m_local_port+1, "tcp");
+    string remote_address = make_address(m_remote_ip, m_remote_port+1, "tcp");
+    if(m_stream_mode=="sender"){
         zmq_connect (zmq_data, remote_address.c_str());
         cout << "ZmqMan::init " << remote_address << " connected" << endl;
     }
-    else if(mode=="receiver"){
+    else if(m_stream_mode=="receiver"){
         zmq_bind (zmq_data, local_address.c_str());
         cout << "ZmqMan::init " << local_address << " bound" << endl;
     }
+    return 0;
 }
 
 int ZmqMan::put(const void *p_data, json p_jmsg){

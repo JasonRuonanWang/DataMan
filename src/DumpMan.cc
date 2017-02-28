@@ -7,6 +7,9 @@ DumpMan::DumpMan()
 DumpMan::~DumpMan(){
 }
 
+int DumpMan::init(json p_jmsg){
+    return 0;
+}
 int DumpMan::get(void *p_data, json &p_jmsg){
     return 0;
 }

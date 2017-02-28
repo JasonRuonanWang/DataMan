@@ -1,18 +1,23 @@
 #include "CacheMan.h"
 
 
-void CacheItem::init(string p_doid,
-        string p_var,
-        string p_dtype,
-        vector<size_t> p_varshape){
-    m_doid = p_doid;
-    m_var = p_var;
-    m_dtype = p_dtype;
-    m_varshape = p_varshape;
-    m_bytes = dsize(m_dtype);
-    m_varsize = product(m_varshape);
-    m_buffer = malloc(m_varsize * m_bytes);
+int CacheMan::init(json p_jmsg){
+    return 0;
 }
+int CacheItem::init(json p_jmsg){
+    if(check_json(p_jmsg, {"doid", "var", "dtype", "varshape", "dtype"}, "CacheItem")){
+        m_doid = p_jmsg["doid"];
+        m_var = p_jmsg["var"];
+        m_dtype = p_jmsg["dtype"];
+        m_varshape = p_jmsg["varshape"].get<vector<size_t>>();
+        m_bytes = dsize(m_dtype);
+        m_varsize = product(m_varshape);
+        m_buffer = malloc(m_varsize * m_bytes);
+        return 0;
+    }
+    return -1;
+}
+
 
 CacheItem::CacheItem()
 :DataMan(){}
@@ -30,7 +35,7 @@ int CacheItem::put(const void *p_data, json p_jmsg){
     vector<size_t> p_varshape = p_jmsg["varshape"].get<vector<size_t>>();
     vector<size_t> p_offset = p_jmsg["offset"].get<vector<size_t>>();
 
-    if(!m_buffer) init(p_doid, p_var, p_dtype, p_varshape);
+    if(!m_buffer) init(p_jmsg);
     size_t putsize = product(p_putshape);
     size_t chunksize = p_putshape.back();
     for(size_t i=0; i<putsize; i+=chunksize){

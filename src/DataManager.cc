@@ -11,6 +11,10 @@ DataManager::~DataManager()
 {
 }
 
+int DataManager::init(json p_jmsg){
+    return 0;
+}
+
 int DataManager::put(const void *p_data,
         string p_doid,
         string p_var,
@@ -63,24 +67,11 @@ int DataManager::put(const void *p_data, json p_jmsg){
 void DataManager::add_file(string p_method){
 }
 
-void DataManager::add_stream(
-        string p_local_ip,
-        string p_remote_ip,
-        int p_local_port,
-        int p_remote_port,
-        int p_num_channels,
-        string p_method,
-        vector<int> p_tolerance,
-        vector<int> p_priority
-        ){
+void DataManager::add_stream(json p_jmsg){
 
-    m_local_ip = p_local_ip;
-    m_remote_ip = p_remote_ip;
-    m_local_port = p_local_port;
-    m_remote_port = p_remote_port;
-    m_num_channels = p_num_channels;
-    m_tolerance = p_tolerance;
-    m_priority = p_priority;
+    string method = "zmq";
+    if(p_jmsg["method"] != nullptr) method = p_jmsg["method"];
+
 
     if (m_tolerance.size() < m_num_channels){
         for (int i=0; i<m_num_channels; i++){
@@ -93,7 +84,7 @@ void DataManager::add_stream(
         }
     }
 
-    string soname = "lib" + p_method + "man.so";
+    string soname = "lib" + method + "man.so";
     void *so = NULL;
     so = dlopen(soname.c_str(),RTLD_NOW);
     if(so){
@@ -114,25 +105,6 @@ void DataManager::add_stream(
 void DataManager::flush(){
 }
 
-int DataManager::get(void *p_data,
-        string p_doid,
-        string p_var,
-        string p_dtype,
-        vector<size_t> p_getshape,
-        vector<size_t> p_varshape,
-        vector<size_t> p_offset,
-        size_t p_timestep
-        ){
+int DataManager::get(void *p_data, json &p_jmsg){
     return 0;
 }
-
-int DataManager::get(void *p_data,
-        string p_doid,
-        string p_var,
-        string &p_dtype,
-        vector<size_t> &p_varshape,
-        size_t &p_timestep
-        ){
-    return 0;
-}
-

@@ -11,12 +11,6 @@ StreamMan::StreamMan()
 {
 }
 
-StreamMan::StreamMan(string local_address, string remote_address, string mode)
-    :DataMan()
-{
-    init(local_address, remote_address, mode);
-}
-
 StreamMan::~StreamMan(){
     if(zmq_meta) zmq_close(zmq_meta);
     if(zmq_context) zmq_ctx_destroy(zmq_context);
@@ -28,20 +22,39 @@ StreamMan::~StreamMan(){
     }
 }
 
-void StreamMan::init(string local_address, string remote_address, string mode){
-    if(!zmq_context){
-        zmq_context = zmq_ctx_new ();
-        zmq_meta = zmq_socket (zmq_context, ZMQ_PAIR);
-        if(mode == "sender"){
-            zmq_connect (zmq_meta, remote_address.c_str());
-            cout << "StreamMan::init " << remote_address << " connected" << endl;
+int StreamMan::init(json p_jmsg){
+    if(check_json(p_jmsg, {"stream_mode", "remote_ip", "local_ip", "remote_port", "local_port" }, "StreamMan")){
+        m_stream_mode = p_jmsg["stream_mode"];
+        m_local_ip = p_jmsg["local_ip"];
+        m_remote_ip = p_jmsg["remote_ip"];
+        m_local_port = p_jmsg["local_port"];
+        m_remote_port = p_jmsg["remote_port"];
+        string remote_address = make_address(m_remote_ip, m_remote_port, "tcp");
+        string local_address = make_address(m_local_ip, m_local_port, "tcp");
+
+        if(p_jmsg["num_channels"] != nullptr) m_num_channels = p_jmsg["num_channels"];
+        if(p_jmsg["tolerance"] != nullptr) m_tolerance = p_jmsg["tolerance"].get<vector<int>>();
+        if(p_jmsg["priority"] != nullptr) m_priority = p_jmsg["priority"].get<vector<int>>();
+
+
+        if(!zmq_context){
+            zmq_context = zmq_ctx_new ();
+            zmq_meta = zmq_socket (zmq_context, ZMQ_PAIR);
+            if(m_stream_mode == "sender"){
+                zmq_connect (zmq_meta, remote_address.c_str());
+                cout << "StreamMan::init " << remote_address << " connected" << endl;
+            }
+            else if(m_stream_mode == "receiver"){
+                zmq_bind (zmq_meta, local_address.c_str());
+                cout << "StreamMan::init " << local_address << " bound" << endl;
+            }
+            zmq_meta_rep_thread_active = true;
+            zmq_meta_rep_thread = new thread(&StreamMan::zmq_meta_rep_thread_func, this);
         }
-        else if(mode == "receiver"){
-            zmq_bind (zmq_meta, local_address.c_str());
-            cout << "StreamMan::init " << local_address << " bound" << endl;
-        }
-        zmq_meta_rep_thread_active = true;
-        zmq_meta_rep_thread = new thread(&StreamMan::zmq_meta_rep_thread_func, this);
+        return 0;
+    }
+    else{
+        return -1;
     }
 }
 

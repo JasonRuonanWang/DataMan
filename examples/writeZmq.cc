@@ -8,76 +8,43 @@ using namespace std;
 
 int main(){
 
-    string local_ip, remote_ip;
-    int local_port, remote_port;
+    ZmqMan man;
+    json msg;
+    msg["local_ip"] = "127.0.0.1";
+    msg["remote_ip"] = "127.0.0.1";
+    msg["local_port"] = 12306;
+    msg["remote_port"] = 12307;
+    msg["num_channels"] = 1;
+    msg["stream_mode"] = "sender";
+    msg["tolerance"] = {0};
+    msg["priority"] = {100};
+    man.init(msg);
 
-    local_ip = "131.225.2.29";
-    remote_ip = "131.225.2.31";
-
-    local_ip = "127.0.0.1";
-    remote_ip = "127.0.0.1";
-
-    local_port = 12306;
-    remote_port = 12307;
-
-    int num_channels = 1;
-
-    vector<int> tolerance;
-    vector<int> priority;
-    tolerance.assign(num_channels, 0);
-    priority.assign(num_channels, 0);
-
-    unique_ptr<DataMan> man (new ZmqMan(local_ip, remote_ip, local_port, remote_port, num_channels, "sender", tolerance, priority));
-
-    vector<size_t> putshape;
-    putshape.assign(3,0);
-
-    vector<size_t> varshape;
-    varshape.push_back(0);
-    varshape.push_back(0);
-    varshape.push_back(0);
-
-    vector<size_t> offset;
-    offset.push_back(0);
-    offset.push_back(0);
-    offset.push_back(0);
-
-    varshape[0] = 4;
-    varshape[1] = 6;
-    varshape[2] = 10;
-
-    putshape[0] = 1;
-    putshape[1] = 2;
-    putshape[2] = 5;
+    json msg2;
+    msg2["putshape"] = {1,2,5};
+    msg2["varshape"] = {4,6,10};
+    msg2["doid"] = "aaa";
+    msg2["var"] = "data";
+    msg2["dtype"] = "float";
 
     int datasize = 10;
-
     float data[datasize];
-
     for(int loop=0; loop<100; loop++){
-
         for (int i=0; i<4; i++){
             for (int j=0; j<3; j++){
                 for (int k=0; k<2; k++){
                     for (int m=0; m<datasize; m++){
                         data[m] = i*10000 + j*100 + k*10 + m;
                     }
-                    offset[0] = i;
-                    offset[1] = j*2;
-                    offset[2] = k*5;
-                    man->put(data, "aaa", "data", "float", putshape, varshape, offset, 0, 0, 100);
-
+                    msg2["offset"] = {i,j*2,k*5};
+                    man.put(data, msg2);
                     for (int i=0; i<10; i++)
                         cout << ((float*)data)[i] << " ";
                     cout << endl;
                 }
             }
         }
-        man->flush();
-
+        man.flush();
     }
-
     return 0;
 }
-
-

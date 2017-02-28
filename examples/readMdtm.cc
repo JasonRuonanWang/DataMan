@@ -6,57 +6,40 @@
 #include <numeric>
 using namespace std;
 
-void get(const void *data,
+void getcb(const void *data,
          string doid,
          string var,
          string dtype,
-         vector<uint64_t> varshape
+         vector<size_t> varshape
          ){
-
-    cout << doid << endl;
-    cout << var << endl;
-    cout << dtype << endl;
+    cout << "data object ID = " << doid << endl;
+    cout << "variable name = " << var << endl;
+    cout << "data type = " << dtype << endl;
     float *dataf = (float*)data;
-
-    uint64_t varsize = std::accumulate(varshape.begin(), varshape.end(), 1, std::multiplies<uint64_t>());
-
+    size_t varsize = std::accumulate(varshape.begin(), varshape.end(), 1, std::multiplies<size_t>());
     for (int i=0; i<varsize; i++)
         cout << ((float*)data)[i] << " ";
     cout << endl;
-
 }
 
-
 int main(){
-
-    string sender_address;
-    string receiver_address;
-
-    sender_address = "tcp://131.225.2.29:12306";
-    receiver_address = "tcp://131.225.2.31:12307";
-
-    sender_address = "tcp://127.0.0.1:12306";
-    receiver_address = "tcp://127.0.0.1:12307";
-
-    string mode = "receiver";
-    string prefix = "/tmp/MdtmManPipes/";
-    int num_pipes = 4;
-
-    vector<int> tolerance;
-    vector<int> priority;
-    tolerance.assign(num_pipes, 0);
-    priority.assign(num_pipes, 0);
-
-    MdtmMan mdtmman(receiver_address, sender_address, mode, prefix, num_pipes, tolerance, priority);
-    mdtmman.reg_callback(get);
-
-
-    for (int i=0; i<100; i++){
+    MdtmMan man;
+    json j;
+    j["local_ip"] = "127.0.0.1";
+    j["remote_ip"] = "127.0.0.1";
+    j["local_port"] = 12307;
+    j["remote_port"] = 12306;
+    j["num_channels"] = 1;
+    j["stream_mode"] = "receiver";
+    j["tolerance"] = {0};
+    j["priority"] = {100};
+    j["pipe_prefix"] = "/tmp/MdtmManPipes/";
+    man.init(j);
+    man.reg_callback(getcb);
+    for (int i=0; i<100000; i++){
         cout << "1 second" << endl;
         usleep(1000000);
     }
-
-
     return 0;
 }
 

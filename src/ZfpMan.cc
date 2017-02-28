@@ -9,6 +9,10 @@ ZfpMan::ZfpMan()
 ZfpMan::~ZfpMan(){
 }
 
+int ZfpMan::init(json p_jmsg){
+    return 0;
+}
+
 int ZfpMan::put(const void *p_data, json p_jmsg){
 
     void *compressed_data = NULL;

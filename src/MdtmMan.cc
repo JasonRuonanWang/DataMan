@@ -11,38 +11,38 @@ MdtmMan::MdtmMan(){
 
 }
 
-MdtmMan::MdtmMan(string local_address,
-        string remote_address,
-        string mode,
-        string prefix,
-        int num_pipes,
-        vector<int> tolerance,
-        vector<int> priority)
-    :StreamMan(local_address, remote_address, mode)
-{
+int MdtmMan::init(json p_jmsg){
+
+    StreamMan::init(p_jmsg);
+
+    if(!check_json(p_jmsg, {"pipe_prefix"}, "MdtmMan")){
+        return -1;
+    }
+    string prefix = p_jmsg["pipe_prefix"];
+
     pipe_desc["operation"] = "init";
-    pipe_desc["mode"] = mode;
+    pipe_desc["mode"] = m_stream_mode;
     pipe_desc["pipe_prefix"] = prefix;
 
     string pipename_prefix = "MdtmManPipe";
-    for(int i=0; i<num_pipes; i++){
+    for(int i=0; i<m_num_channels; i++){
         stringstream pipename;
         pipename << pipename_prefix << i;
         if(i==0){
             pipe_desc["pipe_names"] = {pipename.str()};
-            pipe_desc["loss_tolerance"] = {tolerance[i]};
-            pipe_desc["priority"] = {priority[i]};
+            pipe_desc["loss_tolerance"] = {m_tolerance[i]};
+            pipe_desc["priority"] = {m_priority[i]};
         }
         else{
             pipe_desc["pipe_names"].insert(pipe_desc["pipe_names"].end(), pipename.str());
-            pipe_desc["loss_tolerance"].insert(pipe_desc["loss_tolerance"].end(), tolerance[i]);
-            pipe_desc["priority"].insert(pipe_desc["priority"].end(), priority[i]);
+            pipe_desc["loss_tolerance"].insert(pipe_desc["loss_tolerance"].end(), m_tolerance[i]);
+            pipe_desc["priority"].insert(pipe_desc["priority"].end(), m_priority[i]);
         }
     }
 
     // ZMQ_DataMan_MDTM
 
-    if(mode=="sender"){
+    if(m_stream_mode=="sender"){
         zmq_ipc_req = zmq_socket (zmq_context, ZMQ_REQ);
         zmq_connect (zmq_ipc_req, "ipc:///tmp/ADIOS_MDTM_pipe");
 
@@ -58,21 +58,22 @@ MdtmMan::MdtmMan(string local_address,
         mkfifo(filename.c_str(), 0666);
     }
 
-    for(int i=0; i<num_pipes; i++){
+    for(int i=0; i<m_num_channels; i++){
         stringstream pipename;
         pipename << pipename_prefix << i;
         string fullpipename = prefix + pipename.str();
-        if (mode == "sender"){
+        if (m_stream_mode == "sender"){
             int fp = open(fullpipename.c_str(), O_WRONLY);
             pipes.push_back(fp);
         }
-        if (mode == "receiver"){
+        if (m_stream_mode == "receiver"){
             int fp = open(fullpipename.c_str(), O_RDONLY | O_NONBLOCK);
             pipes.push_back(fp);
         }
         printf("pipe pointer %d ------------------- \n", pipes[i]);
         pipenames.push_back(pipename.str());
     }
+    return 0;
 }
 
 MdtmMan::~MdtmMan(){
