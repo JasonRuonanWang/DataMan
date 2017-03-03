@@ -14,6 +14,9 @@ class DumpMan : public DataMan{
         virtual int get(void *p_data, json &p_jmsg);
         void flush();
         string name(){return "DumpMan";}
+
+    private:
+        bool m_dumping = true;
 };
 
 extern "C" shared_ptr<DataMan> getMan(){

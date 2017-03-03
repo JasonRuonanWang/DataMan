@@ -69,7 +69,10 @@ void CacheItem::clean(const string mode){
         return;
     }
     if(mode == "nan"){
-        memset(m_buffer, numeric_limits<int>::quiet_NaN(), m_varsize * m_bytes);
+        for(size_t i=0; i<m_varsize; i++){
+            if(m_dtype == "float")
+                ((float*)m_buffer)[i] = numeric_limits<float>::quiet_NaN();
+        }
         return;
     }
 }

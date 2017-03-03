@@ -8,6 +8,9 @@ DumpMan::~DumpMan(){
 }
 
 int DumpMan::init(json p_jmsg){
+    if(p_jmsg["dumping"]!=NULL){
+        m_dumping = p_jmsg["dumping"].get<bool>();
+    }
     return 0;
 }
 int DumpMan::get(void *p_data, json &p_jmsg){
@@ -15,6 +18,10 @@ int DumpMan::get(void *p_data, json &p_jmsg){
 }
 
 int DumpMan::put(const void *p_data, json p_jmsg){
+
+    if(!m_dumping){
+        return 0;
+    }
 
     string doid = p_jmsg["doid"];
     string var = p_jmsg["var"];
