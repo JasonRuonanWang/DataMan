@@ -120,7 +120,6 @@ int MdtmMan::get(void *p_data, json &p_jmsg){
 void MdtmMan::on_recv(json j){
 
     // push new request
-
     jqueue.push(j);
     bqueue.push(NULL);
     iqueue.push(0);
@@ -134,12 +133,14 @@ void MdtmMan::on_recv(json j){
         jqueue.pop();
     }
 
+    if(jqueue.size() == 0){
+        return;
+    }
+
     // for put
-    for(int outloop=0; outloop<10; outloop++){
-
-        // allocate buffer
+    for(int outloop=0; outloop<jqueue.size(); outloop++){
         if(jqueue.front()["operation"] == "put"){
-
+            // allocate buffer
             size_t putbytes = jqueue.front()["putbytes"].get<size_t>();
             if(bqueue.front() == NULL) bqueue.front() = malloc(putbytes);
 
@@ -166,19 +167,17 @@ void MdtmMan::on_recv(json j){
                 }
             }
 
-            cout << "--------------------------" << endl;
-
             if(s == putbytes){
                 m_cache.put(bqueue.front(),msg);
                 if(bqueue.front()) free(bqueue.front());
                 bqueue.pop();
                 iqueue.pop();
                 jqueue.pop();
+                break;
             }
             else{
                 iqueue.front()=s;
             }
-            cout << "*****************************" << endl;
         }
     }
 }

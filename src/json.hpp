@@ -3820,7 +3820,7 @@ class basic_json
             return m_value.object->operator[](key);
         }
 
-        JSON_THROW(std::domain_error("cannot use operator[] with " + type_name()));
+        JSON_THROW(std::domain_error("cannot use operator[" + key + "] with " + type_name()));
     }
 
     /*!
@@ -3862,7 +3862,7 @@ class basic_json
             return m_value.object->find(key)->second;
         }
 
-        JSON_THROW(std::domain_error("cannot use operator[] with " + type_name()));
+        JSON_THROW(std::domain_error("cannot use operator[" + key + "] with " + type_name()));
     }
 
     /*!
@@ -4020,7 +4020,7 @@ class basic_json
             return m_value.object->find(key)->second;
         }
 
-        JSON_THROW(std::domain_error("cannot use operator[] with " + type_name()));
+        JSON_THROW(std::domain_error("cannot use operator[" + key + "] with " + type_name()));
     }
 
     /*!
