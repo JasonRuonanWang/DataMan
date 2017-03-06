@@ -13,6 +13,7 @@ MdtmMan::MdtmMan(){
 
 int MdtmMan::init(json p_jmsg){
 
+
     StreamMan::init(p_jmsg);
 
     if(!check_json(p_jmsg, {"pipe_prefix"}, "MdtmMan")){
@@ -39,6 +40,7 @@ int MdtmMan::init(json p_jmsg){
             pipe_desc["priority"].insert(pipe_desc["priority"].end(), m_priority[i]);
         }
     }
+
 
     // ZMQ_DataMan_MDTM
 
@@ -80,13 +82,16 @@ MdtmMan::~MdtmMan(){
     if(zmq_ipc_req) zmq_close(zmq_ipc_req);
 }
 
-
 int MdtmMan::put(const void *p_data, json p_jmsg){
 
-    int priority = p_jmsg["priority"].get<int>();
     vector<size_t> putshape = p_jmsg["putshape"].get<vector<size_t>>();
     vector<size_t> varshape = p_jmsg["varshape"].get<vector<size_t>>();
     string dtype = p_jmsg["dtype"];
+
+    int priority = 100;
+    if(p_jmsg["priority"] != nullptr){
+        priority = p_jmsg["priority"].get<int>();
+    }
 
     int index = closest(priority, pipe_desc["priority"], true);
     p_jmsg["pipe"] = pipe_desc["pipe_names"][index];
@@ -162,7 +167,6 @@ void MdtmMan::on_recv(json j){
             }
 
             cout << "--------------------------" << endl;
-            cout << msg << endl;
 
             if(s == putbytes){
                 m_cache.put(bqueue.front(),msg);
@@ -174,6 +178,7 @@ void MdtmMan::on_recv(json j){
             else{
                 iqueue.front()=s;
             }
+            cout << "*****************************" << endl;
         }
     }
 }
