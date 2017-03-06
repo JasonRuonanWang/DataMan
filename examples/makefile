@@ -2,6 +2,7 @@ CXX=clang++
 CXX=g++
 
 CXXFLAGS=-std=c++11 -Wno-return-type-c-linkage
+LDFLAGS=-Wl,--no-as-needed -ldl
 
 
 default:mdtm
@@ -9,28 +10,28 @@ default:mdtm
 all:zmq mdtm zfp cache dump manager stream
 
 dump:
-	$(CXX) $(CXXFLAGS) writeDump.cc -o writeDump.exe -ldumpman
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) writeDump.cc -o writeDump.exe -ldumpman
 
 zfp:
-	$(CXX) $(CXXFLAGS) writeZfp.cc -o writeZfp.exe
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) writeZfp.cc -o writeZfp.exe
 
 zmq:
-	$(CXX) $(CXXFLAGS) writeZmq.cc -o writeZmq.exe -lzmqman -lstreamman
-	$(CXX) $(CXXFLAGS) readZmq.cc -o readZmq.exe -lzmqman -lstreamman
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) writeZmq.cc -o writeZmq.exe -lzmqman -lstreamman
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) readZmq.cc -o readZmq.exe -lzmqman -lstreamman
 
 mdtm:
-	$(CXX) $(CXXFLAGS) readMdtm.cc -o readMdtm.exe -lmdtmman -lstreamman
-	$(CXX) $(CXXFLAGS) writeMdtm.cc -o writeMdtm.exe -lmdtmman -lstreamman
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) readMdtm.cc -o readMdtm.exe -lmdtmman -lstreamman
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) writeMdtm.cc -o writeMdtm.exe -lmdtmman -lstreamman
 
 cache:
-	$(CXX) $(CXXFLAGS) writeCache.cc -o writeCache.exe -lcacheman
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) writeCache.cc -o writeCache.exe -lcacheman
 
 manager:
-	$(CXX) $(CXXFLAGS) writeManager.cc -o writeManager.exe -ldataman
-	$(CXX) $(CXXFLAGS) readManager.cc -o readManager.exe -ldataman
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) writeManager.cc -o writeManager.exe -ldataman
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) readManager.cc -o readManager.exe -ldataman
 
 stream:
-	$(CXX) $(CXXFLAGS) writeStreamWorkflow.cc -o writeStreamWorkflow.exe -ldataman
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) writeStreamWorkflow.cc -o writeStreamWorkflow.exe -ldataman
 
 
 clean:
