@@ -47,16 +47,15 @@ int MdtmMan::init(json p_jmsg){
     if(m_stream_mode=="sender"){
         zmq_ipc_req = zmq_socket (zmq_context, ZMQ_REQ);
         zmq_connect (zmq_ipc_req, "ipc:///tmp/ADIOS_MDTM_pipe");
-
         char buffer_return[10];
         zmq_send (zmq_ipc_req, pipe_desc.dump().c_str(), pipe_desc.dump().length(), 0);
         zmq_recv (zmq_ipc_req, buffer_return, 10, 0);
-
     }
+
     // Pipes
     mkdir(prefix.c_str(), 0755);
     for (int i=0; i<pipe_desc["pipe_names"].size(); i++){
-        string filename = prefix + rmquote(pipe_desc["pipe_names"][i].dump());
+        string filename = prefix + pipe_desc["pipe_names"][i].get<string>();
         mkfifo(filename.c_str(), 0666);
     }
 
@@ -72,7 +71,6 @@ int MdtmMan::init(json p_jmsg){
             int fp = open(fullpipename.c_str(), O_RDONLY | O_NONBLOCK);
             pipes.push_back(fp);
         }
-        printf("pipe pointer %d ------------------- \n", pipes[i]);
         pipenames.push_back(pipename.str());
     }
     return 0;
@@ -93,7 +91,21 @@ int MdtmMan::put(const void *p_data, json p_jmsg){
         priority = p_jmsg["priority"].get<int>();
     }
 
-    int index = closest(priority, pipe_desc["priority"], true);
+    int index;
+    if(m_parallel_mode == "round"){
+        if(m_current_channel == m_num_channels - 1){
+            index = 0;
+            m_current_channel = 0;
+        }
+        else{
+            m_current_channel ++;
+            index = m_current_channel;
+        }
+    }
+    else if(m_parallel_mode == "priority"){
+        index = closest(priority, pipe_desc["priority"], true);
+    }
+
     p_jmsg["pipe"] = pipe_desc["pipe_names"][index];
     size_t putbytes = product(putshape, dsize(dtype));
     p_jmsg["putbytes"] = putbytes;
@@ -104,11 +116,11 @@ int MdtmMan::put(const void *p_data, json p_jmsg){
 
     index=0;
     for(int i=0; i<pipenames.size(); i++){
-        if(rmquote(p_jmsg["pipe"].dump()) == pipenames[i]){
+        if(p_jmsg["pipe"].get<string>() == pipenames[i]){
             index=i;
         }
     }
-    string pipename = rmquote(pipe_desc["pipe_prefix"].dump()) + rmquote(p_jmsg["pipe"].dump());
+    string pipename = pipe_desc["pipe_prefix"].get<string>() + p_jmsg["pipe"].get<string>();
     write(pipes[index], p_data, putbytes);
     return 0;
 }
@@ -149,7 +161,7 @@ void MdtmMan::on_recv(json j){
             if(msg == nullptr) break;
             int pipeindex=0;
             for(int i=0; i<pipenames.size(); i++){
-                if(rmquote(msg["pipe"]) == pipenames[i]){
+                if(msg["pipe"].get<string>() == pipenames[i]){
                     pipeindex=i;
                 }
             }

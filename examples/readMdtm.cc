@@ -29,11 +29,13 @@ int main(){
     j["remote_ip"] = "127.0.0.1";
     j["local_port"] = 12307;
     j["remote_port"] = 12306;
-    j["num_channels"] = 1;
     j["stream_mode"] = "receiver";
-    j["tolerance"] = {0};
-    j["priority"] = {100};
     j["pipe_prefix"] = "/tmp/MdtmManPipes/";
+
+    j["num_channels"] = 4;
+    j["tolerance"] = {0,0,0,0};
+    j["priority"] = {100,100,1,1};
+
     man.init(j);
     man.reg_callback(getcb);
     for (int i=0; i<100000; i++){

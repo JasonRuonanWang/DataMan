@@ -13,11 +13,13 @@ int main(){
     msg["remote_ip"] = "127.0.0.1";
     msg["local_port"] = 12306;
     msg["remote_port"] = 12307;
-    msg["num_channels"] = 1;
     msg["stream_mode"] = "sender";
-    msg["tolerance"] = {0};
-    msg["priority"] = {100};
     msg["pipe_prefix"] = "/tmp/MdtmManPipes/";
+
+    msg["num_channels"] = 4;
+    msg["tolerance"] = {0,0,0,0};
+    msg["priority"] = {100,100,1,1};
+
     man.init(msg);
 
     json msg2;
@@ -45,6 +47,7 @@ int main(){
             }
         }
         man.flush();
+        cout << "Time Step " << loop << endl;
     }
     return 0;
 }
