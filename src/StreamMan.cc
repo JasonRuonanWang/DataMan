@@ -34,7 +34,9 @@ int StreamMan::init(json p_jmsg){
 
         if(p_jmsg["num_channels"] != nullptr) m_num_channels = p_jmsg["num_channels"];
         if(p_jmsg["tolerance"] != nullptr) m_tolerance = p_jmsg["tolerance"].get<vector<int>>();
+        else m_tolerance.assign(m_num_channels, 0);
         if(p_jmsg["priority"] != nullptr) m_priority = p_jmsg["priority"].get<vector<int>>();
+        else m_priority.assign(m_num_channels, 100);
 
         if(!zmq_context){
             zmq_context = zmq_ctx_new ();
