@@ -7,23 +7,21 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-MdtmMan::MdtmMan(){
-
-}
+MdtmMan::MdtmMan(){}
 
 int MdtmMan::init(json p_jmsg){
 
-
     StreamMan::init(p_jmsg);
 
-    if(!check_json(p_jmsg, {"pipe_prefix"}, "MdtmMan")){
-        return -1;
+    if(p_jmsg["pipe_prefix"] == nullptr){
+        pipe_desc["pipe_prefix"] = "/tmp/MdtmManPipes/";
     }
-    string prefix = p_jmsg["pipe_prefix"];
+    else{
+        pipe_desc["pipe_prefix"] = p_jmsg["pipe_prefix"];
+    }
 
     pipe_desc["operation"] = "init";
     pipe_desc["mode"] = m_stream_mode;
-    pipe_desc["pipe_prefix"] = prefix;
 
     string pipename_prefix = "MdtmManPipe";
     for(int i=0; i<m_num_channels; i++){
@@ -41,7 +39,6 @@ int MdtmMan::init(json p_jmsg){
         }
     }
 
-
     // ZMQ_DataMan_MDTM
 
     if(m_stream_mode=="sender"){
@@ -53,16 +50,16 @@ int MdtmMan::init(json p_jmsg){
     }
 
     // Pipes
-    mkdir(prefix.c_str(), 0755);
+    mkdir(pipe_desc["pipe_prefix"].get<string>().c_str(), 0755);
     for (int i=0; i<pipe_desc["pipe_names"].size(); i++){
-        string filename = prefix + pipe_desc["pipe_names"][i].get<string>();
+        string filename = pipe_desc["pipe_prefix"].get<string>() + pipe_desc["pipe_names"][i].get<string>();
         mkfifo(filename.c_str(), 0666);
     }
 
     for(int i=0; i<m_num_channels; i++){
         stringstream pipename;
         pipename << pipename_prefix << i;
-        string fullpipename = prefix + pipename.str();
+        string fullpipename = pipe_desc["pipe_prefix"].get<string>() + pipename.str();
         if (m_stream_mode == "sender"){
             int fp = open(fullpipename.c_str(), O_WRONLY);
             pipes.push_back(fp);
@@ -150,7 +147,7 @@ void MdtmMan::on_recv(json j){
     }
 
     // for put
-    for(int outloop=0; outloop<jqueue.size(); outloop++){
+    for(int outloop=0; outloop<jqueue.size()*2; outloop++){
         if(jqueue.front()["operation"] == "put"){
             // allocate buffer
             size_t putbytes = jqueue.front()["putbytes"].get<size_t>();
@@ -167,6 +164,7 @@ void MdtmMan::on_recv(json j){
             }
 
             // read the head request
+            int error_times=0;
             int s = iqueue.front();
             putbytes = msg["putbytes"].get<int>();
             while(s<putbytes){
@@ -175,6 +173,10 @@ void MdtmMan::on_recv(json j){
                     s += ret;
                 }
                 else{
+                    error_times++;
+                    continue;
+                }
+                if(error_times > 1000000){
                     break;
                 }
             }
