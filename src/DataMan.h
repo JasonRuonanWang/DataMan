@@ -1,12 +1,14 @@
 #ifndef DATAMAN_H_
 #define DATAMAN_H_
 
+#include<cstdint>
+#include <unistd.h>
 #include<string>
 #include<iostream>
-#include<cstdint> //uintX_t
 #include<vector>
-#include<memory> //shared_ptr
-#include<functional> //std::function
+#include<memory>
+#include<functional>
+#include<chrono>
 #include<dlfcn.h>
 #include"json.hpp"
 
@@ -15,7 +17,11 @@ using namespace std;
 
 class DataMan{
     public:
-        DataMan(){}
+        DataMan(){
+            m_profiling["total_manager_time"] = 0.0f;
+            m_profiling["total_bytes"] = 0.0f;
+            m_start_time = chrono::system_clock::now();
+        }
         virtual ~DataMan(){}
         int put(const void *p_data,
                 string p_doid,
@@ -43,7 +49,23 @@ class DataMan{
             return put(p_data, msg);
         }
 
-        virtual int put(const void *p_data, json p_jmsg) = 0;
+        virtual int put(const void *p_data, json p_jmsg){
+            auto start = chrono::system_clock::now();
+            int ret = put(p_data, p_jmsg, 0);
+            auto end = chrono::system_clock::now();
+            chrono::duration<double> duration = end - start;
+            m_profiling["total_manager_time"] = m_profiling["total_manager_time"].get<double>() + duration.count();
+            m_profiling["total_bytes"] = m_profiling["total_bytes"].get<size_t>() + product(p_jmsg["varshape"], dsize(p_jmsg["dtype"]));
+            duration = end - m_start_time;
+            m_profiling["total_workflow_time"] = duration.count();
+            m_profiling["workflow_bandwidth"] = m_profiling["total_bytes"].get<double>() / m_profiling["total_workflow_time"].get<double>();
+            m_profiling["manager_bandwidth"] = m_profiling["total_bytes"].get<double>() / m_profiling["total_manager_time"].get<double>();
+
+            cout << m_profiling << endl;
+
+            return ret;
+        }
+        virtual int put(const void *p_data, json p_jmsg, int flag) = 0;
 
         int get(void *p_data,
                 string p_doid,
@@ -84,7 +106,7 @@ class DataMan{
         virtual string name() = 0;
         void reg_callback( std::function<void( const void*, string, string, string, vector<size_t> )> cb ){
             if(m_next.size()==0){
-                get_callback = cb;
+                m_callback = cb;
             }
             else{
                 for (size_t i=0; i<m_next.size(); i++){
@@ -114,6 +136,7 @@ class DataMan{
         }
 
     protected:
+
 
         inline void logging(string p_msg, string p_man = ""){
             if(p_man=="") p_man = name();
@@ -294,8 +317,11 @@ class DataMan{
             return nullptr;
         }
 
-        std::function<void(const void*, string, string, string, vector<size_t> )> get_callback;
+        std::function<void(const void*, string, string, string, vector<size_t>)> m_callback;
         vector<shared_ptr<DataMan>> m_next;
+        json m_profiling;
+        chrono::time_point<chrono::system_clock> m_start_time;
+
 };
 
 #endif

@@ -7,7 +7,9 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-MdtmMan::MdtmMan(){}
+MdtmMan::MdtmMan()
+    :StreamMan()
+{}
 
 int MdtmMan::init(json p_jmsg){
 
@@ -77,7 +79,7 @@ MdtmMan::~MdtmMan(){
     if(zmq_ipc_req) zmq_close(zmq_ipc_req);
 }
 
-int MdtmMan::put(const void *p_data, json p_jmsg){
+int MdtmMan::put(const void *p_data, json p_jmsg, int p_flag){
 
     vector<size_t> putshape = p_jmsg["putshape"].get<vector<size_t>>();
     vector<size_t> varshape = p_jmsg["varshape"].get<vector<size_t>>();
@@ -182,7 +184,7 @@ void MdtmMan::on_recv(json j){
             }
 
             if(s == putbytes){
-                m_cache.put(bqueue.front(),msg);
+                m_cache.put(bqueue.front(),msg,0);
                 if(bqueue.front()) free(bqueue.front());
                 bqueue.pop();
                 iqueue.pop();

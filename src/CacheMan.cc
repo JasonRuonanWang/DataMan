@@ -27,7 +27,7 @@ CacheItem::~CacheItem(){
 }
 
 
-int CacheItem::put(const void *p_data, json p_jmsg){
+int CacheItem::put(const void *p_data, json p_jmsg, int p_flag){
     string p_doid = p_jmsg["doid"];
     string p_var = p_jmsg["var"];
     string p_dtype = p_jmsg["dtype"];
@@ -81,17 +81,17 @@ const void *CacheItem::get_buffer(){
     return m_buffer;
 }
 
-CacheMan::CacheMan(){
-}
+CacheMan::CacheMan()
+    :DataMan(){}
 
 CacheMan::~CacheMan(){
 }
 
-int CacheMan::put(const void *p_data, json p_jmsg){
+int CacheMan::put(const void *p_data, json p_jmsg, int p_flag){
     if(check_json(p_jmsg, {"doid", "var"}, "CacheMan")){
         string doid = p_jmsg["doid"];
         string var = p_jmsg["var"];
-        return m_cache[doid][var].put(p_data, p_jmsg);
+        return m_cache[doid][var].put(p_data, p_jmsg, 0);
     }
     return -1;
 }

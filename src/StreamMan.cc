@@ -60,12 +60,12 @@ int StreamMan::init(json p_jmsg){
 }
 
 void StreamMan::callback(){
-    if(get_callback){
+    if(m_callback){
         vector<string> do_list = m_cache.get_do_list();
         for(string i : do_list){
             vector<string> var_list = m_cache.get_var_list(i);
             for(string j : var_list){
-                get_callback(m_cache.get_buffer(i,j),
+                m_callback(m_cache.get_buffer(i,j),
                         i,
                         j,
                         m_cache.get_dtype(i, j),

@@ -17,7 +17,7 @@ int DumpMan::get(void *p_data, json &p_jmsg){
     return 0;
 }
 
-int DumpMan::put(const void *p_data, json p_jmsg){
+int DumpMan::put(const void *p_data, json p_jmsg, int p_flag){
 
     if(!m_dumping){
         return 0;

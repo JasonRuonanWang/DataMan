@@ -37,7 +37,7 @@ int main(){
                         data[m] = i*10000 + j*100 + k*10 + m;
                     }
                     msg2["offset"] = {i,j*2,k*5};
-                    man.put(data, msg2);
+                    man.put(data, msg2, 0);
                     for (int i=0; i<10; i++)
                         cout << ((float*)data)[i] << " ";
                     cout << endl;

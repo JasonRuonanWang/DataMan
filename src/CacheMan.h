@@ -16,7 +16,7 @@ class CacheItem : public DataMan{
                 );
 
         virtual int init(json p_jmsg);
-        virtual int put(const void *p_data, json p_jmsg);
+        virtual int put(const void *p_data, json p_jmsg, int p_flag);
         virtual int get(void *p_data, json &p_jmsg);
 
         void flush();
@@ -25,6 +25,7 @@ class CacheItem : public DataMan{
         void clean(const string mode);
         vector<size_t> get_shape();
         string get_dtype();
+
 
     private:
         void *m_buffer=NULL;
@@ -72,7 +73,7 @@ class CacheMan : public DataMan{
         ~CacheMan();
 
         virtual int init(json p_jmsg);
-        virtual int put(const void *p_data, json p_jmsg);
+        virtual int put(const void *p_data, json p_jmsg, int p_flag);
         virtual int get(void *p_data, json &p_jmsg);
 
         void flush();
@@ -84,6 +85,7 @@ class CacheMan : public DataMan{
         vector<string> get_var_list(string doid);
         vector<size_t> get_shape(string doid, string var);
         string get_dtype(string doid, string var);
+
 
     private:
         typedef map<string, map<string, CacheItem> > CacheDMap;

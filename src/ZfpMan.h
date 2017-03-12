@@ -10,7 +10,7 @@ class ZfpMan : public CompressMan{
 
 
         virtual int init(json p_jmsg);
-        virtual int put(const void *p_data, json p_jmsg);
+        virtual int put(const void *p_data, json p_jmsg, int p_flag);
         virtual int get(void *p_data, json &p_jmsg);
 
         virtual void flush();
