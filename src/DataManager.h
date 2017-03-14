@@ -9,7 +9,7 @@ class DataManager: public DataMan{
         DataManager();
         ~DataManager();
         virtual int init(json p_jmsg);
-        virtual int put(const void *p_data, json p_jmsg, int flag);
+        virtual int put(const void *p_data, json p_jmsg);
         virtual int get(void *p_data, json &p_jmsg);
         void flush();
         void add_stream(json p_jmsg);

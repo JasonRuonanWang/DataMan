@@ -17,11 +17,13 @@ int DumpMan::get(void *p_data, json &p_jmsg){
     return 0;
 }
 
-int DumpMan::put(const void *p_data, json p_jmsg, int p_flag){
+int DumpMan::put(const void *p_data, json p_jmsg){
+    put_begin(p_data, p_jmsg);
 
     if(!m_dumping){
         return 0;
     }
+
 
     string doid = p_jmsg["doid"];
     string var = p_jmsg["var"];
@@ -50,6 +52,9 @@ int DumpMan::put(const void *p_data, json p_jmsg, int p_flag){
         for (size_t i=0; i<product(putshape,1); i++) cout << ((double*)p_data)[i] << " ";
 
     cout << endl;
+
+    put_end(p_data, p_jmsg);
+
     return 0;
 }
 

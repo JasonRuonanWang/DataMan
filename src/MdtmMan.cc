@@ -80,6 +80,7 @@ MdtmMan::~MdtmMan(){
 }
 
 int MdtmMan::put(const void *p_data, json p_jmsg, int p_flag){
+    put_begin(p_data, p_jmsg);
 
     vector<size_t> putshape = p_jmsg["putshape"].get<vector<size_t>>();
     vector<size_t> varshape = p_jmsg["varshape"].get<vector<size_t>>();
@@ -121,6 +122,7 @@ int MdtmMan::put(const void *p_data, json p_jmsg, int p_flag){
     }
     string pipename = pipe_desc["pipe_prefix"].get<string>() + p_jmsg["pipe"].get<string>();
     write(pipes[index], p_data, putbytes);
+    put_end(p_data, p_jmsg);
     return 0;
 }
 
@@ -184,7 +186,7 @@ void MdtmMan::on_recv(json j){
             }
 
             if(s == putbytes){
-                m_cache.put(bqueue.front(),msg,0);
+                m_cache.put(bqueue.front(),msg);
                 if(bqueue.front()) free(bqueue.front());
                 bqueue.pop();
                 iqueue.pop();

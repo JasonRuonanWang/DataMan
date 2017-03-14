@@ -13,7 +13,8 @@ int ZfpMan::init(json p_jmsg){
     return 0;
 }
 
-int ZfpMan::put(const void *p_data, json p_jmsg, int p_flag){
+int ZfpMan::put(const void *p_data, json p_jmsg){
+    put_begin(p_data, p_jmsg);
 
     void *compressed_data = NULL;
 
@@ -40,6 +41,7 @@ int ZfpMan::put(const void *p_data, json p_jmsg, int p_flag){
 
     put_next(p_data, p_jmsg);
     free(compressed_data);
+    put_end(p_data, p_jmsg);
     return 0;
 }
 

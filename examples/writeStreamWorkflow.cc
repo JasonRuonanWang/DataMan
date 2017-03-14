@@ -25,7 +25,7 @@ int main(){
                     data[m] = i*60 + j*10 + m;
                 }
                 msg2["offset"] = {i,j*2,k*5};
-                man.put(data, msg2, 0);
+                man.put(data, msg2);
             }
         }
     }

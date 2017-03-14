@@ -39,7 +39,7 @@ int DataManager::put(const void *p_data,
             );
 }
 
-int DataManager::put(const void *p_data, json p_jmsg, int flag){
+int DataManager::put(const void *p_data, json p_jmsg){
     check_shape(p_jmsg);
     put_next(p_data, p_jmsg);
     return 0;

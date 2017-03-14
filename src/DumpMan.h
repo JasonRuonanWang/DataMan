@@ -10,7 +10,7 @@ class DumpMan : public DataMan{
         ~DumpMan();
 
         virtual int init(json p_jmsg);
-        virtual int put(const void *p_data, json p_jmsg, int p_flag);
+        virtual int put(const void *p_data, json p_jmsg);
         virtual int get(void *p_data, json &p_jmsg);
         void flush();
         string name(){return "DumpMan";}
