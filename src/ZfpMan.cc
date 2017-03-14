@@ -19,8 +19,8 @@ int ZfpMan::put(const void *p_data, json p_jmsg){
     void *compressed_data = NULL;
 
     if (check_json(p_jmsg, {"doid", "var", "dtype", "putshape"}, "ZfpMan")){
-        if (p_jmsg["compressrate"] == nullptr){
-            p_jmsg["compressrate"] = 4;
+        if (p_jmsg["compress_rate"] == nullptr){
+            p_jmsg["compress_rate"] = 4;
         }
         string doid = p_jmsg["doid"];
         string var = p_jmsg["var"];
@@ -38,10 +38,8 @@ int ZfpMan::put(const void *p_data, json p_jmsg){
         dump(decompressed_data, p_jmsg);
         */
     }
-
-    put_next(p_data, p_jmsg);
-    free(compressed_data);
     put_end(p_data, p_jmsg);
+    if(compressed_data) free(compressed_data);
     return 0;
 }
 
@@ -57,7 +55,7 @@ void* ZfpMan::compress(void* p_data, json &p_jmsg){
 
     string dtype = p_jmsg["dtype"];
     vector<size_t> shape = p_jmsg["putshape"].get<vector<size_t>>();
-    int compressrate = p_jmsg["compressrate"].get<int>();
+    int compress_rate = p_jmsg["compress_rate"].get<int>();
 
     int status = 0;    // return value: 0 = success
     uint dim = 1;
@@ -110,7 +108,7 @@ void* ZfpMan::compress(void* p_data, json &p_jmsg){
     zfp = zfp_stream_open(NULL);
 
     // set compression mode and parameters via one of three functions
-    zfp_stream_set_rate(zfp, compressrate, type, dim, 0);
+    zfp_stream_set_rate(zfp, compress_rate, type, dim, 0);
     // zfp_stream_set_precision(zfp, m_precision, type);
     // zfp_stream_set_accuracy(zfp, m_accuracy, type);
 
@@ -132,7 +130,7 @@ void* ZfpMan::compress(void* p_data, json &p_jmsg){
         status = 1;
     }
 
-    p_jmsg["compressedsize"] = bufsize;
+    p_jmsg["compressed_size"] = bufsize;
 
     // clean up
     zfp_field_free(field);
@@ -146,14 +144,14 @@ void* ZfpMan::decompress(void* p_data, json p_jmsg){
 
     string dtype = p_jmsg["dtype"];
     vector<size_t> shape = p_jmsg["putshape"].get<vector<size_t>>();
-    int compressrate = p_jmsg["compressrate"].get<int>();
+    int compress_rate = p_jmsg["compress_rate"].get<int>();
 
     int status = 0;    // return value: 0 = success
     uint dim = 1;
     zfp_type type = zfp_type_none;     // array scalar type
     zfp_field* field;  // array meta data
     zfp_stream* zfp;   // compressed stream
-    size_t bufsize = p_jmsg["compressedsize"].get<size_t>();    // byte size of compressed buffer
+    size_t bufsize = p_jmsg["compressed_size"].get<size_t>();    // byte size of compressed buffer
     bitstream* stream; // bit stream to write to or read from
     size_t zfpsize;    // byte size of compressed stream
 
@@ -195,7 +193,7 @@ void* ZfpMan::decompress(void* p_data, json p_jmsg){
     }
 
     zfp = zfp_stream_open(NULL);
-    zfp_stream_set_rate(zfp, compressrate, type, dim, 0);
+    zfp_stream_set_rate(zfp, compress_rate, type, dim, 0);
     stream = stream_open(p_data, bufsize);
     zfp_stream_set_bit_stream(zfp, stream);
     zfp_stream_rewind(zfp);

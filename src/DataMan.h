@@ -19,7 +19,7 @@ class DataMan{
     public:
         DataMan(){
             m_profiling["total_manager_time"] = 0.0f;
-            m_profiling["total_bytes"] = 0.0f;
+            m_profiling["total_mb"] = 0.0f;
             m_start_time = chrono::system_clock::now();
         }
         virtual ~DataMan(){}
@@ -49,24 +49,25 @@ class DataMan{
             return put(p_data, msg);
         }
 
-        virtual int put_begin(const void *p_data, json p_jmsg){
+        virtual int put_begin(const void *p_data, json &p_jmsg){
+            p_jmsg["profiling"] = m_profiling;
             m_step_time = chrono::system_clock::now();
             return 0;
         }
 
-        virtual int put_end(const void *p_data, json p_jmsg){
+        virtual int put_end(const void *p_data, json &p_jmsg){
             auto end = chrono::system_clock::now();
             chrono::duration<double> duration = end - m_step_time;
             m_profiling["total_manager_time"] = m_profiling["total_manager_time"].get<double>() + duration.count();
-            m_profiling["total_bytes"] = m_profiling["total_bytes"].get<size_t>() + product(p_jmsg["varshape"], dsize(p_jmsg["dtype"]));
+            m_profiling["total_mb"] = m_profiling["total_mb"].get<size_t>() + product(p_jmsg["varshape"], dsize(p_jmsg["dtype"])) / 1000000.0f;
             duration = end - m_start_time;
             m_profiling["total_workflow_time"] = duration.count();
-            m_profiling["workflow_bandwidth"] = m_profiling["total_bytes"].get<double>() / m_profiling["total_workflow_time"].get<double>();
-            m_profiling["manager_bandwidth"] = m_profiling["total_bytes"].get<double>() / m_profiling["total_manager_time"].get<double>();
+            m_profiling["workflow_mbs"] = m_profiling["total_mb"].get<double>() / m_profiling["total_workflow_time"].get<double>();
+            m_profiling["manager_mbs"] = m_profiling["total_mb"].get<double>() / m_profiling["total_manager_time"].get<double>();
             cout << m_profiling << endl;
+            put_next(p_data, p_jmsg);
             return 0;
         }
-
 
         virtual int put(const void *p_data, json p_jmsg) = 0;
 
@@ -112,8 +113,8 @@ class DataMan{
                 m_callback = cb;
             }
             else{
-                for (size_t i=0; i<m_next.size(); i++){
-                    m_next[i]->reg_callback(cb);
+                for (auto i : m_next){
+                    i.second->reg_callback(cb);
                 }
             }
         }
@@ -134,8 +135,8 @@ class DataMan{
             cout << endl;
         }
 
-        void add_next(shared_ptr<DataMan> p_next){
-            m_next.push_back(p_next);
+        void add_next(string p_name, shared_ptr<DataMan> p_next){
+            m_next[p_name] = p_next;
         }
 
     protected:
@@ -164,15 +165,15 @@ class DataMan{
         }
 
         virtual int flush_next(){
-            for(size_t i=0; i<m_next.size(); i++){
-                m_next[i]->flush();
+            for(auto i : m_next){
+                i.second->flush();
             }
             return 0;
         }
 
         virtual int put_next(const void *p_data, json p_jmsg){
-            for(size_t i=0; i<m_next.size(); i++){
-                m_next[i]->put(p_data, p_jmsg);
+            for(auto i : m_next){
+                i.second->put(p_data, p_jmsg);
             }
             return 0;
         }
@@ -324,7 +325,7 @@ class DataMan{
 
     private:
 
-        vector<shared_ptr<DataMan>> m_next;
+        map<string, shared_ptr<DataMan>> m_next;
         json m_profiling;
         chrono::time_point<chrono::system_clock> m_start_time;
         chrono::time_point<chrono::system_clock> m_step_time;

@@ -68,7 +68,7 @@ void DataManager::add_stream(json p_jmsg){
 
     shared_ptr<DataMan> man = get_man(method);
     man->init(p_jmsg);
-    add_next(man);
+    add_next(method, man);
 }
 
 void DataManager::flush(){
