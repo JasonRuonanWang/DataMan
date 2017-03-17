@@ -16,13 +16,17 @@ int main(){
     msg2["var"] = "data";
     msg2["dtype"] = "float";
 
-    size_t datasize = 0;
+    size_t datasize = 1;
     for(size_t i=0; i<varshape.size(); i++){
-        datasize += i;
+        datasize *= varshape[i];
     }
     vector<float> data(datasize,0);
+    for(size_t i=0; i<datasize; i++){
+        data[i] = i;
+    }
 
     man.put(data.data(), msg2);
+    man.print_next();
 
     man.flush();
     return 0;

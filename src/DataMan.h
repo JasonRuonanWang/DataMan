@@ -50,6 +50,7 @@ class DataMan{
         }
 
         virtual int put_begin(const void *p_data, json &p_jmsg){
+            cout << name() << " put_begin" << endl;
             check_shape(p_jmsg);
             p_jmsg["profiling"] = m_profiling;
             m_step_time = chrono::system_clock::now();
@@ -57,6 +58,7 @@ class DataMan{
         }
 
         virtual int put_end(const void *p_data, json &p_jmsg){
+            cout << name() << " put_end" << endl;
             auto end = chrono::system_clock::now();
             chrono::duration<double> duration = end - m_step_time;
             m_profiling["total_manager_time"] = m_profiling["total_manager_time"].get<double>() + duration.count();
@@ -143,6 +145,22 @@ class DataMan{
             m_next.erase(p_name);
         }
 
+        bool have_next(){
+            if (m_next.size() == 0){
+                return false;
+            }
+            else{
+                return true;
+            }
+        }
+
+        void print_next(){
+            for (auto i : m_next){
+                cout << i.second->name() << " -> ";
+                i.second->print_next();
+                cout << endl;
+            }
+        }
 
     protected:
 
@@ -293,16 +311,12 @@ class DataMan{
             else{
                 return;
             }
-
             if(p_jmsg["putshape"] == nullptr){
                 p_jmsg["putshape"] = varshape;
             }
-
             if(p_jmsg["offset"] == nullptr){
                 p_jmsg["offset"] = vector<size_t>(varshape.size(),0);
             }
-
-
         }
 
         inline shared_ptr<DataMan> get_man(string method){

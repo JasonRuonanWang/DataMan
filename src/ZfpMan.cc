@@ -150,19 +150,15 @@ void* ZfpMan::decompress(void* p_data, json p_jmsg){
     // allocate meta data for the 3D array a[nz][ny][nx]
     if(dtype == "int"){
         type = zfp_type_int32;
-        cout << "type=int" << endl;
     }
     else if(dtype == "long"){
         type = zfp_type_int64;
-        cout << "type=long" << endl;
     }
     else if(dtype == "float"){
         type = zfp_type_float;
-        cout << "type=float" << endl;
     }
     else if(dtype == "double"){
         type = zfp_type_double;
-        cout << "type=double" << endl;
     }
 
     void *data;
