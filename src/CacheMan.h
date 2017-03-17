@@ -18,6 +18,7 @@ class CacheItem : public DataMan{
         virtual int init(json p_jmsg);
         virtual int put(const void *p_data, json p_jmsg);
         virtual int get(void *p_data, json &p_jmsg);
+        virtual void transform(const void* p_in, void* p_out, json &p_jmsg){};
 
         void flush();
         string name(){return "CacheItem";}
@@ -75,6 +76,7 @@ class CacheMan : public DataMan{
         virtual int init(json p_jmsg);
         virtual int put(const void *p_data, json p_jmsg);
         virtual int get(void *p_data, json &p_jmsg);
+        virtual void transform(const void* p_in, void* p_out, json &p_jmsg){};
 
         void flush();
         string name(){return "CacheMan";}

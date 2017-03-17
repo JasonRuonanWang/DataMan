@@ -50,7 +50,6 @@ class DataMan{
         }
 
         virtual int put_begin(const void *p_data, json &p_jmsg){
-            cout << name() << " put_begin" << endl;
             check_shape(p_jmsg);
             p_jmsg["profiling"] = m_profiling;
             m_step_time = chrono::system_clock::now();
@@ -58,7 +57,6 @@ class DataMan{
         }
 
         virtual int put_end(const void *p_data, json &p_jmsg){
-            cout << name() << " put_end" << endl;
             auto end = chrono::system_clock::now();
             chrono::duration<double> duration = end - m_step_time;
             m_profiling["total_manager_time"] = m_profiling["total_manager_time"].get<double>() + duration.count();
@@ -161,6 +159,9 @@ class DataMan{
                 cout << endl;
             }
         }
+
+        virtual void transform(const void* p_in, void* p_out, json &p_jmsg) = 0;
+
 
     protected:
 

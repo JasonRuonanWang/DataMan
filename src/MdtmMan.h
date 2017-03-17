@@ -12,6 +12,7 @@ class MdtmMan : public StreamMan{
         virtual int init(json p_jmsg);
         virtual int put(const void *p_data, json p_jmsg, int p_flag);
         virtual int get(void *p_data, json &p_jmsg);
+        virtual void transform(const void* p_in, void* p_out, json &p_jmsg){};
 
         void on_recv(json j);
         string name(){return "MdtmMan";}

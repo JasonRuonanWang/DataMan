@@ -18,6 +18,7 @@ class ZfpMan : public CompressMan{
         void* compress(void* p_data, json &p_jmsg);
         void* decompress(void* p_data, json p_jmsg);
 
+        virtual void transform(const void* p_in, void* p_out, json &p_jmsg);
         string name(){return "ZfpMan";}
 
 

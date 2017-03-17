@@ -14,6 +14,7 @@ class DumpMan : public DataMan{
         virtual int get(void *p_data, json &p_jmsg);
         void flush();
         string name(){return "DumpMan";}
+        virtual void transform(const void* p_in, void* p_out, json &p_jmsg){};
 
     private:
         bool m_dumping = true;
