@@ -50,6 +50,7 @@ class DataMan{
         }
 
         virtual int put_begin(const void *p_data, json &p_jmsg){
+            check_shape(p_jmsg);
             p_jmsg["profiling"] = m_profiling;
             m_step_time = chrono::system_clock::now();
             return 0;
@@ -64,7 +65,6 @@ class DataMan{
             m_profiling["total_workflow_time"] = duration.count();
             m_profiling["workflow_mbs"] = m_profiling["total_mb"].get<double>() / m_profiling["total_workflow_time"].get<double>();
             m_profiling["manager_mbs"] = m_profiling["total_mb"].get<double>() / m_profiling["total_manager_time"].get<double>();
-            cout << m_profiling << endl;
             put_next(p_data, p_jmsg);
             return 0;
         }
@@ -139,6 +139,11 @@ class DataMan{
             m_next[p_name] = p_next;
         }
 
+        void remove_next(string p_name){
+            m_next.erase(p_name);
+        }
+
+
     protected:
 
 
@@ -152,11 +157,12 @@ class DataMan{
             cout << endl;
         }
 
-        inline bool check_json(json p_jmsg, vector<string> p_strings, string p_man){
+        inline bool check_json(json p_jmsg, vector<string> p_strings, string p_man = ""){
+            if (p_man == "") p_man = name();
             for (auto i : p_strings){
                 if (p_jmsg[i] == nullptr){
                     if(p_man != ""){
-                        logging("DataMan", "JSON key " + i + " not found! Used in " + p_man);
+                        logging("JSON key " + i + " not found!",  p_man);
                     }
                     return false;
                 }
@@ -280,25 +286,23 @@ class DataMan{
         }
 
         inline void check_shape(json &p_jmsg){
-            vector<size_t> putshape = p_jmsg["putshape"].get<vector<size_t>>();
-            vector<size_t> varshape = p_jmsg["varshape"].get<vector<size_t>>();
-            vector<size_t> offset = p_jmsg["offset"].get<vector<size_t>>();
-            if(putshape.size()>0){
-                if(putshape.size()>varshape.size()){
-                    varshape.resize(putshape.size());
-                    for (size_t i=0; i<putshape.size(); i++){
-                        varshape[i] = putshape[i];
-                    }
-                    p_jmsg["varshape"] = varshape;
-                }
-                if(putshape.size()>offset.size()){
-                    offset.resize(putshape.size());
-                    for (size_t i=0; i<putshape.size(); i++){
-                        offset[i] = 0;
-                    }
-                    p_jmsg["offset"] = offset;
-                }
+            vector<size_t> varshape, putshape, offset;
+            if(check_json(p_jmsg, {"varshape"})){
+                varshape = p_jmsg["varshape"].get<vector<size_t>>();
             }
+            else{
+                return;
+            }
+
+            if(p_jmsg["putshape"] == nullptr){
+                p_jmsg["putshape"] = varshape;
+            }
+
+            if(p_jmsg["offset"] == nullptr){
+                p_jmsg["offset"] = vector<size_t>(varshape.size(),0);
+            }
+
+
         }
 
         inline shared_ptr<DataMan> get_man(string method){
@@ -322,10 +326,10 @@ class DataMan{
         }
 
         std::function<void(const void*, string, string, string, vector<size_t>)> m_callback;
+        map<string, shared_ptr<DataMan>> m_next;
 
     private:
 
-        map<string, shared_ptr<DataMan>> m_next;
         json m_profiling;
         chrono::time_point<chrono::system_clock> m_start_time;
         chrono::time_point<chrono::system_clock> m_step_time;

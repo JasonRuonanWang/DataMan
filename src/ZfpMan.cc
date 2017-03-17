@@ -69,39 +69,31 @@ void* ZfpMan::compress(void* p_data, json &p_jmsg){
     // allocate meta data for the 3D array a[nz][ny][nx]
     if(dtype == "int"){
         type = zfp_type_int32;
-        cout << "type=int" << endl;
     }
     else if(dtype == "long"){
         type = zfp_type_int64;
-        cout << "type=long" << endl;
     }
     else if(dtype == "float"){
         type = zfp_type_float;
-        cout << "type=float" << endl;
     }
     else if(dtype == "double"){
         type = zfp_type_double;
-        cout << "type=double" << endl;
     }
 
     switch (shape.size()){
         case 3:
             field = zfp_field_3d(p_data, type, shape[0], shape[1], shape[2]);
             dim = 3;
-            cout << "dim=3" << ", size=" << product(shape) << endl;
             break;
         case 2:
             field = zfp_field_2d(p_data, type, shape[0], shape[1]);
             dim = 2;
-            cout << "dim=2" << ", size=" << product(shape) << endl;
             break;
         case 1:
             field = zfp_field_1d(p_data, type, shape[0]);
-            cout << "dim=1" << ", size=" << product(shape) << endl;
             break;
         default:
             field = zfp_field_1d(p_data, type, product(shape));
-            cout << "dim=x" << ", size=" << product(shape) << endl;
     }
 
     // allocate meta data for a compressed stream

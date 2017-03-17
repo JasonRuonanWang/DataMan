@@ -40,8 +40,8 @@ int DataManager::put(const void *p_data,
 }
 
 int DataManager::put(const void *p_data, json p_jmsg){
-    check_shape(p_jmsg);
-    put_next(p_data, p_jmsg);
+    put_begin(p_data, p_jmsg);
+    put_end(p_data, p_jmsg);
     return 0;
 }
 
@@ -66,9 +66,16 @@ void DataManager::add_stream(json p_jmsg){
         }
     }
 
-    shared_ptr<DataMan> man = get_man(method);
+    auto man = get_man(method);
     man->init(p_jmsg);
-    add_next(method, man);
+    this->add_next(method, man);
+
+    auto zfpman = get_man("zfp");
+    zfpman->add_next(method, m_next[method]);
+    this->add_next("zfp", zfpman);
+    this->remove_next(method);
+
+
 }
 
 void DataManager::flush(){

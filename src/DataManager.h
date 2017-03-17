@@ -27,7 +27,6 @@ class DataManager: public DataMan{
         void add_file(string p_method);
         string name(){return "DataManager";}
 
-
     private:
         string m_local_ip="";
         string m_remote_ip="";
@@ -39,3 +38,6 @@ class DataManager: public DataMan{
 };
 
 #endif
+
+
+

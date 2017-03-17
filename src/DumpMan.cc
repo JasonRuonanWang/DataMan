@@ -32,19 +32,7 @@ int DumpMan::put(const void *p_data, json p_jmsg){
     vector<size_t> varshape = p_jmsg["varshape"].get<vector<size_t>>();
     vector<size_t> offset = p_jmsg["offset"].get<vector<size_t>>();
 
-    cout << "DumpMan::put() doid: " << doid << endl;
-    cout << "DumpMan::put() putshape : ";
-    for (size_t i=0; i<putshape.size(); i++)
-        cout << putshape[i] << " " ;
-    cout << endl;
-    cout << "DumpMan::put() varshape : ";
-    for (size_t i=0; i<varshape.size(); i++)
-        cout << varshape[i] << " " ;
-    cout << endl;
-    cout << "DumpMan::put() offset : ";
-    for (size_t i=0; i<offset.size(); i++)
-        cout << offset[i] << " " ;
-    cout << endl;
+    cout << p_jmsg.dump(4) << endl;
 
     if(dtype == "float")
         for (size_t i=0; i<product(putshape,1); i++) cout << ((float*)p_data)[i] << " ";

@@ -4,7 +4,7 @@ CXX=g++
 CXXFLAGS=-std=c++11 -Wno-return-type-c-linkage
 #LDFLAGS=-Wl,--no-as-needed -ldl
 
-default:mdtm
+default:stream
 
 all:zmq mdtm zfp cache dump manager stream
 
