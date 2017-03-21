@@ -34,13 +34,7 @@ int DumpMan::put(const void *p_data, json p_jmsg){
 
     void *data = malloc(putsize);
 
-    if(p_jmsg["compression_method"] != nullptr){
-        auto method = p_jmsg["compression_method"];
-        auto man = get_man(method);
-        man->transform(p_data, data, p_jmsg);
-    }
-
-
+    auto_transform(p_data, data, p_jmsg);
 
     cout << p_jmsg.dump(4) << endl;
 

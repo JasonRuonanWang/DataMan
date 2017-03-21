@@ -3,7 +3,6 @@
 
 #include"DataMan.h"
 
-
 class DataManager: public DataMan{
     public:
         DataManager();
@@ -39,6 +38,5 @@ class DataManager: public DataMan{
 };
 
 #endif
-
 
 

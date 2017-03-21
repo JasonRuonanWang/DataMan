@@ -70,12 +70,7 @@ void DataManager::add_stream(json p_jmsg){
     man->init(p_jmsg);
     this->add_next(method, man);
 
-    auto zfpman = get_man("zfp");
-    zfpman->add_next(method, m_next[method]);
-    this->add_next("zfp", zfpman);
-    this->remove_next(method);
-
-
+    add_man_to_path("zfp", method);
 }
 
 void DataManager::flush(){

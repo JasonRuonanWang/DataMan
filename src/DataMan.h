@@ -165,6 +165,26 @@ class DataMan{
 
     protected:
 
+        void auto_transform(const void* p_in, void* p_out, json &p_jmsg){
+            if(p_jmsg["compression_method"] != nullptr){
+                auto method = p_jmsg["compression_method"];
+                auto man = get_man(method);
+                if(man == nullptr){
+                    logging("Library file for compression method " + p_jmsg["compression_method"].dump() + " not found!");
+                    return;
+                }
+                man->transform(p_in, p_out, p_jmsg);
+            }
+        }
+
+        void add_man_to_path(string p_new, string p_path){
+            if(m_next.count(p_path) > 0){
+                auto man = get_man(p_new);
+                man->add_next(p_path, m_next[p_path]);
+                this->add_next(p_new, man);
+                this->remove_next(p_path);
+            }
+        }
 
         inline void logging(string p_msg, string p_man = ""){
             if(p_man=="") p_man = name();
