@@ -30,23 +30,31 @@ int DumpMan::put(const void *p_data, json p_jmsg){
     vector<size_t> putshape = p_jmsg["putshape"].get<vector<size_t>>();
     vector<size_t> varshape = p_jmsg["varshape"].get<vector<size_t>>();
     vector<size_t> offset = p_jmsg["offset"].get<vector<size_t>>();
+    int numbers_to_print = 100;
+    if(numbers_to_print > product(putshape,1));
     size_t putsize = product(putshape, dsize(dtype));
 
-    void *data = malloc(putsize);
-
-    auto_transform(p_data, data, p_jmsg);
-
     cout << p_jmsg.dump(4) << endl;
+    cout << "total MBs = " << product(putshape,dsize(dtype)) / 1000000 << endl;
+
+    void *data_to_dump;
+
+    void *data = malloc(putsize);
+    if(auto_transform(p_data, data, p_jmsg)){
+        data_to_dump = data;
+    }
+    else{
+        data_to_dump = const_cast<void*>(p_data);
+    }
 
     if(dtype == "float")
-        for (size_t i=0; i<product(putshape,1); i++) cout << ((float*)data)[i] << " ";
+        for (size_t i=0; i<numbers_to_print; i++) cout << ((float*)data_to_dump)[i] << " ";
     if(dtype == "double")
-        for (size_t i=0; i<product(putshape,1); i++) cout << ((double*)data)[i] << " ";
+        for (size_t i=0; i<numbers_to_print; i++) cout << ((double*)data_to_dump)[i] << " ";
 
     cout << endl;
 
     put_end(data, p_jmsg);
-
     free(data);
 
     return 0;

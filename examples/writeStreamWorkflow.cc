@@ -9,7 +9,7 @@ int main(){
     msg["method"] = "dump";
     man.add_stream(msg);
 
-    vector<size_t> varshape = {4,6,10};
+    vector<size_t> varshape = {1000,200,300};
     json msg2;
     msg2["varshape"] = varshape;
     msg2["doid"] = "aaa";

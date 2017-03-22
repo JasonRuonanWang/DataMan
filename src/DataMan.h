@@ -165,15 +165,19 @@ class DataMan{
 
     protected:
 
-        void auto_transform(const void* p_in, void* p_out, json &p_jmsg){
+        bool auto_transform(const void* p_in, void* p_out, json &p_jmsg){
             if(p_jmsg["compression_method"] != nullptr){
                 auto method = p_jmsg["compression_method"];
                 auto man = get_man(method);
                 if(man == nullptr){
                     logging("Library file for compression method " + p_jmsg["compression_method"].dump() + " not found!");
-                    return;
+                    return false;
                 }
                 man->transform(p_in, p_out, p_jmsg);
+                return true;
+            }
+            else{
+                return false;
             }
         }
 
