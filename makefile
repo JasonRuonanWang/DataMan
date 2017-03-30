@@ -1,5 +1,10 @@
-CXX=clang++
-CXX=g++
+UNAME_S:=$(shell uname -s)
+ifeq ($(UNAME_S),Darwin)
+	CXX:=clang++
+else
+	CXX:=g++
+endif
+
 CXXFLAGS=-std=c++11 -fPIC
 LDFLAGS=-L. -Wno-return-type-c-linkage
 INSTALL_PREFIX=$(libpath)
