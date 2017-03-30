@@ -4,6 +4,13 @@
 # or ZMQ_PREFIX which wil automatically set:
 #   ZMQ_CXXFLAGS = -I$(ZMQ_PREFIX)/include
 #   ZMQ_LDFLAGS  = -L$(ZMQ_PREFIX)/lib -lzmq
+#
+# To build with ZFP support, set:
+#   ZFP_CXXFLAGS - C++ flags to use ZFP
+#   ZFP_LDFLAGS  - Linker flags to use ZFP
+# or ZFP_PREFIX which wil automatically set:
+#   ZFP_CXXFLAGS = -I$(ZFP_PREFIX)/include
+#   ZFP_LDFLAGS  = -L$(ZFP_PREFIX)/lib -lzfp
 
 UNAME_S:=$(shell uname -s)
 ifeq ($(UNAME_S),Darwin)
@@ -27,11 +34,21 @@ ifdef ZMQ_LDFLAGS
 endif
 endif
 
+# Setup ZFP dependencies
+ifdef ZFP_PREFIX
+        ZFP_CXXFLAGS=-I$(ZFP_PREFIX)/include
+        ZFP_LDFLAGS=-L$(ZFP_PREFIX)/lib64 -lzfp
+endif
+ifdef ZFP_CXXFLAGS
+ifdef ZFP_LDFLAGS
+        ZFP_TARGETS=zfpman
+endif
+endif
 
 default:dumpman
 	make install
 
-all:manager $(ZMQ_TARGETS) zfpman dumpman
+all:manager $(ZMQ_TARGETS) $(ZFP_TARGETS) dumpman
 	make install
 
 
@@ -56,7 +73,7 @@ compressman:
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) src/CompressMan.cc --shared -o libcompressman.so
 
 zfpman:compressman
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) src/ZfpMan.cc --shared -o libzfpman.so -lcompressman -lzfp
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(ZFP_CXXFLAGS) $(ZFP_LDFLAGS) src/ZfpMan.cc --shared -o libzfpman.so -lcompressman
 
 manager:
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) src/DataManager.cc --shared -o libdataman.so -ldl
