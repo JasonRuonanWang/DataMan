@@ -30,14 +30,8 @@ int ZmqMan::init(json p_jmsg){
 
 int ZmqMan::put(const void *p_data, json p_jmsg, int p_flag){
     put_begin(p_data, p_jmsg);
-    string dtype = p_jmsg["dtype"];
-    vector<size_t> putshape = p_jmsg["putshape"].get<vector<size_t>>();
-    vector<size_t> varshape = p_jmsg["varshape"].get<vector<size_t>>();
-    size_t putbytes = product(putshape, dsize(dtype));
-    p_jmsg["putbytes"] = putbytes;
-    p_jmsg["varbytes"] = product(varshape, dsize(dtype));
     StreamMan::put(p_data, p_jmsg);
-    zmq_send(zmq_data, p_data, putbytes, 0);
+    zmq_send(zmq_data, p_data, p_jmsg["putbytes"], 0);
     put_end(p_data, p_jmsg);
     return 0;
 }
@@ -48,11 +42,13 @@ int ZmqMan::get(void *p_data, json &p_jmsg){
 
 void ZmqMan::on_recv(json msg){
     if (msg["operation"] == "put"){
+        cout << "ZmqMan::on_recv 1" << endl;
         size_t putbytes = msg["putbytes"].get<size_t>();
         void *data = malloc(putbytes);
         int err = zmq_recv (zmq_data, data, putbytes, 0);
         m_cache.put(data, msg);
         free(data);
+        cout << "ZmqMan::on_recv 2" << endl;
     }
     else if (msg["operation"] == "flush"){
         callback();

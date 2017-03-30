@@ -42,7 +42,6 @@ int MdtmMan::init(json p_jmsg){
     }
 
     // ZMQ_DataMan_MDTM
-
     if(m_stream_mode=="sender"){
         zmq_ipc_req = zmq_socket (zmq_context, ZMQ_REQ);
         zmq_connect (zmq_ipc_req, "ipc:///tmp/ADIOS_MDTM_pipe");
@@ -79,7 +78,7 @@ MdtmMan::~MdtmMan(){
     if(zmq_ipc_req) zmq_close(zmq_ipc_req);
 }
 
-int MdtmMan::put(const void *p_data, json p_jmsg, int p_flag){
+int MdtmMan::put(const void *p_data, json p_jmsg){
     put_begin(p_data, p_jmsg);
 
     vector<size_t> putshape = p_jmsg["putshape"].get<vector<size_t>>();
@@ -131,6 +130,7 @@ int MdtmMan::get(void *p_data, json &p_jmsg){
 }
 
 void MdtmMan::on_recv(json j){
+    cout << "MdtmMan::on_recv " << endl;
 
     // push new request
     jqueue.push(j);

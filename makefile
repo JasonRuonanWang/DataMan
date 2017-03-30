@@ -5,12 +5,12 @@ LDFLAGS=-L. -Wno-return-type-c-linkage
 INSTALL_PREFIX=$(libpath)
 
 
-default:dumpman
+default:manager
 	make install
 
 all:manager zmqman mdtmman zfpman dumpman
 	make install
-
+	cd examples; make all
 
 dumpman:
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) src/DumpMan.cc --shared -o libdumpman.so
@@ -37,7 +37,6 @@ zfpman:compressman
 
 manager:
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) src/DataManager.cc --shared -o libdataman.so -ldl
-
 
 install:
 	@( mkdir -p $(INSTALL_PREFIX)/DataMan/lib/);

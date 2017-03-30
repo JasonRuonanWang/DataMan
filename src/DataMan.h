@@ -65,6 +65,8 @@ class DataMan{
             m_profiling["total_workflow_time"] = duration.count();
             m_profiling["workflow_mbs"] = m_profiling["total_mb"].get<double>() / m_profiling["total_workflow_time"].get<double>();
             m_profiling["manager_mbs"] = m_profiling["total_mb"].get<double>() / m_profiling["total_manager_time"].get<double>();
+            if(p_jmsg["compressed_size"] != nullptr)
+                p_jmsg["putbytes"] = p_jmsg["compressed_size"].get<size_t>();
             put_next(p_data, p_jmsg);
             return 0;
         }
@@ -241,7 +243,7 @@ class DataMan{
             return accumulate(shape.begin(), shape.end(), size, multiplies<size_t>());
         }
 
-        inline uint8_t dsize(string dtype){
+        inline size_t dsize(string dtype){
             if (dtype == "char")
                 return sizeof(char);
             if (dtype == "short")
@@ -329,7 +331,7 @@ class DataMan{
         }
 
         inline void check_shape(json &p_jmsg){
-            vector<size_t> varshape, putshape, offset;
+            vector<size_t> varshape;
             if(check_json(p_jmsg, {"varshape"})){
                 varshape = p_jmsg["varshape"].get<vector<size_t>>();
             }
@@ -342,6 +344,8 @@ class DataMan{
             if(p_jmsg["offset"] == nullptr){
                 p_jmsg["offset"] = vector<size_t>(varshape.size(),0);
             }
+            p_jmsg["putbytes"] = product(p_jmsg["putshape"].get<vector<size_t>>(), dsize(p_jmsg["dtype"].get<string>()));
+            p_jmsg["varbytes"] = product(varshape, dsize(p_jmsg["dtype"].get<string>()));
         }
 
         inline shared_ptr<DataMan> get_man(string method){

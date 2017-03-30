@@ -17,27 +17,13 @@ int ZfpMan::put(const void *p_data, json p_jmsg){
     put_begin(p_data, p_jmsg);
 
     void *compressed_data = NULL;
-
     if (check_json(p_jmsg, {"doid", "var", "dtype", "putshape"}, "ZfpMan")){
         if (p_jmsg["compression_rate"] == nullptr){
             p_jmsg["compression_rate"] = 4;
         }
-        string doid = p_jmsg["doid"];
-        string var = p_jmsg["var"];
-        string dtype = p_jmsg["dtype"];
-        vector<size_t> putshape = p_jmsg["putshape"].get<vector<size_t>>();
-
         compressed_data = compress(const_cast<void*>(p_data), p_jmsg);
-
-        /*
-        cout << "original data";  cout << "---------------------\n";
-        p_jmsg["dumplength"] = 30;
-        dump(p_data, p_jmsg);
-        void* decompressed_data = decompress(compressed_data, p_jmsg);
-        cout << "decompressed data\n"; cout << "---------------------\n";
-        dump(decompressed_data, p_jmsg);
-        */
     }
+
     put_end(compressed_data, p_jmsg);
     if(compressed_data) free(compressed_data);
     return 0;
@@ -124,6 +110,7 @@ void* ZfpMan::compress(void* p_data, json &p_jmsg){
 
     p_jmsg["compressed_size"] = bufsize;
     p_jmsg["compression_method"] = "zfp";
+    cout << p_jmsg.dump(8) << endl;
 
     // clean up
     zfp_field_free(field);

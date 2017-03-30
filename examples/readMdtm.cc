@@ -16,8 +16,9 @@ void getcb(const void *data,
     cout << "variable name = " << var << endl;
     cout << "data type = " << dtype << endl;
     float *dataf = (float*)data;
-    size_t varsize = std::accumulate(varshape.begin(), varshape.end(), 1, std::multiplies<size_t>());
-    for (int i=0; i<varsize; i++)
+    size_t printsize = std::accumulate(varshape.begin(), varshape.end(), 1, std::multiplies<size_t>());
+    if(printsize > 1000) printsize = 1000;
+    for (int i=0; i<printsize; i++)
         cout << ((float*)data)[i] << " ";
     cout << endl;
 }

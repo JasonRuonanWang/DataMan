@@ -54,7 +54,7 @@ int DumpMan::put(const void *p_data, json p_jmsg){
 
     cout << endl;
 
-    put_end(data, p_jmsg);
+    put_end(p_data, p_jmsg);
     free(data);
 
     return 0;
