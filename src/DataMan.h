@@ -368,6 +368,25 @@ class DataMan{
             return nullptr;
         }
 
+
+        string run_cmd(string cmd){
+            FILE * pipe = NULL;
+            char buffer[2048];
+            string result;
+            pipe = popen(cmd.c_str(), "r");
+            int len = 0;
+            if (NULL == pipe) {
+                perror("pipe");
+                return "";
+            }
+            while (!feof(pipe)) {
+                if (fgets(buffer, sizeof(buffer), pipe) != NULL)
+                    result = buffer;
+            }
+            pclose(pipe);
+            return result;
+        }
+
         std::function<void(const void*, string, string, string, vector<size_t>)> m_callback;
         map<string, shared_ptr<DataMan>> m_next;
 

@@ -75,6 +75,7 @@ int MdtmMan::init(json p_jmsg){
 }
 
 MdtmMan::~MdtmMan(){
+    run_cmd("rm -rf " + pipe_desc["pipe_prefix"].get<string>());
     if(zmq_ipc_req) zmq_close(zmq_ipc_req);
 }
 

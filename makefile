@@ -14,7 +14,7 @@
 
 UNAME_S:=$(shell uname -s)
 ifeq ($(UNAME_S),Darwin)
-	CXX:=clang++
+	CXX:=g++
 else
 	CXX:=g++
 endif
@@ -24,9 +24,10 @@ LDFLAGS=-L. -Wno-return-type-c-linkage
 INSTALL_PREFIX=$(libpath)
 
 # Setup ZeroMQ dependencies
+ZMQ_LDFLAGS=-lzmq
 ifdef ZMQ_PREFIX
 	ZMQ_CXXFLAGS=-I$(ZMQ_PREFIX)/include
-	ZMQ_LDFLAGS=-L$(ZMQ_PREFIX)/lib -lzmq
+	ZMQ_LDFLAGS+=-L$(ZMQ_PREFIX)/lib
 endif
 ifdef ZMQ_CXXFLAGS
 ifdef ZMQ_LDFLAGS
@@ -35,20 +36,21 @@ endif
 endif
 
 # Setup ZFP dependencies
+ZFP_LDFLAGS=-lzfp
 ifdef ZFP_PREFIX
-        ZFP_CXXFLAGS=-I$(ZFP_PREFIX)/include
-        ZFP_LDFLAGS=-L$(ZFP_PREFIX)/lib64 -lzfp
+	ZFP_CXXFLAGS=-I$(ZFP_PREFIX)/include
+	ZFP_LDFLAGS+=-L$(ZFP_PREFIX)/lib64
 endif
 ifdef ZFP_CXXFLAGS
 ifdef ZFP_LDFLAGS
-        ZFP_TARGETS=zfpman
+	ZFP_TARGETS=zfpman
 endif
 endif
 
 default:manager
 	make install
 
-all:manager $(ZMQ_TARGETS) $(ZFP_TARGETS) dumpman
+all:manager zfpman zmqman dumpman mdtmman
 	make install
 	cd examples; make all
 
@@ -75,6 +77,7 @@ compressman:
 zfpman:compressman
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(ZFP_CXXFLAGS) $(ZFP_LDFLAGS) src/ZfpMan.cc --shared -o libzfpman.so -lcompressman
 
+# DataManager
 manager:
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) src/DataManager.cc --shared -o libdataman.so -ldl
 
