@@ -22,6 +22,7 @@ class CacheItem : public DataMan{
 
         void flush();
         string name(){return "CacheItem";}
+        string type(){return "Cache";}
         const void *get_buffer();
         void clean(const string mode);
         vector<size_t> get_shape();
@@ -80,6 +81,7 @@ class CacheMan : public DataMan{
 
         void flush();
         string name(){return "CacheMan";}
+        string type(){return "Cache";}
         const void *get_buffer(string doid, string var);
         void clean(string doid, string var, string mode);
         void clean_all(string mode);
@@ -90,9 +92,9 @@ class CacheMan : public DataMan{
 
 
     private:
-        typedef map<string, map<string, CacheItem> > CacheDMap;
-        typedef map<string, CacheItem> CacheVMap;
-        CacheDMap m_cache;
+        typedef map<string, CacheItem> CacheVarMap;
+        typedef map<string, CacheVarMap> CacheDoMap;
+        CacheDoMap m_cache;
 
 };
 

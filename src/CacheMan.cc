@@ -112,8 +112,8 @@ void CacheMan::clean(string doid, string var, string mode){
 }
 
 void CacheMan::clean_all(string mode){
-    for(CacheDMap::iterator i = m_cache.begin(); i != m_cache.end(); ++i){
-        for(CacheVMap::iterator j = m_cache[i->first].begin(); j != m_cache[i->first].end(); ++j){
+    for(auto i = m_cache.begin(); i != m_cache.end(); ++i){
+        for(auto j = m_cache[i->first].begin(); j != m_cache[i->first].end(); ++j){
             j->second.clean(mode);
         }
     }
@@ -121,14 +121,14 @@ void CacheMan::clean_all(string mode){
 
 vector<string> CacheMan::get_do_list(){
     vector<string> do_list;
-    for(CacheDMap::const_iterator it = m_cache.begin(); it != m_cache.end(); ++it)
+    for(auto it = m_cache.begin(); it != m_cache.end(); ++it)
         do_list.push_back(it->first);
     return do_list;
 }
 
 vector<string> CacheMan::get_var_list(string doid){
     vector<string> var_list;
-    for(CacheVMap::const_iterator it = m_cache[doid].begin(); it != m_cache[doid].end(); ++it)
+    for(auto it = m_cache[doid].begin(); it != m_cache[doid].end(); ++it)
         var_list.push_back(it->first);
     return var_list;
 }

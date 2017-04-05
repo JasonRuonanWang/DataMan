@@ -18,6 +18,7 @@ class StreamMan : public DataMan{
         virtual int put(const void *p_data, json p_jmsg);
         virtual void on_recv(json p_jmsg) = 0;
         void flush();
+        virtual string type(){return "Stream";}
 
 
     protected:

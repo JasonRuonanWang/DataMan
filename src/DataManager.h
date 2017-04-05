@@ -25,6 +25,7 @@ class DataManager: public DataMan{
                 );
         void add_file(string p_method);
         string name(){return "DataManager";}
+        string type(){return "Manager";}
         virtual void transform(const void* p_in, void* p_out, json &p_jmsg){};
 
     private:

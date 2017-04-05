@@ -50,7 +50,7 @@ endif
 default:manager
 	make install
 
-all:manager zfpman zmqman dumpman mdtmman
+all:manager zfpman zmqman dumpman mdtmman temporalman
 	make install
 	cd examples; make all
 
@@ -76,6 +76,9 @@ compressman:
 
 zfpman:compressman
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(ZFP_CXXFLAGS) $(ZFP_LDFLAGS) src/ZfpMan.cc --shared -o libzfpman.so -lcompressman
+
+temporalman:compressman
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) src/TemporalMan.cc --shared -o libtemporalman.so -lcompressman
 
 # DataManager
 manager:

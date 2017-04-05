@@ -110,6 +110,7 @@ class DataMan{
         virtual int init(json p_jmsg) = 0;
         virtual void flush() = 0;
         virtual string name() = 0;
+        virtual string type() = 0;
         void reg_callback( std::function<void( const void*, string, string, string, vector<size_t> )> cb ){
             if(m_next.size()==0){
                 m_callback = cb;
@@ -374,7 +375,6 @@ class DataMan{
             char buffer[2048];
             string result;
             pipe = popen(cmd.c_str(), "r");
-            int len = 0;
             if (NULL == pipe) {
                 perror("pipe");
                 return "";
