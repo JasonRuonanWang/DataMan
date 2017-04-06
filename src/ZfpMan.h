@@ -18,7 +18,7 @@ class ZfpMan : public CompressMan{
 };
 
 extern "C" shared_ptr<DataMan> getMan(){
-    return shared_ptr<DataMan>(new ZfpMan);
+    return make_shared<ZfpMan>();
 }
 
 #endif

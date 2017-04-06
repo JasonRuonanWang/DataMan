@@ -8,7 +8,7 @@ DumpMan::~DumpMan(){
 }
 
 int DumpMan::init(json p_jmsg){
-    if(p_jmsg["dumping"]!=NULL){
+    if(p_jmsg["dumping"]!=nullptr){
         m_dumping = p_jmsg["dumping"].get<bool>();
     }
     return 0;
@@ -31,7 +31,9 @@ int DumpMan::put(const void *p_data, json p_jmsg){
     vector<size_t> varshape = p_jmsg["varshape"].get<vector<size_t>>();
     vector<size_t> offset = p_jmsg["offset"].get<vector<size_t>>();
     int numbers_to_print = 100;
-    if(numbers_to_print > product(putshape,1));
+    if(numbers_to_print > product(putshape,1)){
+        numbers_to_print = product(putshape,1);
+    }
     size_t putsize = product(putshape, dsize(dtype));
 
     cout << p_jmsg.dump(4) << endl;

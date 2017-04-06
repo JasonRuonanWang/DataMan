@@ -26,7 +26,7 @@ class ZmqMan : public StreamMan{
 
 
 extern "C" shared_ptr<DataMan> getMan(){
-    return shared_ptr<DataMan>(new ZmqMan);
+    return make_shared<ZmqMan>();
 }
 
 

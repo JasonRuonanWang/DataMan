@@ -1,5 +1,9 @@
-CXX=clang++
-CXX=g++
+UNAME_S:=$(shell uname -s)
+ifeq ($(UNAME_S),Darwin)
+	CXX:=clang++
+else
+	CXX:=g++
+endif
 
 CXXFLAGS=-std=c++11 -Wno-return-type-c-linkage
 #LDFLAGS=-Wl,--no-as-needed -ldl

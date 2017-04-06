@@ -14,7 +14,7 @@
 
 UNAME_S:=$(shell uname -s)
 ifeq ($(UNAME_S),Darwin)
-	CXX:=g++
+	CXX:=clang++
 else
 	CXX:=g++
 endif

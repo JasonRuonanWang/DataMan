@@ -12,7 +12,10 @@ int CacheItem::init(json p_jmsg){
         m_varshape = p_jmsg["varshape"].get<vector<size_t>>();
         m_bytes = dsize(m_dtype);
         m_varsize = product(m_varshape);
-        m_buffer = malloc(m_varsize * m_bytes);
+        m_varbytes = m_varsize * m_bytes;
+        if(m_buffer.size() != m_varbytes){
+            m_buffer.resize(m_varbytes);
+        }
         return 0;
     }
     return -1;
@@ -23,26 +26,22 @@ CacheItem::CacheItem()
 :DataMan(){}
 
 CacheItem::~CacheItem(){
-    if(m_buffer) free(m_buffer);
 }
 
 
 int CacheItem::put(const void *p_data, json p_jmsg){
-    string p_doid = p_jmsg["doid"];
-    string p_var = p_jmsg["var"];
-    string p_dtype = p_jmsg["dtype"];
+    init(p_jmsg);
     vector<size_t> p_putshape = p_jmsg["putshape"].get<vector<size_t>>();
     vector<size_t> p_varshape = p_jmsg["varshape"].get<vector<size_t>>();
     vector<size_t> p_offset = p_jmsg["offset"].get<vector<size_t>>();
 
-    if(!m_buffer) init(p_jmsg);
     size_t putsize = product(p_putshape);
     size_t chunksize = p_putshape.back();
     for(size_t i=0; i<putsize; i+=chunksize){
         vector<size_t> p = one2multi(p_putshape, i);
         p = apply_offset(p, p_offset);
         size_t ig = multi2one(p_varshape, p);
-        memcpy((char*)m_buffer + ig * m_bytes, (char*)p_data + i * m_bytes, chunksize * m_bytes);
+        copy((char*)p_data + i * m_bytes, (char*)p_data + i * m_bytes + chunksize * m_bytes,  m_buffer.data() + ig * m_bytes);
     }
 
     return 0;
@@ -65,20 +64,20 @@ void CacheItem::flush(){
 
 void CacheItem::clean(const string mode){
     if(mode == "zero"){
-        memset(m_buffer, 0, m_varsize * m_bytes);
+        memset(m_buffer.data(), 0, m_varbytes);
         return;
     }
     if(mode == "nan"){
         for(size_t i=0; i<m_varsize; i++){
             if(m_dtype == "float")
-                ((float*)m_buffer)[i] = numeric_limits<float>::quiet_NaN();
+                ((float*)m_buffer.data())[i] = numeric_limits<float>::quiet_NaN();
         }
         return;
     }
 }
 
 const void *CacheItem::get_buffer(){
-    return m_buffer;
+    return m_buffer.data();
 }
 
 CacheMan::CacheMan()

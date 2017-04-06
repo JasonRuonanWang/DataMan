@@ -22,7 +22,7 @@ class DumpMan : public DataMan{
 };
 
 extern "C" shared_ptr<DataMan> getMan(){
-    return shared_ptr<DumpMan>(new DumpMan);
+    return make_shared<DumpMan>();
 }
 
 

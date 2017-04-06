@@ -31,7 +31,7 @@ class MdtmMan : public StreamMan{
 };
 
 extern "C" shared_ptr<DataMan> getMan(){
-    return shared_ptr<DataMan>(new MdtmMan);
+    return make_shared<MdtmMan>();
 }
 
 

@@ -30,12 +30,13 @@ class CacheItem : public DataMan{
 
 
     private:
-        void *m_buffer=NULL;
+        vector<char> m_buffer;
         string m_doid;
         string m_var;
         string m_dtype;
-        uint8_t m_bytes;
+        size_t m_bytes;
         size_t m_varsize;
+        size_t m_varbytes;
         vector<size_t> m_varshape;
         bool m_completed;
 
