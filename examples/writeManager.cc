@@ -7,7 +7,6 @@ int main(){
     DataManager man;
     json msg;
     msg["method"] = "zmq";
-    msg["stream_mode"] = "sender";
     msg["local_ip"] = "127.0.0.1";
     msg["remote_ip"] = "127.0.0.1";
     msg["local_port"] = 12306;
@@ -25,20 +24,25 @@ int main(){
     msg2["var"] = "data";
     msg2["dtype"] = "float";
 
-    int datasize = 4*6*10;
+    int datasize = 10;
     float data[datasize];
-    for (int i=0; i<4; i++){
-        for (int j=0; j<3; j++){
-            for (int k=0; k<2; k++){
-                for (int m=0; m<datasize; m++){
-                    data[m] = i*60 + j*10 + m;
+    for(int loop=0; loop<100; loop++){
+        for (int i=0; i<4; i++){
+            for (int j=0; j<3; j++){
+                for (int k=0; k<2; k++){
+                    for (int m=0; m<datasize; m++){
+                        data[m] = i*10000 + j*100 + k*10 + m;
+                    }
+                    msg2["offset"] = {i,j*2,k*5};
+                    man.put(data, msg2);
+                    for (int i=0; i<10; i++)
+                        cout << ((float*)data)[i] << " ";
+                    cout << endl;
                 }
-                msg2["offset"] = {i,j*2,k*5};
-                man.put(data, msg2);
             }
         }
+        man.flush();
     }
-    man.flush();
     return 0;
 }
 

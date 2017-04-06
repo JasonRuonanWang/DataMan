@@ -28,7 +28,7 @@ int ZmqMan::init(json p_jmsg){
     return 0;
 }
 
-int ZmqMan::put(const void *p_data, json p_jmsg, int p_flag){
+int ZmqMan::put(const void *p_data, json p_jmsg){
     put_begin(p_data, p_jmsg);
     StreamMan::put(p_data, p_jmsg);
     zmq_send(zmq_data, p_data, p_jmsg["putbytes"], 0);
@@ -44,14 +44,19 @@ void ZmqMan::on_recv(json msg){
     if (msg["operation"] == "put"){
         cout << "ZmqMan::on_recv 1" << endl;
         size_t putbytes = msg["putbytes"].get<size_t>();
-        void *data = malloc(putbytes);
-        int err = zmq_recv (zmq_data, data, putbytes, 0);
-        m_cache.put(data, msg);
-        free(data);
         cout << "ZmqMan::on_recv 2" << endl;
+        void *data = malloc(putbytes);
+        cout << "ZmqMan::on_recv 3" << endl;
+        int err = zmq_recv (zmq_data, data, putbytes, 0);
+        cout << "ZmqMan::on_recv 4" << endl;
+        m_cache.put(data, msg);
+        cout << "ZmqMan::on_recv 5" << endl;
+        free(data);
+        cout << "ZmqMan::on_recv 6" << endl;
     }
     else if (msg["operation"] == "flush"){
         callback();
+        m_cache.flush();
         m_cache.clean_all("nan");
     }
 }

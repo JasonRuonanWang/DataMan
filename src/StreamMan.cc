@@ -75,7 +75,7 @@ void StreamMan::callback(){
         }
     }
     else{
-        logging("callback called but callback function not registered");
+        logging("callback called but callback function not registered!");
     }
 }
 

@@ -25,12 +25,13 @@ class CacheItem : public DataMan{
         string type(){return "Cache";}
         const void *get_buffer();
         void clean(const string mode);
+        void remove(size_t timestep);
         vector<size_t> get_shape();
         string get_dtype();
 
 
     private:
-        vector<char> m_buffer;
+        map<size_t, vector<char>> m_buffer;
         string m_doid;
         string m_var;
         string m_dtype;
@@ -39,6 +40,7 @@ class CacheItem : public DataMan{
         size_t m_varbytes;
         vector<size_t> m_varshape;
         bool m_completed;
+        size_t m_timestep=0;
 
         inline vector<size_t> apply_offset(const vector<size_t> &p, const vector<size_t> &o){
             vector<size_t> g;
@@ -86,11 +88,12 @@ class CacheMan : public DataMan{
         const void *get_buffer(string doid, string var);
         void clean(string doid, string var, string mode);
         void clean_all(string mode);
+        void remove(string doid, string var, size_t timestep);
+        void remove_all(size_t timestep);
         vector<string> get_do_list();
         vector<string> get_var_list(string doid);
         vector<size_t> get_shape(string doid, string var);
         string get_dtype(string doid, string var);
-
 
     private:
         typedef map<string, CacheItem> CacheVarMap;
