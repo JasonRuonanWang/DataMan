@@ -34,7 +34,7 @@ int ZfpMan::get(void *p_data, json &p_jmsg){
 }
 
 void ZfpMan::flush(){
-
+    flush_next();
 }
 
 void* ZfpMan::compress(void* p_data, json &p_jmsg){
