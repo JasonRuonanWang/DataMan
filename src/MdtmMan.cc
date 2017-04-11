@@ -130,11 +130,11 @@ int MdtmMan::get(void *p_data, json &p_jmsg){
     return 0;
 }
 
-void MdtmMan::on_recv(json j){
+void MdtmMan::on_recv(json jmsg){
     cout << "MdtmMan::on_recv " << endl;
 
     // push new request
-    jqueue.push(j);
+    jqueue.push(jmsg);
     bqueue.push(NULL);
     iqueue.push(0);
 

@@ -14,7 +14,7 @@ class ZmqMan : public StreamMan{
         virtual void transform(const void* p_in, void* p_out, json &p_jmsg){};
 
 
-        virtual void on_recv(json j);
+        virtual void on_recv(json msg);
         string name(){return "ZmqMan";}
 
 

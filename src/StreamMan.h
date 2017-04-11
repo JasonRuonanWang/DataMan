@@ -16,10 +16,9 @@ class StreamMan : public DataMan{
 
         virtual int init(json p_jmsg);
         virtual int put(const void *p_data, json p_jmsg);
-        virtual void on_recv(json p_jmsg) = 0;
+        virtual void on_recv(json msg) = 0;
         void flush();
         virtual string type(){return "Stream";}
-
 
     protected:
         void *zmq_context = NULL;
@@ -52,7 +51,5 @@ class StreamMan : public DataMan{
         bool zmq_meta_rep_thread_active;
         thread *zmq_meta_rep_thread=NULL;
 };
-
-
 
 #endif

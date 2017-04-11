@@ -14,7 +14,7 @@ class MdtmMan : public StreamMan{
         virtual int get(void *p_data, json &p_jmsg);
         virtual void transform(const void* p_in, void* p_out, json &p_jmsg){};
 
-        void on_recv(json j);
+        void on_recv(json msg);
         string name(){return "MdtmMan";}
 
     private:

@@ -177,6 +177,9 @@ class DataMan{
                     return false;
                 }
                 man->transform(p_in, p_out, p_jmsg);
+                p_jmsg.erase("compression_method");
+                p_jmsg.erase("compression_rate");
+                p_jmsg.erase("compressed_size");
                 return true;
             }
             else{
@@ -369,7 +372,6 @@ class DataMan{
             return nullptr;
         }
 
-
         string run_cmd(string cmd){
             FILE * pipe = NULL;
             char buffer[2048];
@@ -396,8 +398,6 @@ class DataMan{
         chrono::time_point<chrono::system_clock> m_start_time;
         chrono::time_point<chrono::system_clock> m_step_time;
         bool m_profiling_enabled = false;
-
-
 };
 
 #endif

@@ -42,17 +42,22 @@ int ZmqMan::get(void *p_data, json &p_jmsg){
 
 void ZmqMan::on_recv(json msg){
     if (msg["operation"] == "put"){
-        cout << "ZmqMan::on_recv 1" << endl;
-        size_t putbytes = msg["putbytes"].get<size_t>();
-        cout << "ZmqMan::on_recv 2" << endl;
-        void *data = malloc(putbytes);
-        cout << "ZmqMan::on_recv 3" << endl;
-        int err = zmq_recv (zmq_data, data, putbytes, 0);
-        cout << "ZmqMan::on_recv 4" << endl;
-        m_cache.put(data, msg);
-        cout << "ZmqMan::on_recv 5" << endl;
-        free(data);
-        cout << "ZmqMan::on_recv 6" << endl;
+        if(msg["compression_method"] == nullptr){
+            size_t putbytes = msg["putbytes"].get<size_t>();
+            vector<char> data;
+            data.resize(putbytes);
+            int err = zmq_recv (zmq_data, data.data(), putbytes, 0);
+            m_cache.put(data.data(), msg);
+        }
+        else{
+            size_t putbytes = msg["putbytes"].get<size_t>();
+            size_t compressed_size = msg["compressed_size"].get<size_t>();
+            vector<char> compressed_data; compressed_data.resize(compressed_size);
+            vector<char> data; data.resize(putbytes);
+            int err = zmq_recv (zmq_data, compressed_data.data(), compressed_size, 0);
+            auto_transform(compressed_data.data(), data.data(), msg);
+            m_cache.put(data.data(), msg);
+        }
     }
     else if (msg["operation"] == "flush"){
         callback();

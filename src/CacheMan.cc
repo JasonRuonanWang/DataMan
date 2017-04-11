@@ -13,9 +13,6 @@ int CacheItem::init(json p_jmsg){
     m_varsize = product(m_varshape);
     m_varbytes = m_varsize * m_bytes;
 
-//    if(m_buffer.count(m_timestep) == 0){
-//    }
-
     if(m_buffer[m_timestep].size() != m_varbytes){
         m_buffer[m_timestep].resize(m_varbytes);
     }

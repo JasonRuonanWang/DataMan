@@ -110,7 +110,6 @@ void* ZfpMan::compress(void* p_data, json &p_jmsg){
 
     p_jmsg["compressed_size"] = bufsize;
     p_jmsg["compression_method"] = "zfp";
-    cout << p_jmsg.dump(8) << endl;
 
     // clean up
     zfp_field_free(field);

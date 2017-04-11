@@ -34,19 +34,21 @@ int DumpMan::put(const void *p_data, json p_jmsg){
     if(numbers_to_print > product(putshape,1)){
         numbers_to_print = product(putshape,1);
     }
-    size_t putsize = product(putshape, dsize(dtype));
+    size_t putbytes = product(putshape, dsize(dtype));
 
     cout << p_jmsg.dump(4) << endl;
     cout << "total MBs = " << product(putshape,dsize(dtype)) / 1000000 << endl;
 
-    void *data_to_dump;
+    const void *data_to_dump;
 
-    void *data = malloc(putsize);
-    if(auto_transform(p_data, data, p_jmsg)){
-        data_to_dump = data;
+    vector<char> data;
+    data.resize(putbytes);
+
+    if(auto_transform(p_data, data.data(), p_jmsg)){
+        data_to_dump = data.data();
     }
     else{
-        data_to_dump = const_cast<void*>(p_data);
+        data_to_dump = p_data;
     }
 
     if(dtype == "float")
@@ -57,7 +59,6 @@ int DumpMan::put(const void *p_data, json p_jmsg){
     cout << endl;
 
     put_end(p_data, p_jmsg);
-    free(data);
 
     return 0;
 }
