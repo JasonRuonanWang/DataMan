@@ -6,7 +6,7 @@ else
 endif
 
 CXXFLAGS=-std=c++11 -Wno-return-type-c-linkage
-LDFLAGS=-Wl,--no-as-needed -ldl
+LDFLAGS=-ldl
 
 default:stream
 
@@ -19,12 +19,12 @@ zfp:
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) writeZfp.cc -o writeZfp.exe
 
 zmq:
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) writeZmq.cc -o writeZmq.exe -lzmqman -lstreamman
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) readZmq.cc -o readZmq.exe -lzmqman -lstreamman
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) writeZmq.cc -o writeZmq.exe -lzmqman -lstreamman -lzmq
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) readZmq.cc -o readZmq.exe -lzmqman -lstreamman -lzmq
 
 mdtm:
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) readMdtm.cc -o readMdtm.exe -lmdtmman -lstreamman
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) writeMdtm.cc -o writeMdtm.exe -lmdtmman -lstreamman
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) readMdtm.cc -o readMdtm.exe -lmdtmman -lstreamman -lzmq
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) writeMdtm.cc -o writeMdtm.exe -lmdtmman -lstreamman -lzmq
 
 cache:
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) writeCache.cc -o writeCache.exe -lcacheman
