@@ -4,6 +4,11 @@
 
 #include "DataMan.h"
 
+namespace adios
+{
+namespace realtime
+{
+
 class DumpMan : public DataMan{
     public:
         DumpMan();
@@ -25,6 +30,8 @@ extern "C" shared_ptr<DataMan> getMan(){
     return make_shared<DumpMan>();
 }
 
+} // end namespace realtime
+} // end namespace adios
 
 
 #endif

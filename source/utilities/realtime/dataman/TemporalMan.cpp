@@ -1,4 +1,9 @@
-#include "TemporalMan.h"
+#include "utilities/realtime/dataman/TemporalMan.h"
+
+namespace adios
+{
+namespace realtime
+{
 
 TemporalMan::TemporalMan()
     :CompressMan()
@@ -31,3 +36,5 @@ void TemporalMan::transform(const void* p_in, void* p_out, json &p_jmsg){
 
 }
 
+} // end namespace realtime
+} // end namespace adios

@@ -1,10 +1,11 @@
-#include <MdtmMan.h>
 #include <unistd.h>
 #include <iostream>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <numeric>
+#include <utilities/realtime/dataman/MdtmMan.h>
 using namespace std;
+using namespace adios::realtime;
 
 void getcb(const void *data,
          string doid,
@@ -24,7 +25,7 @@ void getcb(const void *data,
 }
 
 int main(){
-    MdtmMan man;
+    adios::realtime::MdtmMan man;
     json j;
     j["local_ip"] = "127.0.0.1";
     j["remote_ip"] = "127.0.0.1";

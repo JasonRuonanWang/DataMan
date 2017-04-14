@@ -1,11 +1,16 @@
 #include <sys/stat.h>
 #include <unistd.h>
-#include "MdtmMan.h"
 #include "zmq.h"
 #include <fcntl.h>
 #include <stdio.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include "utilities/realtime/dataman/MdtmMan.h"
+
+namespace adios
+{
+namespace realtime
+{
 
 MdtmMan::MdtmMan()
     :StreamMan()
@@ -201,4 +206,7 @@ void MdtmMan::on_recv(json jmsg){
     }
 }
 
+
+} // end namespace realtime
+} // end namespace adios
 

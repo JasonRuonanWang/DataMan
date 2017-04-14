@@ -4,13 +4,20 @@
 
 #include "DataMan.h"
 
+namespace adios
+{
+namespace realtime
+{
+
 class CompressMan : public DataMan{
     public:
-        CompressMan();
-        ~CompressMan();
+        CompressMan() = default;
+        ~CompressMan() = default;
         virtual string type(){return "Compress";}
 };
 
+} // end namespace realtime
+} // end namespace adios
 
 
 #endif

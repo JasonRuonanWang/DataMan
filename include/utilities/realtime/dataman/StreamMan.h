@@ -7,7 +7,11 @@
 #include "CacheMan.h"
 #include <thread>
 
-using namespace std;
+
+namespace adios
+{
+namespace realtime
+{
 
 class StreamMan : public DataMan{
     public:
@@ -51,5 +55,8 @@ class StreamMan : public DataMan{
         bool zmq_meta_rep_thread_active;
         thread *zmq_meta_rep_thread=NULL;
 };
+
+} // end namespace realtime
+} // end namespace adios
 
 #endif

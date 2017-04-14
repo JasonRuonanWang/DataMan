@@ -1,17 +1,3 @@
-# To build with ZeroMQ support, set:
-#   ZMQ_CXXFLAGS - C++ flags to use ZeroMQ
-#   ZMQ_LDFLAGS  - Linker flags to use ZeroMQ
-# or ZMQ_PREFIX which wil automatically set:
-#   ZMQ_CXXFLAGS = -I$(ZMQ_PREFIX)/include
-#   ZMQ_LDFLAGS  = -L$(ZMQ_PREFIX)/lib -lzmq
-#
-# To build with ZFP support, set:
-#   ZFP_CXXFLAGS - C++ flags to use ZFP
-#   ZFP_LDFLAGS  - Linker flags to use ZFP
-# or ZFP_PREFIX which wil automatically set:
-#   ZFP_CXXFLAGS = -I$(ZFP_PREFIX)/include
-#   ZFP_LDFLAGS  = -L$(ZFP_PREFIX)/lib -lzfp
-
 UNAME_S:=$(shell uname -s)
 ifeq ($(UNAME_S),Darwin)
 	CXX:=clang++
@@ -19,9 +5,10 @@ else
 	CXX:=g++
 endif
 
-CXXFLAGS=-std=c++11 -fPIC
+SRCPATH=source/utilities/realtime/dataman
+INCPATH=include
+CXXFLAGS=-std=c++11 -fPIC -I$(INCPATH)
 LDFLAGS=-L. -Wno-return-type-c-linkage
-INSTALL_PREFIX=$(libpath)
 
 # Setup ZeroMQ dependencies
 ZMQ_LDFLAGS=-lzmq
@@ -47,48 +34,36 @@ ifdef ZFP_LDFLAGS
 endif
 endif
 
-default:manager
-	make install
+
+
+default:all
 
 all:manager zfpman zmqman dumpman mdtmman temporalman
-	make install
 	cd examples; make all
 
 dumpman:
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) src/DumpMan.cc --shared -o libdumpman.so
-
-cacheman:
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) src/CacheMan.cc --shared -o libcacheman.so
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(SRCPATH)/DumpMan.cpp --shared -o libdumpman.so
 
 # streaming methods
-streamman:cacheman
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(ZMQ_CXXFLAGS) $(ZMQ_LDFLAGS) src/StreamMan.cc --shared -o libstreamman.so -lcacheman
 
-mdtmman:streamman cacheman
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(ZMQ_CXXFLAGS) $(ZMQ_LDFLAGS) src/MdtmMan.cc --shared -o libmdtmman.so -lstreamman -lcacheman
+mdtmman:
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(ZMQ_CXXFLAGS) $(ZMQ_LDFLAGS) $(SRCPATH)/MdtmMan.cpp $(SRCPATH)/StreamMan.cpp $(SRCPATH)/CacheMan.cpp --shared -o libmdtmman.so
 
-zmqman:streamman cacheman
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(ZMQ_CXXFLAGS) $(ZMQ_LDFLAGS) src/ZmqMan.cc --shared -o libzmqman.so -lstreamman -lcacheman
+zmqman:
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(ZMQ_CXXFLAGS) $(ZMQ_LDFLAGS) $(SRCPATH)/ZmqMan.cpp $(SRCPATH)/StreamMan.cpp $(SRCPATH)/CacheMan.cpp --shared -o libzmqman.so
 
 # compression methods
-compressman:
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) src/CompressMan.cc --shared -o libcompressman.so
 
-zfpman:compressman
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(ZFP_CXXFLAGS) $(ZFP_LDFLAGS) src/ZfpMan.cc --shared -o libzfpman.so -lcompressman
+zfpman:
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(ZFP_CXXFLAGS) $(ZFP_LDFLAGS) $(SRCPATH)/ZfpMan.cpp --shared -o libzfpman.so
 
-temporalman:compressman
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) src/TemporalMan.cc --shared -o libtemporalman.so -lcompressman
+temporalman:
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(SRCPATH)/TemporalMan.cpp --shared -o libtemporalman.so
 
 # DataManager
 manager:
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) src/DataManager.cc --shared -o libdataman.so -ldl
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(SRCPATH)/DataManager.cpp --shared -o libdataman.so -ldl
 
-install:
-	@( mkdir -p $(INSTALL_PREFIX)/DataMan/lib/);
-	@( mkdir -p $(INSTALL_PREFIX)/DataMan/include/);
-	cp *.so $(INSTALL_PREFIX)/DataMan/lib/
-	cp src/*.h src/*.hpp $(INSTALL_PREFIX)/DataMan/include
 
 clean:
 	rm -f src/*.o *.so*

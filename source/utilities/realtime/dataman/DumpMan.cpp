@@ -1,4 +1,9 @@
-#include "DumpMan.h"
+#include "utilities/realtime/dataman/DumpMan.h"
+
+namespace adios
+{
+namespace realtime
+{
 
 DumpMan::DumpMan()
     :DataMan(){
@@ -67,5 +72,7 @@ void DumpMan::flush(){
 }
 
 
+} // end namespace realtime
+} // end namespace adios
 
 

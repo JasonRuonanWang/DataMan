@@ -1,13 +1,14 @@
 #include <unistd.h>
-#include <MdtmMan.h>
+#include <utilities/realtime/dataman/MdtmMan.h>
 #include <iostream>
 #include <vector>
 
 using namespace std;
+using namespace adios::realtime;
 
 int main(){
 
-    MdtmMan man;
+    adios::realtime::MdtmMan man;
     json msg;
     msg["local_ip"] = "127.0.0.1";
     msg["remote_ip"] = "127.0.0.1";

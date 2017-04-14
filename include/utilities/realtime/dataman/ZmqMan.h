@@ -3,6 +3,11 @@
 
 #include"StreamMan.h"
 
+namespace adios
+{
+namespace realtime
+{
+
 class ZmqMan : public StreamMan{
     public:
         ZmqMan();
@@ -30,5 +35,7 @@ extern "C" shared_ptr<DataMan> getMan(){
 }
 
 
+} // end namespace realtime
+} // end namespace adios
 
 #endif

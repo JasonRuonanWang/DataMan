@@ -1,7 +1,8 @@
-#include <DataMan.h>
+#include <utilities/realtime/dataman/DataMan.h>
 #include <dlfcn.h>
 
 using namespace std;
+using namespace adios::realtime;
 
 int main(){
 

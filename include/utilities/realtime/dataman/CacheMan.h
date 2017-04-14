@@ -4,6 +4,11 @@
 
 #include "DataMan.h"
 
+namespace adios
+{
+namespace realtime
+{
+
 class CacheItem : public DataMan{
     public:
         CacheItem();
@@ -102,5 +107,7 @@ class CacheMan : public DataMan{
 
 };
 
+} // end namespace realtime
+} // end namespace adios
 
 #endif

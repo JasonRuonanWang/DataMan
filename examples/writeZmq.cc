@@ -2,13 +2,14 @@
 #include <iostream>
 #include <vector>
 
-#include <ZmqMan.h>
+#include <utilities/realtime/dataman/ZmqMan.h>
 
 using namespace std;
+using namespace adios::realtime;
 
 int main(){
 
-    ZmqMan man;
+    adios::realtime::ZmqMan man;
     json msg;
     msg["local_ip"] = "127.0.0.1";
     msg["remote_ip"] = "127.0.0.1";

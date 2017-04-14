@@ -10,7 +10,7 @@ LDFLAGS=-ldl
 
 default:stream
 
-all:zmq mdtm zfp cache dump manager stream
+all:zmq mdtm zfp dump manager stream
 
 dump:
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) writeDump.cc -o writeDump.exe -ldumpman
@@ -19,15 +19,12 @@ zfp:
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) writeZfp.cc -o writeZfp.exe
 
 zmq:
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) writeZmq.cc -o writeZmq.exe -lzmqman -lstreamman -lzmq
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) readZmq.cc -o readZmq.exe -lzmqman -lstreamman -lzmq
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) writeZmq.cc -o writeZmq.exe -lzmqman -lzmq
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) readZmq.cc -o readZmq.exe -lzmqman -lzmq
 
 mdtm:
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) readMdtm.cc -o readMdtm.exe -lmdtmman -lstreamman -lzmq
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) writeMdtm.cc -o writeMdtm.exe -lmdtmman -lstreamman -lzmq
-
-cache:
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) writeCache.cc -o writeCache.exe -lcacheman
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) readMdtm.cc -o readMdtm.exe -lmdtmman -lzmq
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) writeMdtm.cc -o writeMdtm.exe -lmdtmman -lzmq
 
 manager:
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) writeManager.cc -o writeManager.exe -ldataman
@@ -35,7 +32,6 @@ manager:
 
 stream:
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) writeStreamWorkflow.cc -o writeStreamWorkflow.exe -ldataman
-
 
 clean:
 	rm -rf *.exe *.dSYM

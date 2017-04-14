@@ -1,9 +1,14 @@
-#include "CacheMan.h"
+#include "utilities/realtime/dataman/CacheMan.h"
 
+namespace adios
+{
+namespace realtime
+{
 
 int CacheMan::init(json p_jmsg){
     return 0;
 }
+
 int CacheItem::init(json p_jmsg){
     m_doid = p_jmsg["doid"];
     m_var = p_jmsg["var"];
@@ -162,3 +167,6 @@ vector<size_t> CacheMan::get_shape(string doid, string var){
 string CacheMan::get_dtype(string doid, string var){
     return m_cache[doid][var].get_dtype();
 }
+
+} // end namespace realtime
+} // end namespace adios

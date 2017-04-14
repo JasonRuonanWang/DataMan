@@ -1,7 +1,12 @@
 #include <sys/stat.h>
 #include <unistd.h>
-#include "ZmqMan.h"
+#include "utilities/realtime/dataman/ZmqMan.h"
 #include "zmq.h"
+
+namespace adios
+{
+namespace realtime
+{
 
 ZmqMan::ZmqMan()
     :StreamMan()
@@ -66,3 +71,5 @@ void ZmqMan::on_recv(json msg){
     }
 }
 
+} // end namespace realtime
+} // end namespace adios

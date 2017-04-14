@@ -3,7 +3,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <numeric>
-#include <DataManager.h>
+#include <utilities/realtime/dataman/DataManager.h>
 using namespace std;
 
 void getcb(const void *data,
@@ -23,7 +23,7 @@ void getcb(const void *data,
 }
 
 int main(){
-    DataManager man;
+    adios::realtime::DataManager man;
     json msg;
     msg["method"] = "zmq";
     msg["stream_mode"] = "receiver";

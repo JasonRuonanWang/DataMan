@@ -1,10 +1,11 @@
-#include <DataManager.h>
+#include <utilities/realtime/dataman/DataManager.h>
 
 using namespace std;
+using namespace adios::realtime;
 
 int main(){
 
-    DataManager man;
+    adios::realtime::DataManager man;
     json msg;
     msg["method"] = "zmq";
     msg["local_ip"] = "127.0.0.1";

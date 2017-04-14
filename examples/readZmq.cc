@@ -1,10 +1,11 @@
-#include <ZmqMan.h>
+#include <utilities/realtime/dataman/ZmqMan.h>
 #include <unistd.h>
 #include <iostream>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <numeric>
 using namespace std;
+using namespace adios::realtime;
 
 void getcb(const void *data,
          string doid,
@@ -23,7 +24,7 @@ void getcb(const void *data,
 }
 
 int main(){
-    ZmqMan man;
+    adios::realtime::ZmqMan man;
     json j;
     j["local_ip"] = "127.0.0.1";
     j["remote_ip"] = "127.0.0.1";

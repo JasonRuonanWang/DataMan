@@ -1,24 +1,32 @@
-#ifndef ZFPMAN_H_
-#define ZFPMAN_H_
+#ifndef TEMPORALMAN_H_
+#define TEMPORALMAN_H_
 
 #include "CompressMan.h"
 
-class ZfpMan : public CompressMan{
+namespace adios
+{
+namespace realtime
+{
+
+class TemporalMan : public CompressMan{
     public:
-        ZfpMan();
-        ~ZfpMan();
+        TemporalMan();
+        ~TemporalMan();
         virtual int init(json p_jmsg);
         virtual int put(const void *p_data, json p_jmsg);
         virtual int get(void *p_data, json &p_jmsg);
         virtual void flush();
-        void* compress(void* p_data, json &p_jmsg);
-        void* decompress(void* p_data, json p_jmsg);
         virtual void transform(const void* p_in, void* p_out, json &p_jmsg);
-        string name(){return "ZfpMan";}
+        string name(){return "TemporalMan";}
 };
 
 extern "C" shared_ptr<DataMan> getMan(){
-    return make_shared<ZfpMan>();
+    return make_shared<TemporalMan>();
 }
 
+} // end namespace realtime
+} // end namespace adios
+
 #endif
+
+

@@ -1,10 +1,13 @@
 #include <iostream>
 #include <unistd.h>
 #include <sstream>
-#include "StreamMan.h"
+#include "utilities/realtime/dataman/StreamMan.h"
 #include "zmq.h"
 
-using namespace std;
+namespace adios
+{
+namespace realtime
+{
 
 StreamMan::StreamMan()
     :DataMan()
@@ -105,4 +108,6 @@ int StreamMan::put(const void *p_data, json p_jmsg){
 }
 
 
+} // end namespace realtime
+} // end namespace adios
 

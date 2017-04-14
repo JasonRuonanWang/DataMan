@@ -1,5 +1,10 @@
-#include "ZfpMan.h"
+#include "utilities/realtime/dataman/ZfpMan.h"
 #include <zfp.h>
+
+namespace adios
+{
+namespace realtime
+{
 
 ZfpMan::ZfpMan()
     :CompressMan()
@@ -248,5 +253,7 @@ void ZfpMan::transform(const void* p_in, void* p_out, json &p_jmsg){
 
 }
 
+} // end namespace realtime
+} // end namespace adios
 
 
