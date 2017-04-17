@@ -24,7 +24,7 @@ void getcb(const void *data,
     cout << endl;
 }
 
-int main(){
+int main(int argc, char** argv){
     adios::realtime::ZmqMan man;
     json j;
     j["local_ip"] = "127.0.0.1";
@@ -35,6 +35,14 @@ int main(){
     j["stream_mode"] = "receiver";
     j["tolerance"] = {0};
     j["priority"] = {100};
+
+    if(argc >= 2){
+        j["local_ip"] = argv[1];
+        if(argc >= 3){
+            j["local_port"] = stoi(argv[2]);
+        }
+    }
+
     man.init(j);
     man.reg_callback(getcb);
     for (int i=0; i<100000; i++){
