@@ -8,7 +8,8 @@ using namespace std;
 using namespace adios::realtime;
 using json = nlohmann::json;
 
-int main(){
+int main(int argc, char** argv){
+
 
     adios::realtime::ZmqMan man;
     json msg;
@@ -20,6 +21,15 @@ int main(){
     msg["stream_mode"] = "sender";
     msg["tolerance"] = {0};
     msg["priority"] = {100};
+
+    if(argc >= 2){
+        msg["remote_ip"] = argv[1];
+        if(argc >= 3){
+            msg["remote_port"] = stoi(argv[2]);
+        }
+    }
+
+
     man.init(msg);
 
     json msg2;
@@ -50,3 +60,7 @@ int main(){
     }
     return 0;
 }
+
+
+
+
