@@ -1,6 +1,6 @@
 UNAME_S:=$(shell uname -s)
 ifeq ($(UNAME_S),Darwin)
-	CXX:=clang++
+	CXX:=g++
 else
 	CXX:=g++
 endif
@@ -13,7 +13,7 @@ default:stream
 all:zmq mdtm zfp dump manager stream
 
 dump:
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) writeDump.cc -o writeDump.exe -ldumpman
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) writeDump.cc -o writeDump.exe -ldataman
 
 zfp:
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) writeZfp.cc -o writeZfp.exe -ldataman

@@ -5,7 +5,6 @@ namespace adios
 namespace realtime
 {
 
-
 int DumpMan::init(json p_jmsg){
     if(p_jmsg["dumping"]!=nullptr){
         m_dumping = p_jmsg["dumping"].get<bool>();
@@ -56,9 +55,7 @@ int DumpMan::put(const void *p_data, json p_jmsg){
         for (size_t i=0; i<numbers_to_print; i++) cout << ((double*)data_to_dump)[i] << " ";
 
     cout << endl;
-
     put_end(p_data, p_jmsg);
-
     return 0;
 }
 
