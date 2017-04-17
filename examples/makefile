@@ -19,8 +19,8 @@ zfp:
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) writeZfp.cc -o writeZfp.exe -ldataman
 
 zmq:
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) -lzmqman -lzmq writeZmq.cc -o writeZmq.exe
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) -lzmqman -lzmq readZmq.cc -o readZmq.exe
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) writeZmq.cc -o writeZmq.exe -lzmqman -lzmq
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) readZmq.cc -o readZmq.exe -lzmqman -lzmq
 
 mdtm:
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) readMdtm.cc -o readMdtm.exe -lmdtmman -lzmq

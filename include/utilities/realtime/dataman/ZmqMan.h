@@ -10,7 +10,7 @@ namespace realtime
 
 class ZmqMan : public StreamMan{
     public:
-        ZmqMan();
+        ZmqMan() = default;
         ~ZmqMan();
 
         virtual int init(json p_jmsg);

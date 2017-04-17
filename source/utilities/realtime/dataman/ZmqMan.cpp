@@ -8,11 +8,6 @@ namespace adios
 namespace realtime
 {
 
-ZmqMan::ZmqMan()
-    :StreamMan()
-{
-}
-
 ZmqMan::~ZmqMan(){
     if(zmq_data) zmq_close(zmq_data);
 }

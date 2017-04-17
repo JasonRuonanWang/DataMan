@@ -11,13 +11,13 @@ int main(){
     if (so == NULL){
         std::cout << "so=NULL\n";
     }
-    std::unique_ptr<DataManBase> (*func)() = NULL;
-    func = (std::unique_ptr<DataManBase>(*)()) dlsym(so,"getMan");
+    std::shared_ptr<DataManBase> (*func)() = NULL;
+    func = (std::shared_ptr<DataManBase>(*)()) dlsym(so,"getMan");
     if (func == NULL){
         std::cout << "func=NULL\n";
     }
 
-    std::unique_ptr<DataManBase> man = func();
+    std::shared_ptr<DataManBase> man = func();
 
     vector<size_t> putshape;
     putshape.assign(3,0);
