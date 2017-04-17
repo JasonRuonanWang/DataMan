@@ -1,11 +1,12 @@
-#include <utilities/realtime/dataman/DataManager.h>
+#include <utilities/realtime/dataman/DataMan.h>
 
 using namespace std;
 using namespace adios::realtime;
 
 int main(){
 
-    adios::realtime::DataManager man;
+    using json = nlohmann::json;
+    adios::realtime::DataMan man;
     json msg;
     msg["method"] = "zmq";
     msg["stream_mode"] = "sender";

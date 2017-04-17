@@ -30,7 +30,7 @@ class ZmqMan : public StreamMan{
 };
 
 
-extern "C" shared_ptr<DataMan> getMan(){
+extern "C" shared_ptr<DataManBase> getMan(){
     return make_shared<ZmqMan>();
 }
 

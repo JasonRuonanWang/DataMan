@@ -33,9 +33,29 @@ namespace adios
                 queue<void*> bqueue;
                 queue<int> iqueue;
 
+                string run_cmd(string cmd)
+                {
+                    FILE *pipe = NULL;
+                    char buffer[2048];
+                    string result;
+                    pipe = popen(cmd.c_str(), "r");
+                    if (NULL == pipe)
+                    {
+                        perror("pipe");
+                        return "";
+                    }
+                    while (!feof(pipe))
+                    {
+                        if (fgets(buffer, sizeof(buffer), pipe) != NULL)
+                            result = buffer;
+                    }
+                    pclose(pipe);
+                    return result;
+                }
+
         }; // end of class MdtmMan
 
-        extern "C" shared_ptr<DataMan> getMan(){
+        extern "C" shared_ptr<DataManBase> getMan(){
             return make_shared<MdtmMan>();
         }
 

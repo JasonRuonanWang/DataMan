@@ -6,6 +6,7 @@
 #include <numeric>
 using namespace std;
 using namespace adios::realtime;
+using json = nlohmann::json;
 
 void getcb(const void *data,
          string doid,

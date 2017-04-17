@@ -24,14 +24,6 @@ int CacheItem::init(json p_jmsg){
     return 0;
 }
 
-
-CacheItem::CacheItem()
-:DataMan(){}
-
-CacheItem::~CacheItem(){
-}
-
-
 int CacheItem::put(const void *p_data, json p_jmsg){
     if(!check_json(p_jmsg, {"doid", "var", "dtype", "varshape", "putshape", "offset"}, "CacheItem")){
         return -1;
@@ -101,12 +93,6 @@ void CacheItem::clean(const string mode){
 
 const void *CacheItem::get_buffer(){
     return m_buffer[m_timestep].data();
-}
-
-CacheMan::CacheMan()
-    :DataMan(){}
-
-CacheMan::~CacheMan(){
 }
 
 int CacheMan::put(const void *p_data, json p_jmsg){

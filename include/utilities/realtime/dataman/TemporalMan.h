@@ -20,7 +20,7 @@ class TemporalMan : public CompressMan{
         string name(){return "TemporalMan";}
 };
 
-extern "C" shared_ptr<DataMan> getMan(){
+extern "C" shared_ptr<DataManBase> getMan(){
     return make_shared<TemporalMan>();
 }
 

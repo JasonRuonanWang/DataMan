@@ -42,27 +42,27 @@ all:manager zfpman zmqman dumpman mdtmman temporalman
 	cd examples; make all
 
 dumpman:
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(SRCPATH)/DumpMan.cpp --shared -o libdumpman.so
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(SRCPATH)/DumpMan.cpp $(SRCPATH)/DataManBase.cpp --shared -o libdumpman.so
 
 # streaming methods
 
 mdtmman:
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(ZMQ_CXXFLAGS) $(ZMQ_LDFLAGS) $(SRCPATH)/MdtmMan.cpp $(SRCPATH)/StreamMan.cpp $(SRCPATH)/CacheMan.cpp --shared -o libmdtmman.so
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(ZMQ_CXXFLAGS) $(ZMQ_LDFLAGS) $(SRCPATH)/MdtmMan.cpp $(SRCPATH)/StreamMan.cpp $(SRCPATH)/CacheMan.cpp $(SRCPATH)/DataManBase.cpp --shared -o libmdtmman.so
 
 zmqman:
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(ZMQ_CXXFLAGS) $(ZMQ_LDFLAGS) $(SRCPATH)/ZmqMan.cpp $(SRCPATH)/StreamMan.cpp $(SRCPATH)/CacheMan.cpp --shared -o libzmqman.so
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(ZMQ_CXXFLAGS) $(ZMQ_LDFLAGS) $(SRCPATH)/ZmqMan.cpp $(SRCPATH)/StreamMan.cpp $(SRCPATH)/CacheMan.cpp $(SRCPATH)/DataManBase.cpp --shared -o libzmqman.so
 
 # compression methods
 
 zfpman:
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(ZFP_CXXFLAGS) $(ZFP_LDFLAGS) $(SRCPATH)/ZfpMan.cpp --shared -o libzfpman.so
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(ZFP_CXXFLAGS) $(ZFP_LDFLAGS) $(SRCPATH)/ZfpMan.cpp $(SRCPATH)/DataManBase.cpp --shared -o libzfpman.so
 
 temporalman:
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(SRCPATH)/TemporalMan.cpp --shared -o libtemporalman.so
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(SRCPATH)/TemporalMan.cpp $(SRCPATH)/DataManBase.cpp --shared -o libtemporalman.so
 
 # DataManager
 manager:
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(SRCPATH)/DataManager.cpp --shared -o libdataman.so -ldl
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(SRCPATH)/DataMan.cpp $(SRCPATH)/DataManBase.cpp --shared -o libdataman.so -ldl
 
 
 clean:

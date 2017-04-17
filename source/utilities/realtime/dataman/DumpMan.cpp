@@ -5,12 +5,6 @@ namespace adios
 namespace realtime
 {
 
-DumpMan::DumpMan()
-    :DataMan(){
-}
-
-DumpMan::~DumpMan(){
-}
 
 int DumpMan::init(json p_jmsg){
     if(p_jmsg["dumping"]!=nullptr){

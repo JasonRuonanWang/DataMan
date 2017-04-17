@@ -4,15 +4,17 @@
 
 #include "DataMan.h"
 
+using namespace std;
+
 namespace adios
 {
 namespace realtime
 {
 
-class CacheItem : public DataMan{
+class CacheItem : public DataManBase{
     public:
-        CacheItem();
-        ~CacheItem();
+        CacheItem() = default;
+        virtual ~CacheItem() = default;
 
         void init(string doid,
                 string var,
@@ -76,11 +78,11 @@ class CacheItem : public DataMan{
         }
 };
 
-class CacheMan : public DataMan{
+class CacheMan : public DataManBase{
 
     public:
-        CacheMan();
-        ~CacheMan();
+        CacheMan() = default;
+        virtual ~CacheMan() = default;
 
         virtual int init(json p_jmsg);
         virtual int put(const void *p_data, json p_jmsg);

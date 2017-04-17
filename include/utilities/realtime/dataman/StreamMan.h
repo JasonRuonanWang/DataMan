@@ -13,10 +13,10 @@ namespace adios
 namespace realtime
 {
 
-class StreamMan : public DataMan{
+class StreamMan : public DataManBase{
     public:
-        StreamMan();
-        ~StreamMan();
+        StreamMan() = default;
+        virtual ~StreamMan();
 
         virtual int init(json p_jmsg);
         virtual int put(const void *p_data, json p_jmsg);

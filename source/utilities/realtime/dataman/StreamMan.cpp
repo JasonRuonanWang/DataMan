@@ -9,10 +9,6 @@ namespace adios
 namespace realtime
 {
 
-StreamMan::StreamMan()
-    :DataMan()
-{
-}
 
 StreamMan::~StreamMan(){
     if(zmq_meta) zmq_close(zmq_meta);

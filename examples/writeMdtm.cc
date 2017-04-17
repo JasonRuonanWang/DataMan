@@ -5,6 +5,7 @@
 
 using namespace std;
 using namespace adios::realtime;
+using json = nlohmann::json;
 
 int main(){
 

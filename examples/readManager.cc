@@ -3,8 +3,9 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <numeric>
-#include <utilities/realtime/dataman/DataManager.h>
+#include <utilities/realtime/dataman/DataMan.h>
 using namespace std;
+using json = nlohmann::json;
 
 void getcb(const void *data,
          string doid,
@@ -23,7 +24,7 @@ void getcb(const void *data,
 }
 
 int main(){
-    adios::realtime::DataManager man;
+    adios::realtime::DataMan man;
     json msg;
     msg["method"] = "zmq";
     msg["stream_mode"] = "receiver";

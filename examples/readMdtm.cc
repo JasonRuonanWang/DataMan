@@ -6,6 +6,7 @@
 #include <utilities/realtime/dataman/MdtmMan.h>
 using namespace std;
 using namespace adios::realtime;
+using json = nlohmann::json;
 
 void getcb(const void *data,
          string doid,

@@ -1,4 +1,4 @@
-#include "utilities/realtime/dataman/DumpMan.h"
+#include "utilities/realtime/dataman/DataManBase.h"
 #include <dlfcn.h>
 
 using namespace std;
@@ -11,13 +11,13 @@ int main(){
     if (so == NULL){
         std::cout << "so=NULL\n";
     }
-    std::unique_ptr<DataMan> (*func)() = NULL;
-    func = (std::unique_ptr<DataMan>(*)()) dlsym(so,"getMan");
+    std::unique_ptr<DataManBase> (*func)() = NULL;
+    func = (std::unique_ptr<DataManBase>(*)()) dlsym(so,"getMan");
     if (func == NULL){
         std::cout << "func=NULL\n";
     }
 
-    std::unique_ptr<DataMan> man = func();
+    std::unique_ptr<DataManBase> man = func();
 
 
     vector<size_t> putshape;

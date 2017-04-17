@@ -4,12 +4,14 @@
 
 #include "DataMan.h"
 
+using namespace std;
+
 namespace adios
 {
 namespace realtime
 {
 
-class CompressMan : public DataMan{
+class CompressMan : public DataManBase{
     public:
         CompressMan() = default;
         ~CompressMan() = default;

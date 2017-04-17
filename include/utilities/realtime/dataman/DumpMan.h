@@ -4,15 +4,17 @@
 
 #include "DataMan.h"
 
+using namespace std;
+
 namespace adios
 {
 namespace realtime
 {
 
-class DumpMan : public DataMan{
+class DumpMan : public DataManBase{
     public:
-        DumpMan();
-        ~DumpMan();
+        DumpMan() = default;
+        virtual ~DumpMan() = default;
 
         virtual int init(json p_jmsg);
         virtual int put(const void *p_data, json p_jmsg);
@@ -26,7 +28,7 @@ class DumpMan : public DataMan{
         bool m_dumping = true;
 };
 
-extern "C" shared_ptr<DataMan> getMan(){
+extern "C" shared_ptr<DataManBase> getMan(){
     return make_shared<DumpMan>();
 }
 
