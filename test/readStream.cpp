@@ -47,8 +47,8 @@ int main(int argc, char *argv[])
                 "monitoring=yes",
                 "local_ip=127.0.0.1",
                 "remote_ip=127.0.0.1",
-                "local_port=12306",
-                "remote_port=12307");
+                "local_port=12307",
+                "remote_port=12306");
         }
 
         auto datamanReader = adios.Open("stream", "r", datamanSettings);
@@ -58,7 +58,7 @@ int main(int argc, char *argv[])
 
         datamanReader->SetCallBack(getcb);
 
-        for (int i = 0; i < 3; i++)
+        while(1)
         {
             std::this_thread::sleep_for(std::chrono::milliseconds(1000));
         }
